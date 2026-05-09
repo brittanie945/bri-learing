@@ -28,3 +28,30 @@ def create_access_token(data: dict) -> str:
     expire = datetime.now(timezone.utc) + timedelta(minutes=EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+from uuid import UUID
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError
+
+_bearer = HTTPBearer()
+
+
+def get_current_user_id(
+    credentials: HTTPAuthorizationCredentials = Depends(_bearer),
+) -> UUID:
+    """FastAPI 依赖：从 Bearer JWT 中提取 user_id"""
+    token = credentials.credentials
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        if not user_id:
+            raise ValueError("no sub")
+        return UUID(user_id)
+    except (JWTError, ValueError):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="无效或已过期的令牌",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
