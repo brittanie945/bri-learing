@@ -3,133 +3,147 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { BookOpen, Calendar, Mail, Timer, Pencil } from "lucide-react";
 import { getUser } from "@/lib/auth-client";
 import { diaryApi, type MoodStats } from "@/lib/api/diary";
 
+// 根据小时返回时段
+function getGreetingKey(): "morning" | "afternoon" | "evening" {
+  const h = new Date().getHours();
+  if (h < 12) return "morning";
+  if (h < 18) return "afternoon";
+  return "evening";
+}
+
+// 炫紫星云功能卡配置
+const FEATURES = [
+  {
+    key: "diary",    href: "/diary",    Icon: BookOpen,
+    // 紫罗兰
+    accent: "oklch(0.78 0.24 290)",
+    bg:     "oklch(0.19 0.055 290)",
+    border: "oklch(0.32 0.090 290 / 0.50)",
+  },
+  {
+    key: "calendar", href: "/calendar", Icon: Calendar,
+    // 品红
+    accent: "oklch(0.78 0.22 330)",
+    bg:     "oklch(0.19 0.050 330)",
+    border: "oklch(0.32 0.085 330 / 0.50)",
+  },
+  {
+    key: "drift",    href: "/drift",    Icon: Mail,
+    // 电光蓝
+    accent: "oklch(0.76 0.22 256)",
+    bg:     "oklch(0.19 0.048 256)",
+    border: "oklch(0.32 0.080 256 / 0.50)",
+  },
+  {
+    key: "capsule",  href: "/diary",   Icon: Timer,
+    // 霓虹青
+    accent: "oklch(0.80 0.18 195)",
+    bg:     "oklch(0.19 0.042 195)",
+    border: "oklch(0.32 0.075 195 / 0.50)",
+  },
+] as const;
+
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
+  const router = useRouter();
   const user = getUser();
   const [stats, setStats] = useState<MoodStats | null>(null);
   const [capsuleCount, setCapsuleCount] = useState(0);
+  const greeting = getGreetingKey();
 
   useEffect(() => {
     diaryApi.moodStats().then(setStats).catch(() => {});
     diaryApi.list({ is_capsule: true }).then((r) => setCapsuleCount(r.length)).catch(() => {});
   }, []);
 
-  const features = [
-    {
-      key: "diary",
-      href: "/diary",
-      icon: (
-        <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-      ),
-      gradient: "from-green-400 to-emerald-500",
-      bg: "bg-green-50",
-      border: "border-green-100",
-      iconBg: "bg-green-500",
-      actionColor: "text-green-600 hover:text-green-700",
-    },
-    {
-      key: "calendar",
-      href: "/calendar",
-      icon: (
-        <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      ),
-      gradient: "from-teal-400 to-cyan-500",
-      bg: "bg-teal-50",
-      border: "border-teal-100",
-      iconBg: "bg-teal-500",
-      actionColor: "text-teal-600 hover:text-teal-700",
-    },
-    {
-      key: "drift",
-      href: "/drift",
-      icon: (
-        <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      ),
-      gradient: "from-blue-400 to-indigo-500",
-      bg: "bg-blue-50",
-      border: "border-blue-100",
-      iconBg: "bg-blue-500",
-      actionColor: "text-blue-600 hover:text-blue-700",
-    },
-    {
-      key: "capsule",
-      href: "/diary",
-      icon: (
-        <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      gradient: "from-amber-400 to-orange-500",
-      bg: "bg-amber-50",
-      border: "border-amber-100",
-      iconBg: "bg-amber-500",
-      actionColor: "text-amber-600 hover:text-amber-700",
-    },
-  ] as const;
+  // 今天日期
+  const today = new Date().toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
 
   return (
-    <div className="space-y-8">
-      {/* Welcome */}
+    <div className="max-w-xl mx-auto space-y-8">
+
+      {/* ── 暖光问候区 ── */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          {t("welcome", { username: user?.username || "-" })}
+        <p className="text-xs font-medium tracking-widest mb-2" style={{color: "oklch(0.50 0.012 62)"}}>
+          {today}
+        </p>
+        <h1 className="text-2xl font-semibold leading-snug" style={{color: "oklch(0.90 0.012 75)"}}>
+          {t(greeting, { username: user?.username || "" })}
         </h1>
-        <p className="mt-1 text-sm text-slate-500">{t("welcomeSubtitle")}</p>
+        <p className="mt-1 text-sm" style={{color: "oklch(0.52 0.012 62)"}}>
+          {t("writePrompt")}
+        </p>
       </div>
 
-      {/* Quick stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="rounded-xl border border-green-100 bg-green-50 p-5">
-          <p className="text-xs font-medium text-green-600 uppercase tracking-wide">{t("totalDiaries")}</p>
-          <p className="mt-1.5 text-3xl font-bold text-green-700">{stats?.total ?? "—"}</p>
+      {/* ── 主 CTA ── */}
+      <button
+        onClick={() => router.push("/diary")}
+        className="group w-full flex items-center gap-4 rounded-2xl px-5 py-4 text-left transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
+        style={{
+          background: "oklch(0.16 0.030 290)",
+          border: "1px solid oklch(0.34 0.055 290 / 0.55)",
+          boxShadow: "0 2px 16px oklch(0.06 0.030 290 / 0.50)",
+        }}
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+          style={{background: "linear-gradient(135deg, oklch(0.70 0.24 290), oklch(0.68 0.24 330))", boxShadow: "0 0 16px oklch(0.45 0.28 290 / 0.45)"}}>
+          <Pencil className="h-4.5 w-4.5 text-white" strokeWidth={2} />
         </div>
-        <div className="rounded-xl border border-teal-100 bg-teal-50 p-5">
-          <p className="text-xs font-medium text-teal-600 uppercase tracking-wide">{t("streak")}</p>
-          <p className="mt-1.5 text-3xl font-bold text-teal-700">
-            {stats != null ? `${stats.streak}` : "—"}
-            {stats != null && <span className="text-base font-medium ml-0.5">{t("streakUnit")}</span>}
+        <div className="flex-1">
+          <p className="text-sm font-medium" style={{color: "oklch(0.88 0.015 290)"}}>{t("writeBtn")}</p>
+          <p className="text-xs mt-0.5" style={{color: "oklch(0.50 0.015 290)"}}>
+            {t("diaryDesc")}
           </p>
         </div>
-        <div className="rounded-xl border border-amber-100 bg-amber-50 p-5">
-          <p className="text-xs font-medium text-amber-600 uppercase tracking-wide">{t("capsuleCount")}</p>
-          <p className="mt-1.5 text-3xl font-bold text-amber-700">{capsuleCount ?? "—"}</p>
-        </div>
-      </div>
+        <span className="text-base transition-transform group-hover:translate-x-1" style={{color: "oklch(0.72 0.22 290)"}}>→</span>
+      </button>
 
-      {/* Feature cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {features.map((f) => (
-          <div
-            key={f.key}
-            className={`rounded-2xl border ${f.border} ${f.bg} p-6 flex flex-col gap-4`}
-          >
-            <div className="flex items-start gap-4">
-              <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${f.iconBg} text-white shadow-sm`}>
-                {f.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-slate-800 text-base">{t(`${f.key}Title`)}</h3>
-                <p className="mt-1 text-sm text-slate-500 leading-relaxed">{t(`${f.key}Desc`)}</p>
-              </div>
-            </div>
-            <Link
-              href={f.href}
-              className={`self-start text-sm font-medium ${f.actionColor} flex items-center gap-1 transition-colors`}
-            >
-              {t(`${f.key}Action`)} →
-            </Link>
+      {/* ── 数据小条 ── */}
+      <div className="flex items-center gap-6">
+        {[
+          { label: t("totalDiaries"), value: stats?.total ?? "—", accent: "oklch(0.78 0.24 290)" },
+          { label: t("streak"), value: stats != null ? `${stats.streak}${t("streakUnit")}` : "—", accent: "oklch(0.78 0.22 330)" },
+          { label: t("capsuleCount"), value: capsuleCount, accent: "oklch(0.80 0.18 195)" },
+        ].map(({ label, value, accent }) => (
+          <div key={label} className="flex flex-col items-center gap-0.5">
+            <span className="text-xl font-bold tabular-nums" style={{color: accent}}>{value}</span>
+            <span className="text-[10px] tracking-wide" style={{color: "oklch(0.48 0.015 290)"}}>{label}</span>
           </div>
         ))}
+      </div>
+
+      {/* ── 功能导航 2×2 ── */}
+      <div>
+        <p className="text-xs font-medium tracking-widest mb-3" style={{color: "oklch(0.44 0.018 290)"}}>
+          探索功能
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          {FEATURES.map(({ key, href, Icon, accent, bg, border }) => (
+            <Link key={key} href={href}
+              className="group flex flex-col gap-3 rounded-2xl p-4 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              style={{background: bg, border: `1px solid ${border}`, boxShadow: `0 4px 20px ${bg}`}}
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl"
+                style={{background: `${accent}26`}}>
+                <Icon className="h-4.5 w-4.5" style={{color: accent}} strokeWidth={1.8} />
+              </div>
+              <div>
+                <p className="text-sm font-semibold" style={{color: "oklch(0.90 0.012 290)"}}>{t(`${key}Title`)}</p>
+                <p className="text-[11px] leading-relaxed mt-0.5" style={{color: "oklch(0.52 0.015 290)"}}>{t(`${key}Desc`)}</p>
+              </div>
+              <span className="text-xs font-medium mt-auto transition-all group-hover:translate-x-0.5" style={{color: accent}}>
+                {t(`${key}Action`)} →
+              </span>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
+

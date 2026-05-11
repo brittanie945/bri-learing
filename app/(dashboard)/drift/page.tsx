@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 import { driftApi, type BottleItem, type BottleWithReplies } from "@/lib/api/drift";
 
 function MyBottleCard({ bottle, t, onExpand }: { bottle: BottleItem; t: ReturnType<typeof useTranslations>; onExpand: () => void }) {
@@ -96,7 +97,6 @@ export default function DriftPage() {
   const [myBottles, setMyBottles] = useState<BottleItem[]>([]);
   const [loadingMine, setLoadingMine] = useState(true);
   const [expandedBottle, setExpandedBottle] = useState<BottleWithReplies | null>(null);
-  const [throwSuccess, setThrowSuccess] = useState(false);
   const [pickError, setPickError] = useState("");
 
   const fetchMine = useCallback(async () => {
@@ -115,10 +115,9 @@ export default function DriftPage() {
     if (!throwContent.trim()) return;
     setThrowing(true);
     try {
-      await driftApi.throw({ content: throwContent.trim() });
+      await driftApi.throw(throwContent.trim());
       setThrowContent("");
-      setThrowSuccess(true);
-      setTimeout(() => setThrowSuccess(false), 3000);
+      toast.success(t("throwSuccess"));
       fetchMine();
     } finally {
       setThrowing(false);
@@ -131,6 +130,7 @@ export default function DriftPage() {
     try {
       const bottle = await driftApi.pick();
       setPickedBottle(bottle);
+      toast.success(t("picked") + "!");
     } catch (e) {
       const msg = e instanceof Error ? e.message : "";
       setPickError(msg.includes("429") || msg.includes("limit") ? t("pickLimitReached") : t("noBottlesAvailable"));
@@ -148,14 +148,14 @@ export default function DriftPage() {
 
   const handleReply = async (content: string) => {
     if (!expandedBottle) return;
-    await driftApi.reply(expandedBottle.id, { content });
+    await driftApi.reply(expandedBottle.id, content);
     const updated = await driftApi.getBottle(expandedBottle.id);
     setExpandedBottle(updated);
   };
 
   const handlePickedReply = async (content: string) => {
     if (!pickedBottle) return;
-    await driftApi.reply(pickedBottle.id, { content });
+    await driftApi.reply(pickedBottle.id, content);
     const updated = await driftApi.getBottle(pickedBottle.id);
     setPickedBottle(updated);
   };
@@ -174,9 +174,6 @@ export default function DriftPage() {
           rows={5}
           className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500/30 focus:border-green-500 resize-none"
         />
-        {throwSuccess && (
-          <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">{t("throwSuccess")}</p>
-        )}
         <button
           onClick={handleThrow}
           disabled={throwing || !throwContent.trim()}

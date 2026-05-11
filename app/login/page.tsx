@@ -4,11 +4,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { TreePine } from "lucide-react";
 import { login } from "@/lib/auth-client";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export default function LoginPage() {
   const t = useTranslations("login");
@@ -32,41 +30,54 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-50 via-white to-green-50 px-4">
+    <div className="min-h-screen flex items-center justify-center px-4" style={{background: "oklch(0.10 0.030 290)"}}>
+      {/* 星云光晕 */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-green-200/40 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-emerald-200/40 blur-3xl" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-125 w-125 rounded-full opacity-40"
+          style={{background: "radial-gradient(circle, oklch(0.45 0.28 290), transparent 70%)"}} />
+        <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full opacity-30"
+          style={{background: "radial-gradient(circle, oklch(0.40 0.26 330), transparent 70%)"}} />
+        <div className="absolute top-1/2 left-0 h-64 w-64 rounded-full opacity-20"
+          style={{background: "radial-gradient(circle, oklch(0.42 0.22 256), transparent 70%)"}} />
       </div>
 
-      <Card className="relative w-full max-w-md border-0 shadow-xl shadow-green-100/50 backdrop-blur-sm">
-        <CardHeader className="space-y-4 pb-2 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-green-500 to-emerald-500 shadow-lg shadow-green-200">
-            <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
-            </svg>
+      <div className="relative w-full max-w-sm">
+        {/* 品牌 */}
+        <div className="text-center mb-8">
+          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl mb-4"
+            style={{background: "linear-gradient(135deg, oklch(0.70 0.24 290), oklch(0.68 0.24 330))", boxShadow: "0 0 24px oklch(0.50 0.28 290 / 0.60)"}}>
+            <TreePine className="h-6 w-6 text-white" />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("title")}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{t("subtitle")}</p>
-          </div>
-        </CardHeader>
+          <h1 className="text-2xl font-semibold" style={{color: "oklch(0.93 0.010 290)"}}>{t("title")}</h1>
+          <p className="mt-1 text-sm" style={{color: "oklch(0.52 0.015 290)"}}>{t("subtitle")}</p>
+        </div>
 
-        <CardContent>
+        {/* 表单卡片 */}
+        <div className="rounded-2xl p-6 space-y-5" style={{
+          background: "oklch(0.16 0.030 290)",
+          border: "1px solid oklch(0.32 0.050 290 / 0.55)",
+          boxShadow: "0 20px 50px oklch(0.05 0.030 290 / 0.70), inset 0 1px 0 oklch(0.40 0.060 290 / 0.15)"
+        }}>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="login">{t("loginField")}</Label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium tracking-wide" style={{color: "oklch(0.58 0.015 290)"}}>
+                {t("loginField")}
+              </label>
               <Input
                 id="login"
                 placeholder={t("loginPlaceholder")}
                 value={form.login}
                 onChange={(e) => setForm({ ...form, login: e.target.value })}
                 required
-                className="transition-colors focus-visible:ring-green-500/30 focus-visible:border-green-500"
+                className="h-10 text-sm"
+                style={{background: "oklch(0.20 0.035 290)", borderColor: "oklch(0.34 0.050 290 / 0.65)", color: "oklch(0.90 0.012 290)"}}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">{t("password")}</Label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium tracking-wide" style={{color: "oklch(0.58 0.015 290)"}}>
+                {t("password")}
+              </label>
               <Input
                 id="password"
                 type="password"
@@ -74,31 +85,39 @@ export default function LoginPage() {
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
-                className="transition-colors focus-visible:ring-green-500/30 focus-visible:border-green-500"
+                className="h-10 text-sm"
+                style={{background: "oklch(0.20 0.035 290)", borderColor: "oklch(0.34 0.050 290 / 0.65)", color: "oklch(0.90 0.012 290)"}}
               />
             </div>
 
             {error && (
-              <p className="text-sm text-red-500 bg-red-50 rounded-lg px-3 py-2">{error}</p>
+              <p className="text-sm rounded-xl px-3 py-2" style={{color: "oklch(0.80 0.20 15)", background: "oklch(0.20 0.045 15)"}}>{error}</p>
             )}
 
-            <Button
+            <button
               type="submit"
               disabled={loading}
-              className="w-full bg-linear-to-r from-green-500 to-emerald-500 text-white shadow-md shadow-green-200 hover:shadow-lg hover:shadow-green-300 hover:scale-[1.01] transition-all duration-200 active:scale-[0.99]"
+              className="w-full h-10 text-sm font-semibold rounded-xl transition-all duration-200 disabled:opacity-50 mt-1"
+              style={{
+                background: loading
+                  ? "oklch(0.45 0.18 290)"
+                  : "linear-gradient(135deg, oklch(0.68 0.24 290), oklch(0.65 0.24 330))",
+                color: "white",
+                boxShadow: loading ? "none" : "0 4px 20px oklch(0.40 0.28 300 / 0.50)"
+              }}
             >
               {loading ? t("submitting") : t("submit")}
-            </Button>
+            </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          <p className="text-center text-xs pt-1" style={{color: "oklch(0.48 0.015 290)"}}>
             {t("noAccount")}{" "}
-            <Link href="/register" className="font-medium text-green-600 hover:text-green-500 transition-colors">
+            <Link href="/register" className="font-medium transition-colors" style={{color: "oklch(0.76 0.22 290)"}}>
               {t("register")}
             </Link>
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

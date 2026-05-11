@@ -37,6 +37,11 @@
   "dashboard": {
     "welcome": "你好，{username} 👋",
     "welcomeSubtitle": "记录生活，留住心情，让时间说话。",
+    "morning": "早上好，{username}",
+    "afternoon": "下午好，{username}",
+    "evening": "晚上好，{username}",
+    "writePrompt": "今天想写点什么？",
+    "writeBtn": "开始书写",
     "diaryTitle": "我的日记",
     "diaryDesc": "写下今天的故事，记录每一刻心情与天气。",
     "diaryAction": "去写日记",

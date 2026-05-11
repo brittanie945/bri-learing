@@ -83,37 +83,44 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  /* ══════════════════════════════════════════════
+     炫紫星云调色板
+     深邃暗紫底色 + 霓虹多彩强调
+     ══════════════════════════════════════════════ */
+  --background:           oklch(0.12 0.028 290);   /* 深宇宙紫 */
+  --foreground:           oklch(0.93 0.010 290);   /* 冷调白 */
+  --card:                 oklch(0.16 0.030 290);   /* 卡片紫 */
+  --card-foreground:      oklch(0.93 0.010 290);
+  --popover:              oklch(0.18 0.028 290);
+  --popover-foreground:   oklch(0.93 0.010 290);
+  --primary:              oklch(0.70 0.24 290);    /* 鲜明紫罗兰 */
+  --primary-foreground:   oklch(0.10 0.020 290);
+  --secondary:            oklch(0.20 0.030 290);
+  --secondary-foreground: oklch(0.88 0.012 290);
+  --muted:                oklch(0.18 0.025 290);
+  --muted-foreground:     oklch(0.55 0.015 290);
+  --accent:               oklch(0.22 0.030 290);
+  --accent-foreground:    oklch(0.93 0.010 290);
+  --destructive:          oklch(0.65 0.22 15);
+  --border:               oklch(0.30 0.040 290 / 50%);
+  --input:                oklch(0.22 0.035 290 / 80%);
+  --ring:                 oklch(0.70 0.24 290);    /* 紫罗兰 focus */
+  --radius:               0.75rem;
+  /* 炫彩图表 */
+  --chart-1: oklch(0.70 0.24 290);   /* 紫 */
+  --chart-2: oklch(0.70 0.24 330);   /* 品红 */
+  --chart-3: oklch(0.72 0.20 195);   /* 青 */
+  --chart-4: oklch(0.68 0.22 256);   /* 电蓝 */
+  --chart-5: oklch(0.75 0.18 65);    /* 金 */
+  /* ── 侧边栏 — 更深一层 ── */
+  --sidebar:                    oklch(0.09 0.024 292);
+  --sidebar-foreground:         oklch(0.68 0.015 290);
+  --sidebar-primary:            oklch(0.70 0.24 290);
+  --sidebar-primary-foreground: oklch(0.10 0.020 290);
+  --sidebar-accent:             oklch(0.18 0.032 290);
+  --sidebar-accent-foreground:  oklch(0.93 0.010 290);
+  --sidebar-border:             oklch(0.28 0.038 290 / 45%);
+  --sidebar-ring:               oklch(0.70 0.24 290);
 }
 
 @layer base {
@@ -127,3 +134,94 @@
     @apply font-sans;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   炫紫星云 — 全局 utility 覆写
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── 背景面 ── */
+html.dark .bg-white     { background-color: oklch(0.16 0.030 290); }
+html.dark .bg-slate-50  { background-color: oklch(0.14 0.026 290); }
+html.dark .bg-slate-100 { background-color: oklch(0.19 0.028 290); }
+html.dark .bg-slate-200 { background-color: oklch(0.22 0.026 290); }
+
+/* ── 边框 ── */
+html.dark .border-slate-100 { border-color: oklch(0.28 0.038 290 / 0.45); }
+html.dark .border-slate-200 { border-color: oklch(0.32 0.036 290 / 0.50); }
+html.dark .border-slate-300 { border-color: oklch(0.38 0.032 290 / 0.60); }
+html.dark .divide-slate-100 > * + * { border-color: oklch(0.28 0.038 290 / 0.40); }
+
+/* ── 文字 ── */
+html.dark .text-slate-900 { color: oklch(0.95 0.010 290); }
+html.dark .text-slate-800 { color: oklch(0.88 0.012 290); }
+html.dark .text-slate-700 { color: oklch(0.80 0.012 290); }
+html.dark .text-slate-600 { color: oklch(0.68 0.014 290); }
+html.dark .text-slate-500 { color: oklch(0.56 0.015 290); }
+html.dark .text-slate-400 { color: oklch(0.46 0.015 290); }
+
+/* ── 阴影（紫调）── */
+html.dark .shadow-sm  { box-shadow: 0 1px 3px 0 oklch(0.06 0.030 290 / 0.60); }
+html.dark .shadow-md  { box-shadow: 0 4px 8px -1px oklch(0.06 0.030 290 / 0.55), 0 2px 4px -2px oklch(0.06 0.030 290 / 0.45); }
+html.dark .shadow-xl  { box-shadow: 0 20px 30px -5px oklch(0.06 0.030 290 / 0.60), 0 8px 12px -6px oklch(0.06 0.030 290 / 0.50); }
+html.dark .shadow-2xl { box-shadow: 0 24px 48px -12px oklch(0.05 0.030 290 / 0.70); }
+
+/* ── 紫色系（primary）── */
+html.dark .bg-green-50      { background-color: oklch(0.19 0.055 290); }
+html.dark .bg-green-100     { background-color: oklch(0.22 0.070 290); }
+html.dark .border-green-100 { border-color: oklch(0.35 0.090 290 / 0.50); }
+html.dark .border-green-200 { border-color: oklch(0.40 0.090 290 / 0.55); }
+html.dark .text-green-700   { color: oklch(0.78 0.22 290); }
+html.dark .text-green-600   { color: oklch(0.72 0.22 290); }
+html.dark .text-green-500   { color: oklch(0.65 0.22 290); }
+html.dark .text-green-400   { color: oklch(0.82 0.20 290); }
+html.dark .hover\:bg-green-600:hover { background-color: oklch(0.58 0.22 290); }
+
+/* ── 品红系（calendar）── */
+html.dark .bg-teal-50      { background-color: oklch(0.19 0.055 330); }
+html.dark .border-teal-100 { border-color: oklch(0.35 0.090 330 / 0.50); }
+html.dark .text-teal-700   { color: oklch(0.78 0.20 330); }
+html.dark .text-teal-600   { color: oklch(0.72 0.20 330); }
+
+/* ── 金/橙系（capsule）── */
+html.dark .bg-amber-50      { background-color: oklch(0.20 0.050 65); }
+html.dark .border-amber-100 { border-color: oklch(0.35 0.085 65 / 0.48); }
+html.dark .border-amber-200 { border-color: oklch(0.40 0.085 65 / 0.55); }
+html.dark .border-amber-300 { border-color: oklch(0.46 0.100 65 / 0.60); }
+html.dark .text-amber-700   { color: oklch(0.82 0.18 65); }
+html.dark .text-amber-600   { color: oklch(0.76 0.18 65); }
+html.dark .text-amber-500   { color: oklch(0.70 0.17 65); }
+html.dark .hover\:bg-amber-100:hover { background-color: oklch(0.24 0.055 65); }
+
+/* ── 电蓝系（drift）── */
+html.dark .bg-blue-50      { background-color: oklch(0.19 0.048 256); }
+html.dark .border-blue-200 { border-color: oklch(0.38 0.090 256 / 0.55); }
+html.dark .text-blue-600   { color: oklch(0.74 0.20 256); }
+html.dark .bg-blue-500     { background-color: oklch(0.62 0.22 256); }
+html.dark .hover\:bg-blue-600:hover { background-color: oklch(0.56 0.22 256); }
+
+/* ── 红色/错误 ── */
+html.dark .bg-red-50    { background-color: oklch(0.19 0.045 15); }
+html.dark .text-red-500 { color: oklch(0.72 0.22 15); }
+
+/* ── 输入框焦点（紫色）── */
+html.dark .focus-visible\:ring-green-500\/30:focus-visible {
+  --tw-ring-color: oklch(0.70 0.24 290 / 0.35);
+}
+html.dark .focus-visible\:border-green-500:focus-visible {
+  border-color: oklch(0.70 0.24 290);
+}
+html.dark .focus\:ring-2:focus { --tw-ring-shadow: 0 0 0 2px var(--tw-ring-color); }
+html.dark .focus\:border-green-500:focus  { border-color: oklch(0.70 0.24 290); }
+html.dark .focus\:ring-green-500\/30:focus { --tw-ring-color: oklch(0.70 0.24 290 / 0.35); }
+html.dark .focus\:outline-none:focus { outline: none; }
+
+/* ── 悬停状态 ── */
+html.dark .hover\:bg-slate-50:hover  { background-color: oklch(0.20 0.028 290); }
+html.dark .hover\:bg-slate-100:hover { background-color: oklch(0.22 0.028 290); }
+html.dark .hover\:bg-slate-200:hover { background-color: oklch(0.26 0.026 290); }
+html.dark .hover\:shadow-md:hover    { box-shadow: 0 4px 8px -1px oklch(0.06 0.030 290 / 0.55); }
+html.dark .hover\:border-green-200:hover { border-color: oklch(0.42 0.090 290 / 0.60); }
+html.dark .hover\:text-green-700:hover   { color: oklch(0.78 0.22 290); }
+html.dark .hover\:text-green-500:hover   { color: oklch(0.72 0.22 290); }
+html.dark .group:hover .group-hover\:text-green-700 { color: oklch(0.78 0.22 290); }
+

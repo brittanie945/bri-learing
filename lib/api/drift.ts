@@ -1,4 +1,4 @@
-import { getToken } from "@/lib/auth-client";
+import { getToken, logout } from "@/lib/auth-client";
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -15,6 +15,10 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: { ...authHeaders(), ...(init?.headers ?? {}) },
   });
+  if (res.status === 401) {
+    logout();
+    throw new Error("登录已过期，请重新登录");
+  }
   const json = await res.json();
   if (!res.ok) throw new Error(json.detail || "请求失败");
   return json as T;
@@ -46,7 +50,7 @@ export const driftApi = {
       body: JSON.stringify({ content }),
     }),
 
-  pick: () => req<BottleItem>("/drift/pick", { method: "POST" }),
+  pick: () => req<BottleWithReplies>("/drift/pick", { method: "POST" }),
 
   myBottles: () => req<BottleItem[]>("/drift/my"),
 

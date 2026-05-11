@@ -4,8 +4,76 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { Home, BookOpen, Calendar, Mail, Settings, LogOut, TreePine, Menu, X } from "lucide-react";
 import { isAuthenticated, getUser, logout } from "@/lib/auth-client";
 import LanguageSwitcher from "@/components/language-switcher";
+
+const navConfig = [
+  { key: "home", href: "/", Icon: Home },
+  { key: "diary", href: "/diary", Icon: BookOpen },
+  { key: "calendar", href: "/calendar", Icon: Calendar },
+  { key: "drift", href: "/drift", Icon: Mail },
+  { key: "settings", href: "/settings", Icon: Settings },
+] as const;
+
+function SidebarNav({
+  pathname,
+  t,
+  onNavigate,
+}: {
+  pathname: string;
+  t: (key: string) => string;
+  onNavigate?: () => void;
+}) {
+  return (
+    <nav className="flex-1 px-3 py-4 space-y-1">
+      {navConfig.map(({ key, href, Icon }) => {
+        const isActive = pathname === href;
+        return (
+          <Link
+            key={href}
+            href={href}
+            onClick={onNavigate}
+            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
+              isActive
+                ? "bg-[oklch(0.22_0.070_290)] text-[oklch(0.85_0.22_290)]"
+                : "text-[oklch(0.52_0.015_290)] hover:bg-[oklch(0.17_0.032_290)] hover:text-[oklch(0.85_0.015_290)]"
+            }`}
+          >
+            <Icon className={`h-4.5 w-4.5 shrink-0 ${ isActive ? "text-[oklch(0.80_0.22_290)]" : "text-[oklch(0.44_0.018_290)]" }`} strokeWidth={1.8} />
+            {t(key)}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function SidebarUser({ user, logoutLabel }: { user: ReturnType<typeof getUser>; logoutLabel: string }) {
+  return (
+    <div className="border-t border-[oklch(0.26_0.036_290/0.45)] p-4 space-y-3">
+      <LanguageSwitcher />
+      <div className="flex items-center gap-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold"
+          style={{background: "oklch(0.22 0.070 290)", color: "oklch(0.85 0.22 290)"}}>
+          {user?.username?.charAt(0)?.toUpperCase() || "U"}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="truncate text-sm font-medium" style={{color: "oklch(0.80 0.015 290)"}}>{user?.username || "-"}</p>
+          <p className="truncate text-xs" style={{color: "oklch(0.48 0.015 290)"}}>{user?.email || ""}</p>
+        </div>
+        <button
+          onClick={logout}
+          className="rounded-lg p-1.5 transition-colors"
+          style={{color: "oklch(0.46 0.015 290)"}}
+          title={logoutLabel}
+        >
+          <LogOut className="h-4 w-4" strokeWidth={2} />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardLayout({
   children,
@@ -16,56 +84,8 @@ export default function DashboardLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [ready, setReady] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const user = getUser();
-
-  const navItems = [
-    {
-      label: t("home"),
-      href: "/",
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-        </svg>
-      ),
-    },
-    {
-      label: t("diary"),
-      href: "/diary",
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-      ),
-    },
-    {
-      label: t("calendar"),
-      href: "/calendar",
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      ),
-    },
-    {
-      label: t("drift"),
-      href: "/drift",
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-      ),
-    },
-    {
-      label: t("settings"),
-      href: "/settings",
-      icon: (
-        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.573-1.066z" />
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      ),
-    },
-  ];
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -83,79 +103,60 @@ export default function DashboardLayout({
     );
   }
 
+  const closeSidebar = () => setSidebarOpen(false);
+
   return (
-    <div className="flex h-screen bg-slate-50">
-      {/* Sidebar — 30% width */}
-      <aside className="w-[30%] min-w-60 max-w-90 flex flex-col border-r border-slate-200 bg-white">
-        {/* Brand area */}
-        <div className="flex h-16 items-center gap-3 border-b border-slate-100 px-6">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-green-500 to-emerald-500">
-            <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 22V12m0 0c0-4 3-7 3-7s-1.5 4 0 7m0 0c0-4-3-7-3-7s1.5 4 0 7" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 22h14" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c-3-2-5-5-3-8 1 3 3 5 3 8z" />
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 12c3-2 5-5 3-8-1 3-3 5-3 8z" />
-            </svg>
+    <div className="flex h-screen bg-[oklch(0.12_0.028_290)]">
+      {/* Desktop sidebar */}
+      <aside className="hidden md:flex w-60 flex-col border-r border-[oklch(0.28_0.038_290/0.45)] bg-[oklch(0.09_0.024_292)]">
+        <div className="flex h-16 items-center gap-3 border-b border-[oklch(0.26_0.036_290/0.45)] px-5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl shadow-md shadow-[oklch(0.10_0.040_290/0.60)]"
+            style={{background: "linear-gradient(135deg, oklch(0.70 0.24 290), oklch(0.68 0.24 330))"}}>
+            <TreePine className="h-4.5 w-4.5 text-white" />
           </div>
-          <span className="text-base font-bold text-slate-800 tracking-tight">
-            心洞
-          </span>
+          <span className="text-sm font-bold tracking-widest" style={{color: "oklch(0.82 0.018 290)"}}>心 洞</span>
         </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "bg-green-50 text-green-700"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                <span className={isActive ? "text-green-600" : "text-slate-400"}>
-                  {item.icon}
-                </span>
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* User section */}
-        <div className="border-t border-slate-100 p-4 space-y-3">
-          <LanguageSwitcher />
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-linear-to-br from-green-100 to-emerald-100 text-sm font-semibold text-green-700">
-              {user?.username?.charAt(0)?.toUpperCase() || "U"}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="truncate text-sm font-medium text-slate-700">
-                {user?.username || "-"}
-              </p>
-              <p className="truncate text-xs text-slate-400">
-                {user?.email || ""}
-              </p>
-            </div>
-            <button
-              onClick={logout}
-              className="rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors"
-              title={t("logout")}
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-            </button>
-          </div>
-        </div>
+        <SidebarNav pathname={pathname} t={t} />
+        <SidebarUser user={user} logoutLabel={t("logout")} />
       </aside>
 
-      {/* Main content — 70% */}
+      {/* Mobile overlay */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 md:hidden" onClick={closeSidebar}>
+          <div className="absolute inset-0 bg-[oklch(0.06_0.028_290/0.80)] backdrop-blur-sm" />
+        </div>
+      )}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 w-60 flex-col border-r border-[oklch(0.26_0.036_290/0.45)] bg-[oklch(0.09_0.024_292)] transition-transform duration-200 md:hidden ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+        style={{ display: sidebarOpen ? "flex" : "none" }}
+      >
+        <div className="flex h-16 items-center justify-between px-5 border-b border-[oklch(0.26_0.036_290/0.45)]">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl"
+              style={{background: "linear-gradient(135deg, oklch(0.70 0.24 290), oklch(0.68 0.24 330))"}}>
+              <TreePine className="h-4.5 w-4.5 text-white" />
+            </div>
+            <span className="text-sm font-bold tracking-widest" style={{color: "oklch(0.82 0.018 290)"}}>心 洞</span>
+          </div>
+          <button onClick={closeSidebar} className="transition-colors" style={{color: "oklch(0.48 0.015 290)"}}>
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <SidebarNav pathname={pathname} t={t} onNavigate={closeSidebar} />
+        <SidebarUser user={user} logoutLabel={t("logout")} />
+      </aside>
+
+      {/* Main content */}
       <main className="flex-1 overflow-y-auto">
-        <div className="p-8">{children}</div>
+        <div className="md:hidden flex items-center gap-3 border-b border-[oklch(0.26_0.036_290/0.45)] bg-[oklch(0.09_0.024_292)] px-4 h-14 sticky top-0 z-10">
+          <button onClick={() => setSidebarOpen(true)} className="transition-colors" style={{color: "oklch(0.55 0.015 290)"}}>
+            <Menu className="h-5 w-5" />
+          </button>
+          <span className="text-sm font-bold tracking-widest" style={{color: "oklch(0.82 0.018 290)"}}>心 洞</span>
+        </div>
+        <div className="p-4 md:p-8">{children}</div>
       </main>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { Plus, Timer } from "lucide-react";
 import { diaryApi, type DiaryListItem, type DiaryCreatePayload } from "@/lib/api/diary";
 import DiaryEditor from "@/components/diary-editor";
 import { MOOD_COLORS } from "@/components/mood-picker";
@@ -65,6 +66,7 @@ function DiaryCard({ entry, t, onClick }: { entry: DiaryListItem; t: ReturnType<
 
 export default function DiaryPage() {
   const t = useTranslations("diary");
+  const tm = useTranslations("mood");
   const router = useRouter();
   const [view, setView] = useState<View>("list");
   const [entries, setEntries] = useState<DiaryListItem[]>([]);
@@ -125,15 +127,15 @@ export default function DiaryPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setView("capsule")}
-            className="px-3 py-1.5 text-sm rounded-lg border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
+            className="px-3 py-1.5 text-sm rounded-lg border border-amber-300 bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors inline-flex items-center gap-1"
           >
-            ⏰ {t("newCapsule")}
+            <Timer className="h-4 w-4" /> {t("newCapsule")}
           </button>
           <button
             onClick={() => setView("new")}
-            className="px-3 py-1.5 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors shadow-sm"
+            className="px-3 py-1.5 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600 transition-colors shadow-sm inline-flex items-center gap-1"
           >
-            + {t("newDiary")}
+            <Plus className="h-4 w-4" /> {t("newDiary")}
           </button>
         </div>
       </div>
@@ -153,7 +155,7 @@ export default function DiaryPage() {
         >
           <option value="">{t("all")}</option>
           {["happy", "sad", "anxious", "calm", "angry", "neutral"].map((m) => (
-            <option key={m} value={m}>{m}</option>
+            <option key={m} value={m}>{tm(m)}</option>
           ))}
         </select>
         <label className="flex items-center gap-2 text-sm text-slate-600 px-2">

@@ -36,8 +36,11 @@
   },
   "dashboard": {
     "welcome": "Hello, {username} 👋",
-    "welcomeSubtitle": "Record life, keep emotions, let time speak.",
-    "diaryTitle": "My Diary",
+    "welcomeSubtitle": "Record life, keep emotions, let time speak.",    "morning": "Good morning, {username}",
+    "afternoon": "Good afternoon, {username}",
+    "evening": "Good evening, {username}",
+    "writePrompt": "What's on your mind today?",
+    "writeBtn": "Start Writing",    "diaryTitle": "My Diary",
     "diaryDesc": "Write down today's story and capture every mood and weather.",
     "diaryAction": "Write Now",
     "calendarTitle": "Mood Calendar",
