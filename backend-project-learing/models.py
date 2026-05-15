@@ -78,6 +78,40 @@ class BottleReply(Base):
     )
 
 
+class ChatSession(Base):
+    """AI时空对话会话"""
+    __tablename__ = "chat_sessions"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    title: Mapped[str] = mapped_column(String(200), nullable=False)
+    time_from: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    time_to: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    system_prompt: Mapped[str] = mapped_column(Text, nullable=False)
+    diary_refs: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True, default=dict)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
+class ChatMessage(Base):
+    """AI时空对话消息"""
+    __tablename__ = "chat_messages"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    role: Mapped[str] = mapped_column(String(20), nullable=False)  # user | assistant
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    ref_ids: Mapped[Optional[list]] = mapped_column(JSONB, nullable=True, default=list)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+
 class DailyPrompt(Base):
     """每日写作提示"""
     __tablename__ = "daily_prompts"
