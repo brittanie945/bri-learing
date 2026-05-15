@@ -10,9 +10,9 @@ import LanguageSwitcher from "@/components/language-switcher";
 
 const navConfig = [
   { key: "home", href: "/", Icon: Home },
+  { key: "chat", href: "/chat", Icon: MessageSquare },
   { key: "diary", href: "/diary", Icon: BookOpen },
   { key: "calendar", href: "/calendar", Icon: Calendar },
-  { key: "chat", href: "/chat", Icon: MessageSquare },
   { key: "drift", href: "/drift", Icon: Mail },
   { key: "settings", href: "/settings", Icon: Settings },
 ] as const;
