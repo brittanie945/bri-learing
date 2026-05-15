@@ -109,7 +109,7 @@ export default function DriftPage() {
     }
   }, []);
 
-  useEffect(() => { fetchMine(); }, [fetchMine]);
+  useEffect(() => { void fetchMine(); }, [fetchMine]);
 
   const handleThrow = async () => {
     if (!throwContent.trim()) return;

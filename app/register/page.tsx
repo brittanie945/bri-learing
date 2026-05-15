@@ -7,6 +7,17 @@ import { useTranslations } from "next-intl";
 import { BookHeart } from "lucide-react";
 import { register, login } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
+import { z } from "zod";
+
+const registerSchema = z.object({
+  username: z.string().min(1, "请输入用户名"),
+  email: z.string().email("请输入有效的邮箱地址"),
+  password: z.string().min(6, "密码至少 6 位"),
+  confirmPassword: z.string().min(6, "请确认密码"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "两次输入的密码不匹配",
+  path: ["confirmPassword"],
+});
 
 export default function RegisterPage() {
   const t = useTranslations("register");
@@ -18,8 +29,11 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (form.password !== form.confirmPassword) { setError(t("passwordMismatch")); return; }
-    if (form.password.length < 6) { setError(t("passwordTooShort")); return; }
+    const result = registerSchema.safeParse(form);
+    if (!result.success) {
+      setError(result.error.issues.map(issue => issue.message).join(", "));
+      return;
+    }
     setLoading(true);
     try {
       await register({ username: form.username, email: form.email, password: form.password });

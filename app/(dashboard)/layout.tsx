@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Home, BookOpen, Calendar, Mail, Settings, LogOut, TreePine, Menu, X } from "lucide-react";
+import { Home, BookOpen, Calendar, Mail, Settings, LogOut, TreePine, Menu, X, MessageSquare } from "lucide-react";
 import { isAuthenticated, getUser, logout } from "@/lib/auth-client";
 import LanguageSwitcher from "@/components/language-switcher";
 
@@ -12,6 +12,7 @@ const navConfig = [
   { key: "home", href: "/", Icon: Home },
   { key: "diary", href: "/diary", Icon: BookOpen },
   { key: "calendar", href: "/calendar", Icon: Calendar },
+  { key: "chat", href: "/chat", Icon: MessageSquare },
   { key: "drift", href: "/drift", Icon: Mail },
   { key: "settings", href: "/settings", Icon: Settings },
 ] as const;

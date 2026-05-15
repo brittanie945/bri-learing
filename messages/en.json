@@ -69,6 +69,7 @@
     "home": "Home",
     "diary": "My Diary",
     "calendar": "Mood Calendar",
+    "chat": "Time Warp Chat",
     "drift": "Drift Bottle",
     "settings": "Settings",
     "logout": "Sign Out"
@@ -165,5 +166,25 @@
     "streak": "Day Streak",
     "totalEntries": "Total Entries",
     "legend": "Mood Legend"
+  },
+  "chat": {
+    "title": "AI Time Warp Chat",
+    "newSession": "New Chat",
+    "creating": "Creating…",
+    "selectTime": "Select a Time Portal",
+    "selectTimeDesc": "Choose a past time period to talk to your past self",
+    "allTime": "All Memories",
+    "recent3m": "Past 3 Months",
+    "halfYear": "Half a Year Ago",
+    "oneYearAgo": "1 Year Ago",
+    "twoYearsAgo": "2 Years Ago",
+    "startNewSession": "Start Time Warp Chat",
+    "emptyDesc": "Choose a time portal to have a cross-time conversation with your past self",
+    "noSessions": "No chat history yet",
+    "firstMessage": "Say something to your past self…",
+    "inputPlaceholder": "Ask your past self something… (Enter to send, Shift+Enter for newline)",
+    "sendHint": "Enter to send · Shift+Enter for newline",
+    "confirmDelete": "Delete this chat session?",
+    "thinking": "Your past self is remembering…"
   }
 }
