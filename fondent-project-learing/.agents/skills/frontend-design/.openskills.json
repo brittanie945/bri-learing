@@ -1,0 +1,7 @@
+{
+  "source": "anthropics/claude-code/plugins/frontend-design/skills/frontend-design",
+  "sourceType": "git",
+  "repoUrl": "https://github.com/anthropics/claude-code",
+  "subpath": "plugins/frontend-design/skills/frontend-design",
+  "installedAt": "2026-01-28T15:36:32.360Z"
+}
