@@ -2,6 +2,19 @@
   "common": {
     "appName": "心洞"
   },
+  "authBrand": {
+    "badge": "时间会记得你",
+    "headline": "把情绪、记忆与未来想说的话，收藏进一座属于你的心灵星图。",
+    "description": "心洞把日记、情绪日历、漂流瓶和 AI 时空对话连成一条记忆轨道，让你记录当下，也能回望过去、重新理解自己。",
+    "featureDiaryTitle": "记录此刻",
+    "featureDiaryDesc": "把今天的心情、天气和故事安静地留在自己的时间轴里。",
+    "featureCalendarTitle": "看见变化",
+    "featureCalendarDesc": "在情绪日历里追踪起伏与节奏，看见情感如何流动。",
+    "featureChatTitle": "对话记忆",
+    "featureChatDesc": "从过往日记中召回片段，与过去的自己展开跨时空交流。",
+    "storyLabel": "产品介绍",
+    "storyValue": "一个把自我记录、情绪整理与时间感连接在一起的个人记忆空间。"
+  },
   "login": {
     "title": "欢迎回来",
     "subtitle": "输入你的账号信息登录",

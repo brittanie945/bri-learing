@@ -2,6 +2,19 @@
   "common": {
     "appName": "心洞"
   },
+  "authBrand": {
+    "badge": "Time remembers you",
+    "headline": "Keep your moods, memories, and future letters inside a personal constellation of time.",
+    "description": "Heart Cave connects diaries, mood tracking, drift bottles, and AI time-warp conversations into one memory orbit, so you can record the present and revisit who you used to be.",
+    "featureDiaryTitle": "Capture the moment",
+    "featureDiaryDesc": "Save today's mood, weather, and story in a timeline that belongs only to you.",
+    "featureCalendarTitle": "See the patterns",
+    "featureCalendarDesc": "Follow emotional rhythms through the mood calendar and notice how they evolve.",
+    "featureChatTitle": "Talk to memory",
+    "featureChatDesc": "Recall fragments from past diary entries and start a cross-time conversation with your former self.",
+    "storyLabel": "Product Overview",
+    "storyValue": "A personal memory space that connects self-recording, emotional reflection, and the feeling of time."
+  },
   "login": {
     "title": "Welcome back",
     "subtitle": "Enter your account info to sign in",

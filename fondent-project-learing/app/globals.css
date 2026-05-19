@@ -225,3 +225,35 @@ html.dark .hover\:text-green-700:hover   { color: oklch(0.78 0.22 290); }
 html.dark .hover\:text-green-500:hover   { color: oklch(0.72 0.22 290); }
 html.dark .group:hover .group-hover\:text-green-700 { color: oklch(0.78 0.22 290); }
 
+/* ═══════════════════════════════════════════════════════════
+   认证页设计令牌
+   ═══════════════════════════════════════════════════════════ */
+
+@theme inline {
+  --color-auth-bg:    oklch(0.10 0.030 290);
+  --color-auth-badge: oklch(0.72 0.14 75);
+  --color-auth-title: oklch(0.93 0.010 290);
+  --color-auth-muted: oklch(0.62 0.015 290);
+}
+
+/* ── 认证卡片 ── */
+@utility auth-card {
+  background: oklch(0.16 0.030 290 / 0.94);
+  border: 1px solid oklch(0.32 0.050 290 / 0.55);
+  box-shadow: 0 20px 50px oklch(0.05 0.030 290 / 0.70),
+              inset 0 1px 0 oklch(0.40 0.060 290 / 0.15);
+}
+
+/* ── 背景光晕 ── */
+@utility auth-glow-top {
+  background: radial-gradient(circle, oklch(0.46 0.26 290 / 0.70), transparent 65%);
+}
+@utility auth-glow-bottom {
+  background: radial-gradient(circle, oklch(0.45 0.20 240 / 0.60), transparent 68%);
+}
+@utility auth-glow-right {
+  background: radial-gradient(circle, oklch(0.48 0.20 330 / 0.60), transparent 68%);
+}
+
+
+
