@@ -1,13 +1,99 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { Fragment, Suspense, useCallback, useEffect, useState, startTransition } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Home, BookOpen, Calendar, Mail, Settings, LogOut, TreePine, Menu, X, MessageSquare, ShoppingBag, Coins, Archive } from "lucide-react";
+import { Home, BookOpen, Calendar, Mail, LogOut, TreePine, Menu, X, MessageSquare, ShoppingBag, Coins, Archive, ChevronDown, Plus } from "lucide-react";
 import { isAuthenticated, getUser, logout } from "@/lib/auth-client";
 import LanguageSwitcher from "@/components/language-switcher";
 import { coinsApi } from "@/lib/api/coins";
+import { chatApi, type ChatSession } from "@/lib/api/chat";
+
+// ── 对话列表子面板 ──
+function ChatSubPanel({ onNavigate }: { onNavigate?: () => void }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentSid = searchParams.get("sid");
+  const [sessions, setSessions] = useState<ChatSession[]>([]);
+  const [collapsed, setCollapsed] = useState(false);
+
+  const load = useCallback(async () => {
+    try {
+      const list = await chatApi.listSessions();
+      setSessions(list);
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => { startTransition(() => { void load(); }); }, [load]);
+
+  useEffect(() => {
+    const h = () => load();
+    window.addEventListener("chat-sessions-updated", h);
+    return () => window.removeEventListener("chat-sessions-updated", h);
+  }, [load]);
+
+  function nav(url: string) {
+    router.push(url);
+    onNavigate?.();
+  }
+
+  return (
+    <div className="mx-1 mb-1 rounded-xl overflow-hidden" style={{ background: "oklch(0.12 0.025 290 / 0.60)" }}>
+      {/* header */}
+      <button
+        onClick={() => setCollapsed((c) => !c)}
+        className="w-full flex items-center justify-between px-3 py-1.5 text-[10px] font-semibold tracking-widest uppercase transition-colors hover:bg-[oklch(0.17_0.032_290)]"
+        style={{ color: "oklch(0.44 0.012 290)" }}
+      >
+        <span>历史对话</span>
+        <ChevronDown
+          className="h-3 w-3 transition-transform duration-200"
+          style={{ transform: collapsed ? "rotate(-90deg)" : "rotate(0deg)" }}
+        />
+      </button>
+
+      {!collapsed && (
+        <>
+          {/* + 新对话 */}
+          <div className="px-2 pb-1.5">
+            <button
+              onClick={() => nav("/chat?new=1")}
+              className="w-full flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium transition-all hover:scale-[1.01]"
+              style={{ background: "oklch(0.20 0.055 290 / 0.70)", color: "oklch(0.72 0.18 290)" }}
+            >
+              <Plus className="h-3 w-3" />
+              新对话
+            </button>
+          </div>
+
+          {/* 会话列表 */}
+          <div className="max-h-52 overflow-y-auto pb-2" style={{ scrollbarWidth: "none" }}>
+            {sessions.length === 0 && (
+              <p className="text-center text-[10px] py-3 px-3" style={{ color: "oklch(0.38 0.010 290)" }}>
+                暂无对话
+              </p>
+            )}
+            {sessions.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => nav(`/chat?sid=${s.id}`)}
+                className="group relative w-full text-left px-3 py-2 flex items-center gap-2 transition-colors rounded-lg"
+                style={{
+                  background: currentSid === s.id ? "oklch(0.20 0.050 290)" : "transparent",
+                  color: currentSid === s.id ? "oklch(0.82 0.015 290)" : "oklch(0.48 0.012 290)",
+                }}
+              >
+                <MessageSquare className="h-3 w-3 shrink-0" strokeWidth={1.8} />
+                <span className="text-[11px] truncate flex-1">{s.title}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 const navConfig = [
   { key: "home", href: "/", Icon: Home },
@@ -29,26 +115,35 @@ function SidebarNav({
   t: (key: string) => string;
   onNavigate?: () => void;
 }) {
+  const isChatPage = pathname === "/chat";
   return (
-    <nav className="flex-1 px-3 py-4 space-y-1">
-      {navConfig.map(({ key, href, Icon }) => {
-        const isActive = pathname === href;
-        return (
-          <Link
-            key={href}
-            href={href}
-            onClick={onNavigate}
-            className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
-              isActive
-                ? "bg-[oklch(0.22_0.070_290)] text-[oklch(0.85_0.22_290)]"
-                : "text-[oklch(0.52_0.015_290)] hover:bg-[oklch(0.17_0.032_290)] hover:text-[oklch(0.85_0.015_290)]"
-            }`}
-          >
-            <Icon className={`h-4.5 w-4.5 shrink-0 ${ isActive ? "text-[oklch(0.80_0.22_290)]" : "text-[oklch(0.44_0.018_290)]" }`} strokeWidth={1.8} />
-            {t(key)}
-          </Link>
-        );
-      })}
+    <nav className="flex-1 px-3 py-4 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
+      <div className="space-y-0.5">
+        {navConfig.map(({ key, href, Icon }) => {
+          const isActive = pathname === href;
+          return (
+            <Fragment key={href}>
+              <Link
+                href={href}
+                onClick={onNavigate}
+                className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
+                  isActive
+                    ? "bg-[oklch(0.22_0.070_290)] text-[oklch(0.85_0.22_290)]"
+                    : "text-[oklch(0.52_0.015_290)] hover:bg-[oklch(0.17_0.032_290)] hover:text-[oklch(0.85_0.015_290)]"
+                }`}
+              >
+                <Icon className={`h-4.5 w-4.5 shrink-0 ${ isActive ? "text-[oklch(0.80_0.22_290)]" : "text-[oklch(0.44_0.018_290)]" }`} strokeWidth={1.8} />
+                {t(key)}
+              </Link>
+              {key === "chat" && isChatPage && (
+                <Suspense fallback={null}>
+                  <ChatSubPanel onNavigate={onNavigate} />
+                </Suspense>
+              )}
+            </Fragment>
+          );
+        })}
+      </div>
     </nav>
   );
 }

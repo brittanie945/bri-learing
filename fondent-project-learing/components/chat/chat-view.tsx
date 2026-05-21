@@ -1,17 +1,21 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, startTransition } from "react";
 import { useTranslations } from "next-intl";
-import { MessageSquare, Plus, Trash2, Sparkles, Send } from "lucide-react";
-import { chatApi, type ChatSession, type ChatSessionDetail, type ChatMessage } from "@/lib/api/chat";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Plus, Trash2, Sparkles, Send } from "lucide-react";
+import { chatApi, type ChatSessionDetail, type ChatMessage } from "@/lib/api/chat";
 import { MessageBubble } from "./message-bubble";
 import { StreamingBubble } from "./streaming-bubble";
 import { TimeSelectModal, type TimePreset } from "./time-select-modal";
 
 export function ChatView() {
   const t = useTranslations("chat");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const sid = searchParams.get("sid");
+  const isNew = searchParams.get("new") === "1";
 
-  const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [activeSession, setActiveSession] = useState<ChatSessionDetail | null>(null);
   const [showTimeModal, setShowTimeModal] = useState(false);
   const [streamingContent, setStreamingContent] = useState<string | null>(null);
@@ -22,16 +26,22 @@ export function ChatView() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const loadSessions = useCallback(async () => {
-    try {
-      const list = await chatApi.listSessions();
-      setSessions(list);
-    } catch {
-      // ignore
-    }
-  }, []);
+  // 根据 URL 中的 sid 加载对应会话
+  useEffect(() => {
+    if (!sid) { startTransition(() => setActiveSession(null)); return; }
+    if (activeSession?.id === sid) return;
+    startTransition(() => setLoadingSession(true));
+    chatApi.getSession(sid)
+      .then(setActiveSession)
+      .catch(() => setActiveSession(null))
+      .finally(() => setLoadingSession(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sid]);
 
-  useEffect(() => { loadSessions(); }, [loadSessions]);
+  // ?new=1 自动弹出新对话 Modal
+  useEffect(() => {
+    if (isNew) startTransition(() => setShowTimeModal(true));
+  }, [isNew]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -42,8 +52,9 @@ export function ChatView() {
     setCreating(true);
     try {
       const session = await chatApi.createSession({ time_preset: preset });
-      setSessions((prev) => [session, ...prev]);
       setActiveSession(session);
+      router.push(`/chat?sid=${session.id}`);
+      window.dispatchEvent(new Event("chat-sessions-updated"));
     } catch (e) {
       alert(e instanceof Error ? e.message : "创建失败");
     } finally {
@@ -51,23 +62,14 @@ export function ChatView() {
     }
   };
 
-  const handleSelectSession = async (id: string) => {
-    if (activeSession?.id === id) return;
-    setLoadingSession(true);
+  const handleDeleteActiveSession = async () => {
+    if (!activeSession || !confirm(t("confirmDelete"))) return;
     try {
-      const detail = await chatApi.getSession(id);
-      setActiveSession(detail);
-    } finally {
-      setLoadingSession(false);
-    }
-  };
-
-  const handleDeleteSession = async (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    if (!confirm(t("confirmDelete"))) return;
-    await chatApi.deleteSession(id);
-    setSessions((prev) => prev.filter((s) => s.id !== id));
-    if (activeSession?.id === id) setActiveSession(null);
+      await chatApi.deleteSession(activeSession.id);
+      setActiveSession(null);
+      router.push("/chat");
+      window.dispatchEvent(new Event("chat-sessions-updated"));
+    } catch { /* ignore */ }
   };
 
   const handleSend = async () => {
@@ -125,59 +127,12 @@ export function ChatView() {
 
   return (
     <div
-      className="flex h-[calc(100vh-7rem)] md:h-[calc(100vh-4rem)] gap-0 overflow-hidden rounded-2xl"
+      className="flex flex-col h-[calc(100vh-7rem)] md:h-[calc(100vh-4rem)] overflow-hidden rounded-2xl"
       style={{ border: "1px solid oklch(0.26 0.040 290 / 0.45)" }}
     >
-      {/* ── 会话列表侧栏 ── */}
-      <div
-        className="hidden md:flex w-52 shrink-0 flex-col"
-        style={{ background: "oklch(0.11 0.026 292)", borderRight: "1px solid oklch(0.24 0.038 290 / 0.40)" }}
-      >
-        <div className="p-3 border-b" style={{ borderColor: "oklch(0.24 0.038 290 / 0.40)" }}>
-          <button
-            onClick={() => setShowTimeModal(true)}
-            disabled={creating}
-            className="flex w-full items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium transition-all"
-            style={{ background: "linear-gradient(135deg, oklch(0.42 0.20 290), oklch(0.40 0.20 330))", color: "white", opacity: creating ? 0.6 : 1 }}
-          >
-            <Plus className="h-3.5 w-3.5" />
-            {creating ? t("creating") : t("newSession")}
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto py-2">
-          {sessions.length === 0 && (
-            <p className="text-center text-xs py-8 px-3" style={{ color: "oklch(0.40 0.012 290)" }}>
-              {t("noSessions")}
-            </p>
-          )}
-          {sessions.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => handleSelectSession(s.id)}
-              className="group relative w-full text-left px-3 py-2.5 flex items-start gap-2 transition-colors"
-              style={{
-                background: activeSession?.id === s.id ? "oklch(0.18 0.045 290)" : "transparent",
-                color: activeSession?.id === s.id ? "oklch(0.85 0.015 290)" : "oklch(0.55 0.012 290)",
-              }}
-            >
-              <MessageSquare className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-              <span className="flex-1 text-xs leading-snug line-clamp-2">{s.title}</span>
-              <button
-                onClick={(e) => handleDeleteSession(e, s.id)}
-                className="shrink-0 hidden group-hover:block rounded p-0.5 transition-colors"
-                style={{ color: "oklch(0.50 0.012 290)" }}
-              >
-                <Trash2 className="h-3 w-3" />
-              </button>
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* ── 聊天主区域 ── */}
-      <div className="flex flex-1 flex-col min-w-0" style={{ background: "oklch(0.13 0.028 290)" }}>
-        {!activeSession && (
+      <div className="flex flex-1 flex-col min-w-0 overflow-hidden" style={{ background: "oklch(0.13 0.028 290)" }}>
+        {!activeSession && !loadingSession && (
           <div className="flex flex-1 flex-col items-center justify-center gap-6 p-8">
             <div
               className="flex h-20 w-20 items-center justify-center rounded-3xl"
@@ -201,23 +156,30 @@ export function ChatView() {
           </div>
         )}
 
+        {loadingSession && !activeSession && (
+          <div className="flex flex-1 items-center justify-center">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: "oklch(0.55 0.20 290)", borderTopColor: "transparent" }} />
+          </div>
+        )}
+
         {activeSession && (
           <>
+            {/* 标题栏 */}
             <div
               className="shrink-0 flex items-center gap-3 px-5 py-3 border-b"
               style={{ borderColor: "oklch(0.22 0.034 290 / 0.45)" }}
             >
               <Sparkles className="h-4 w-4 shrink-0" style={{ color: "oklch(0.75 0.22 290)" }} />
-              <span className="text-sm font-semibold truncate" style={{ color: "oklch(0.88 0.012 290)" }}>
+              <span className="text-sm font-semibold truncate flex-1" style={{ color: "oklch(0.88 0.012 290)" }}>
                 {activeSession.title}
               </span>
               <button
-                onClick={() => setShowTimeModal(true)}
-                className="md:hidden ml-auto flex items-center gap-1 text-xs rounded-lg px-2 py-1"
-                style={{ background: "oklch(0.20 0.050 290)", color: "oklch(0.75 0.18 290)" }}
+                onClick={handleDeleteActiveSession}
+                className="shrink-0 flex items-center justify-center h-7 w-7 rounded-lg transition-colors hover:bg-[oklch(0.20_0.040_290)]"
+                title={t("confirmDelete")}
+                style={{ color: "oklch(0.44 0.012 290)" }}
               >
-                <Plus className="h-3 w-3" />
-                {t("newSession")}
+                <Trash2 className="h-3.5 w-3.5" />
               </button>
             </div>
 
@@ -273,7 +235,14 @@ export function ChatView() {
       </div>
 
       {showTimeModal && (
-        <TimeSelectModal onSelect={handleTimeSelect} onClose={() => setShowTimeModal(false)} t={t} />
+        <TimeSelectModal
+          onSelect={handleTimeSelect}
+          onClose={() => {
+            setShowTimeModal(false);
+            if (isNew) router.replace("/chat");
+          }}
+          t={t}
+        />
       )}
     </div>
   );
