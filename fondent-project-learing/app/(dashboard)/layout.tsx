@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Home, BookOpen, Calendar, Mail, Settings, LogOut, TreePine, Menu, X, MessageSquare } from "lucide-react";
+import { Home, BookOpen, Calendar, Mail, Settings, LogOut, TreePine, Menu, X, MessageSquare, ShoppingBag, Coins, Archive } from "lucide-react";
 import { isAuthenticated, getUser, logout } from "@/lib/auth-client";
 import LanguageSwitcher from "@/components/language-switcher";
+import { coinsApi } from "@/lib/api/coins";
 
 const navConfig = [
   { key: "home", href: "/", Icon: Home },
@@ -14,7 +15,9 @@ const navConfig = [
   { key: "diary", href: "/diary", Icon: BookOpen },
   { key: "calendar", href: "/calendar", Icon: Calendar },
   { key: "drift", href: "/drift", Icon: Mail },
-  { key: "settings", href: "/settings", Icon: Settings },
+  { key: "seeds", href: "/seeds", Icon: TreePine },
+  { key: "shop", href: "/shop", Icon: ShoppingBag },
+  { key: "settings", href: "/settings", Icon: Archive },
 ] as const;
 
 function SidebarNav({
@@ -50,9 +53,14 @@ function SidebarNav({
   );
 }
 
-function SidebarUser({ user, logoutLabel }: { user: ReturnType<typeof getUser>; logoutLabel: string }) {
+function SidebarUser({ user, logoutLabel, coinBalance }: { user: ReturnType<typeof getUser>; logoutLabel: string; coinBalance: number }) {
   return (
     <div className="border-t border-[oklch(0.26_0.036_290/0.45)] p-4 space-y-3">
+      <Link href="/shop" className="flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-[oklch(0.17_0.032_290)]">
+        <Coins className="h-4 w-4 shrink-0" style={{color: "oklch(0.75 0.18 80)"}} strokeWidth={1.8} />
+        <span className="text-sm font-semibold" style={{color: "oklch(0.75 0.18 80)"}}>{coinBalance}</span>
+        <span className="text-xs" style={{color: "oklch(0.48 0.015 290)"}}>时光币</span>
+      </Link>
       <LanguageSwitcher />
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold"
@@ -86,6 +94,7 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [ready, setReady] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [coinBalance, setCoinBalance] = useState(0);
   const user = getUser();
 
   useEffect(() => {
@@ -93,6 +102,7 @@ export default function DashboardLayout({
       router.replace("/login");
     } else {
       setTimeout(() => setReady(true), 0);
+      coinsApi.getBalance().then(r => setCoinBalance(r.balance)).catch(() => {});
     }
   }, [router]);
 
@@ -118,7 +128,7 @@ export default function DashboardLayout({
           <span className="text-sm font-bold tracking-widest" style={{color: "oklch(0.82 0.018 290)"}}>心 洞</span>
         </div>
         <SidebarNav pathname={pathname} t={t} />
-        <SidebarUser user={user} logoutLabel={t("logout")} />
+        <SidebarUser user={user} logoutLabel={t("logout")} coinBalance={coinBalance} />
       </aside>
 
       {/* Mobile overlay */}
@@ -146,7 +156,7 @@ export default function DashboardLayout({
           </button>
         </div>
         <SidebarNav pathname={pathname} t={t} onNavigate={closeSidebar} />
-        <SidebarUser user={user} logoutLabel={t("logout")} />
+        <SidebarUser user={user} logoutLabel={t("logout")} coinBalance={coinBalance} />
       </aside>
 
       {/* Main content */}

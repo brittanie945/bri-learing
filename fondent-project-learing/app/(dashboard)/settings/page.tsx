@@ -1,48 +1,352 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
+import { Stamp, Clock, BookOpen, Coins, Timer, Leaf, TrendingUp } from "lucide-react";
 import { getUser } from "@/lib/auth-client";
+import { diaryApi, type MoodStats } from "@/lib/api/diary";
+import { coinsApi, type CoinBalance } from "@/lib/api/coins";
+import { seedsApi } from "@/lib/api/seeds";
 
-export default function SettingsPage() {
-  const t = useTranslations("settings");
-  const user = getUser();
+// ────── Mood config (matches existing mood system) ──────
+const MOOD_META: Record<string, { label: string; color: string; icon: string }> = {
+  happy:   { label: "开心",  color: "oklch(0.80 0.18 80)",  icon: "😊" },
+  calm:    { label: "平静",  color: "oklch(0.72 0.16 165)", icon: "😌" },
+  sad:     { label: "难过",  color: "oklch(0.70 0.16 256)", icon: "😢" },
+  anxious: { label: "焦虑",  color: "oklch(0.74 0.18 40)",  icon: "😰" },
+  angry:   { label: "愤怒",  color: "oklch(0.72 0.18 20)",  icon: "😠" },
+  neutral: { label: "普通",  color: "oklch(0.68 0.012 290)", icon: "😐" },
+};
 
+// ────── Archive grid line background (subtle paper grid) ──────
+const GRID_BG = {
+  backgroundImage: `
+    linear-gradient(oklch(0.28 0.040 290 / 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, oklch(0.28 0.040 290 / 0.12) 1px, transparent 1px)
+  `,
+  backgroundSize: "28px 28px",
+};
+
+// ────── Stagger children ──────
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.10 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 18 },
+  show:   { opacity: 1, y: 0, transition: { type: "spring", stiffness: 220, damping: 22 } },
+};
+
+// ────── Corner decoration for archive-style cards ──────
+function CornerDots({ color = "oklch(0.40 0.055 290 / 0.55)" }: { color?: string }) {
+  const s = 5;
+  const corners = ["top-2 left-2", "top-2 right-2", "bottom-2 left-2", "bottom-2 right-2"];
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{t("title")}</h1>
-        <p className="mt-1 text-sm text-slate-500">{t("subtitle")}</p>
-      </div>
-
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="text-sm font-semibold text-slate-900">{t("personalInfo")}</h2>
-        </div>
-        <div className="divide-y divide-slate-100">
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <p className="text-sm font-medium text-slate-700">{t("username")}</p>
-              <p className="text-sm text-slate-500">{user?.username || "-"}</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <p className="text-sm font-medium text-slate-700">{t("email")}</p>
-              <p className="text-sm text-slate-500">{user?.email || "-"}</p>
-            </div>
-          </div>
-          <div className="flex items-center justify-between px-6 py-4">
-            <div>
-              <p className="text-sm font-medium text-slate-700">{t("registeredAt")}</p>
-              <p className="text-sm text-slate-500">
-                {user?.created_at
-                  ? new Date(user.created_at).toLocaleDateString()
-                  : "-"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <>
+      {corners.map((cls) => (
+        <span
+          key={cls}
+          className={`absolute ${cls} rounded-full`}
+          style={{ width: s, height: s, background: color }}
+        />
+      ))}
+    </>
   );
 }
+
+// ────── Stamp badge component ──────
+function StampBadge({
+  icon, label, desc, unlocked,
+}: { icon: string; label: string; desc: string; unlocked: boolean }) {
+  return (
+    <motion.div
+      variants={itemVariants}
+      className="flex flex-col items-center gap-1.5 text-center"
+    >
+      <div
+        className="relative flex h-14 w-14 items-center justify-center rounded-full text-2xl transition-all"
+        style={{
+          border: `2px dashed ${unlocked ? "oklch(0.60 0.18 290 / 0.80)" : "oklch(0.32 0.030 290 / 0.45)"}`,
+          background: unlocked
+            ? "oklch(0.18 0.055 290)"
+            : "oklch(0.14 0.020 290)",
+          boxShadow: unlocked ? "0 0 18px oklch(0.38 0.18 290 / 0.35)" : "none",
+          opacity: unlocked ? 1 : 0.42,
+          filter: unlocked ? "none" : "grayscale(0.7)",
+        }}
+      >
+        {icon}
+        {unlocked && (
+          <span
+            className="absolute -bottom-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full text-[9px] font-bold"
+            style={{ background: "oklch(0.55 0.22 145)", color: "oklch(0.96 0.010 145)" }}
+          >
+            ✓
+          </span>
+        )}
+      </div>
+      <div>
+        <p className="text-xs font-semibold leading-tight"
+          style={{ color: unlocked ? "oklch(0.80 0.015 290)" : "oklch(0.42 0.015 290)" }}>
+          {label}
+        </p>
+        <p className="text-[10px] leading-tight mt-0.5"
+          style={{ color: unlocked ? "oklch(0.50 0.015 290)" : "oklch(0.35 0.012 290)" }}>
+          {desc}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+// ────── Main page ──────
+export default function SettingsPage() {
+  const t = useTranslations("settings");
+  const tMood = useTranslations("mood");
+  const user = getUser();
+
+  const [moodStats, setMoodStats] = useState<MoodStats | null>(null);
+  const [coinData, setCoinData] = useState<CoinBalance | null>(null);
+  const [capsuleCount, setCapsuleCount] = useState(0);
+  const [seedCount, setSeedCount] = useState(0);
+
+  useEffect(() => {
+    diaryApi.moodStats().then(setMoodStats).catch(() => {});
+    coinsApi.getBalance().then(setCoinData).catch(() => {});
+    diaryApi.list({ is_capsule: true }).then((r) => setCapsuleCount(r.length)).catch(() => {});
+    seedsApi.getCurrent()
+      .then((r) => setSeedCount(r.withered_seeds.length + (r.active_seed ? 1 : 0)))
+      .catch(() => {});
+  }, []);
+
+  const archiveId = user?.id?.replace(/-/g, "").slice(0, 8).toUpperCase() ?? "--------";
+  const createdDate = user?.created_at
+    ? new Date(user.created_at).toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric" })
+    : "—";
+
+  const totalDiaries = moodStats?.total ?? 0;
+  const streak = moodStats?.streak ?? 0;
+  const totalEarned = coinData?.total_earned ?? 0;
+  const coinBalance = coinData?.balance ?? 0;
+
+  // Stats grid
+  const STATS = [
+    { icon: <BookOpen className="h-4 w-4" />, label: t("statDiaries"),  value: totalDiaries,          accent: "oklch(0.78 0.22 290)" },
+    { icon: <TrendingUp className="h-4 w-4" />, label: t("statStreak"), value: `${streak}${t("streakUnit")}`, accent: "oklch(0.78 0.22 330)" },
+    { icon: <Coins className="h-4 w-4" />,    label: t("statCoins"),    value: coinBalance,            accent: "oklch(0.80 0.18 80)"  },
+    { icon: <Timer className="h-4 w-4" />,    label: t("statCapsules"), value: capsuleCount,           accent: "oklch(0.80 0.18 195)" },
+    { icon: <TrendingUp className="h-4 w-4" />, label: t("statEarned"), value: `+${totalEarned}`,     accent: "oklch(0.75 0.18 80)"  },
+    { icon: <Leaf className="h-4 w-4" />,     label: t("statSeeds"),    value: seedCount,              accent: "oklch(0.72 0.20 145)" },
+  ];
+
+  // Achievement unlock conditions
+  const BADGES = [
+    { id: "init",      icon: "📁", label: t("badge_init"),      desc: t("badge_init_desc"),      unlocked: true },
+    { id: "writer",    icon: "✍️",  label: t("badge_writer"),    desc: t("badge_writer_desc"),    unlocked: totalDiaries >= 5 },
+    { id: "streak",    icon: "🔥", label: t("badge_streak"),    desc: t("badge_streak_desc"),    unlocked: streak >= 3 },
+    { id: "capsule",   icon: "⏳", label: t("badge_capsule"),   desc: t("badge_capsule_desc"),   unlocked: capsuleCount >= 1 },
+    { id: "rich",      icon: "💰", label: t("badge_rich"),      desc: t("badge_rich_desc"),      unlocked: totalEarned >= 50 },
+    { id: "gardener",  icon: "🌱", label: t("badge_gardener"),  desc: t("badge_gardener_desc"),  unlocked: seedCount >= 1 },
+  ];
+
+  // Mood spectrum data
+  const sortedMoods = [...(moodStats?.stats ?? [])]
+    .filter((s) => s.mood && s.count > 0)
+    .sort((a, b) => b.count - a.count);
+  const maxMoodCount = sortedMoods[0]?.count ?? 1;
+
+  return (
+    <motion.div
+      className="max-w-md mx-auto space-y-5 pb-10"
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
+      {/* ── 档案封面 ── */}
+      <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl p-6"
+        style={{
+          ...GRID_BG,
+          background: "oklch(0.14 0.032 290)",
+          border: "1px solid oklch(0.30 0.055 290 / 0.50)",
+          boxShadow: "0 8px 32px oklch(0.06 0.025 290 / 0.60)",
+        }}
+      >
+        <CornerDots />
+
+        {/* watermark */}
+        <div
+          className="pointer-events-none absolute -right-4 -top-2 text-[88px] font-black select-none rotate-12"
+          style={{ color: "oklch(0.22 0.040 290 / 0.30)", lineHeight: 1 }}
+          aria-hidden
+        >
+          档案
+        </div>
+
+        {/* archive number badge */}
+        <div className="flex items-center justify-between mb-5">
+          <span
+            className="rounded-lg px-2.5 py-1 font-mono text-[10px] tracking-widest"
+            style={{ background: "oklch(0.20 0.040 290)", color: "oklch(0.55 0.12 290)", border: "1px solid oklch(0.30 0.055 290 / 0.50)" }}
+          >
+            #{archiveId}
+          </span>
+          <span
+            className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium"
+            style={{ background: "oklch(0.18 0.055 145)", color: "oklch(0.72 0.18 145)", border: "1px solid oklch(0.35 0.12 145 / 0.50)" }}
+          >
+            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: "oklch(0.65 0.20 145)" }} />
+            {t("archiveStatus")}
+          </span>
+        </div>
+
+        {/* avatar + identity */}
+        <div className="flex items-center gap-4">
+          <div
+            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-2xl font-bold"
+            style={{
+              background: "linear-gradient(135deg, oklch(0.55 0.24 290), oklch(0.50 0.22 330))",
+              boxShadow: "0 0 24px oklch(0.40 0.22 290 / 0.45)",
+              color: "white",
+            }}
+          >
+            {user?.username?.charAt(0)?.toUpperCase() ?? "?"}
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1 className="text-lg font-bold truncate" style={{ color: "oklch(0.92 0.015 290)" }}>
+              {user?.username ?? "—"}
+            </h1>
+            <p className="text-xs truncate mt-0.5" style={{ color: "oklch(0.50 0.018 290)" }}>
+              {user?.email ?? "—"}
+            </p>
+            <div className="flex items-center gap-1.5 mt-2">
+              <Clock className="h-3 w-3 shrink-0" style={{ color: "oklch(0.44 0.018 290)" }} />
+              <span className="text-[10px]" style={{ color: "oklch(0.44 0.018 290)" }}>
+                {t("archiveCreated")} {createdDate}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* divider — dashed like a tear line */}
+        <div className="mt-5 border-t" style={{ borderColor: "oklch(0.28 0.040 290 / 0.50)", borderStyle: "dashed" }} />
+
+        {/* file stamp at bottom */}
+        <div className="mt-4 flex items-center gap-2">
+          <Stamp className="h-3.5 w-3.5 shrink-0" style={{ color: "oklch(0.45 0.055 290)" }} />
+          <span className="font-mono text-[10px] tracking-widest" style={{ color: "oklch(0.38 0.040 290)" }}>
+            HEARTCAVE · PERSONAL ARCHIVE · {new Date().getFullYear()}
+          </span>
+        </div>
+      </motion.div>
+
+      {/* ── 时光印记 ── */}
+      <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl p-5"
+        style={{
+          background: "oklch(0.13 0.028 290)",
+          border: "1px solid oklch(0.26 0.042 290 / 0.45)",
+        }}
+      >
+        <CornerDots color="oklch(0.35 0.050 290 / 0.45)" />
+        <p className="text-xs font-semibold tracking-widest mb-4" style={{ color: "oklch(0.44 0.018 290)" }}>
+          {t("statsTitle")}
+        </p>
+        <div className="grid grid-cols-3 gap-3">
+          {STATS.map(({ icon, label, value, accent }) => (
+            <div
+              key={label}
+              className="relative flex flex-col items-center gap-1.5 rounded-2xl py-3"
+              style={{ background: "oklch(0.16 0.032 290)", border: `1px solid ${accent}22` }}
+            >
+              <div style={{ color: accent }}>{icon}</div>
+              <span className="text-lg font-bold tabular-nums leading-none" style={{ color: accent }}>
+                {value}
+              </span>
+              <span className="text-[10px] text-center leading-tight px-1" style={{ color: "oklch(0.48 0.015 290)" }}>
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── 心情光谱 ── */}
+      <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl p-5"
+        style={{
+          background: "oklch(0.13 0.028 290)",
+          border: "1px solid oklch(0.26 0.042 290 / 0.45)",
+        }}
+      >
+        <CornerDots color="oklch(0.35 0.050 290 / 0.45)" />
+        <p className="text-xs font-semibold tracking-widest mb-4" style={{ color: "oklch(0.44 0.018 290)" }}>
+          {t("moodTitle")}
+        </p>
+
+        {sortedMoods.length === 0 ? (
+          <p className="text-xs text-center py-3" style={{ color: "oklch(0.40 0.015 290)" }}>
+            {t("moodEmpty")}
+          </p>
+        ) : (
+          <div className="space-y-2.5">
+            {sortedMoods.map(({ mood, count }) => {
+              const meta = MOOD_META[mood ?? "neutral"] ?? MOOD_META.neutral;
+              const pct = Math.round((count / maxMoodCount) * 100);
+              return (
+                <div key={mood} className="flex items-center gap-3">
+                  <span className="w-5 text-center text-base leading-none">{meta.icon}</span>
+                  <div className="flex-1 relative h-5 rounded-full overflow-hidden"
+                    style={{ background: "oklch(0.18 0.028 290)" }}>
+                    <motion.div
+                      className="absolute inset-y-0 left-0 rounded-full"
+                      style={{ background: meta.color, opacity: 0.75 }}
+                      initial={{ width: 0 }}
+                      animate={{ width: `${pct}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                    />
+                    <span className="absolute inset-0 flex items-center px-2.5 text-[10px] font-medium"
+                      style={{ color: "oklch(0.88 0.012 290)" }}>
+                      {tMood(mood ?? "neutral")} · {count}
+                    </span>
+                  </div>
+                  <span className="w-7 text-right text-[10px] tabular-nums shrink-0"
+                    style={{ color: "oklch(0.48 0.015 290)" }}>
+                    {pct}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </motion.div>
+
+      {/* ── 成就印章 ── */}
+      <motion.div variants={itemVariants} className="relative overflow-hidden rounded-3xl p-5"
+        style={{
+          background: "oklch(0.13 0.028 290)",
+          border: "1px solid oklch(0.26 0.042 290 / 0.45)",
+        }}
+      >
+        <CornerDots color="oklch(0.35 0.050 290 / 0.45)" />
+        <div className="flex items-center justify-between mb-5">
+          <p className="text-xs font-semibold tracking-widest" style={{ color: "oklch(0.44 0.018 290)" }}>
+            {t("badgesTitle")}
+          </p>
+          <span className="text-[10px]" style={{ color: "oklch(0.40 0.015 290)" }}>
+            {BADGES.filter((b) => b.unlocked).length} / {BADGES.length}
+          </span>
+        </div>
+        <motion.div
+          className="grid grid-cols-3 gap-4"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
+          {BADGES.map((badge) => (
+            <StampBadge key={badge.id} {...badge} />
+          ))}
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+}
+

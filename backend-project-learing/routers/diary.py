@@ -3,6 +3,7 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Query, status
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.security import get_current_user_id
@@ -27,13 +28,14 @@ from services.diary_service import (
 router = APIRouter(prefix="/diary", tags=["diary"])
 
 
-@router.post("", response_model=DiaryResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", status_code=status.HTTP_201_CREATED)
 async def create_diary(
     data: DiaryCreate,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await svc_create_diary(db, user_id, data)
+    diary, coins_earned = await svc_create_diary(db, user_id, data)
+    return {**diary.model_dump(), "coins_earned": coins_earned}
 
 
 @router.get("", response_model=list[DiaryListResponse])

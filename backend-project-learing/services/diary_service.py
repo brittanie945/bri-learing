@@ -26,9 +26,25 @@ from schemas.diary_schemas import (
 )
 
 
+async def _compute_streak(db: AsyncSession, user_id: UUID) -> int:
+    """计算连续打卡天数（复用逻辑，供多处调用）。"""
+    dates = await get_diary_dates(db, user_id)
+    streak = 0
+    if dates:
+        today = datetime.now(timezone.utc).date()
+        for i, d in enumerate(dates):
+            expected = today - __import__("datetime").timedelta(days=i)
+            if d == expected:
+                streak += 1
+            else:
+                break
+    return streak
+
+
 async def svc_create_diary(
     db: AsyncSession, user_id: UUID, data: DiaryCreate
-) -> DiaryResponse:
+) -> tuple[DiaryResponse, int]:
+    """创建日记，返回 (diary, coins_earned)。"""
     # 时间胶囊：unlock_at 必须在未来
     if data.is_capsule:
         if not data.unlock_at:
@@ -53,7 +69,13 @@ async def svc_create_diary(
         unlock_at=data.unlock_at,
         self_destruct_days=data.self_destruct_days,
     )
-    return DiaryResponse.model_validate(entry)
+
+    # 打卡奖励（每天首次写日记才奖励）
+    from services.coin_service import svc_diary_checkin_coins
+    streak = await _compute_streak(db, user_id)
+    checkin = await svc_diary_checkin_coins(db, user_id, streak)
+
+    return DiaryResponse.model_validate(entry), checkin.coins_earned
 
 
 async def svc_get_diary(
@@ -118,19 +140,7 @@ async def svc_mood_stats(db: AsyncSession, user_id: UUID) -> MoodStats:
     raw = await get_mood_stats(db, user_id)
     stats = [MoodStatsItem(mood=mood, count=cnt) for mood, cnt in raw]
     total = sum(s.count for s in stats)
-
-    # 计算连续打卡天数
-    dates = await get_diary_dates(db, user_id)
-    streak = 0
-    if dates:
-        today = datetime.now(timezone.utc).date()
-        for i, d in enumerate(dates):
-            expected = today - __import__("datetime").timedelta(days=i)
-            if d == expected:
-                streak += 1
-            else:
-                break
-
+    streak = await _compute_streak(db, user_id)
     return MoodStats(stats=stats, streak=streak, total=total)
 
 

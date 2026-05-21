@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BookOpen, Calendar, Mail, Timer, Pencil } from "lucide-react";
+import { BookOpen, Calendar, Mail, Timer, Pencil, Droplets } from "lucide-react";
 import { getUser } from "@/lib/auth-client";
 import { diaryApi, type MoodStats } from "@/lib/api/diary";
+import { seedsApi, type Seed } from "@/lib/api/seeds";
+import { SeedAnimation } from "@/components/seeds/seed-animation";
+import { DailyQuoteWidget } from "@/components/quote/daily-quote-widget";
 
 // 根据小时返回时段
 function getGreetingKey(): "morning" | "afternoon" | "evening" {
@@ -48,6 +51,88 @@ const FEATURES = [
   },
 ] as const;
 
+// ── 种子小组件（首页嵌入）──
+function SeedWidget() {
+  const tSeeds = useTranslations("seeds");
+  const [seed, setSeed] = useState<Seed | null | undefined>(undefined); // undefined = loading
+  const [isWatering, setIsWatering] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+
+  useEffect(() => {
+    seedsApi.getCurrent()
+      .then((r) => setSeed(r.active_seed))
+      .catch(() => setSeed(null));
+  }, []);
+
+  async function handleWater(e: React.MouseEvent) {
+    e.preventDefault();
+    if (!seed || isWatering) return;
+    setIsWatering(true);
+    try {
+      const res = await seedsApi.water();
+      setSeed(res.seed);
+      setMsg(res.encouragement_message);
+      setTimeout(() => setMsg(null), 3000);
+    } catch { /* ignore */ }
+    finally { setTimeout(() => setIsWatering(false), 900); }
+  }
+
+  // still loading
+  if (seed === undefined) return null;
+
+  return (
+    <Link href="/seeds"
+      className="group flex items-center gap-4 rounded-2xl px-5 py-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
+      style={{
+        background: "oklch(0.15 0.032 145)",
+        border: "1px solid oklch(0.30 0.065 145 / 0.45)",
+        boxShadow: "0 2px 16px oklch(0.06 0.025 145 / 0.45)",
+      }}
+    >
+      {/* mini animation */}
+      <div className="shrink-0">
+        <SeedAnimation
+          status={seed?.status ?? null}
+          streakDays={seed?.streak_days ?? 0}
+          isWatering={isWatering}
+          size={52}
+        />
+      </div>
+
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold" style={{ color: "oklch(0.82 0.18 145)" }}>
+          {tSeeds("title")}
+        </p>
+        {msg ? (
+          <p className="text-xs mt-0.5 truncate" style={{ color: "oklch(0.65 0.15 145)" }}>{msg}</p>
+        ) : seed ? (
+          <p className="text-xs mt-0.5" style={{ color: "oklch(0.52 0.018 290)" }}>
+            {tSeeds("streakOf", { days: seed.streak_days })}
+          </p>
+        ) : (
+          <p className="text-xs mt-0.5" style={{ color: "oklch(0.48 0.018 290)" }}>
+            {tSeeds("noSeedDesc")}
+          </p>
+        )}
+      </div>
+
+      {seed?.status === "growing" && (
+        <button
+          onClick={handleWater}
+          className="shrink-0 flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium transition-all hover:scale-[1.05] active:scale-[0.95]"
+          style={{
+            background: "oklch(0.28 0.065 200)",
+            color: "oklch(0.82 0.16 200)",
+          }}
+        >
+          <Droplets className="h-3.5 w-3.5" />
+          {isWatering ? "…" : tSeeds("waterBtn")}
+        </button>
+      )}
+    </Link>
+  );
+}
+
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
   const router = useRouter();
@@ -66,6 +151,9 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-xl mx-auto space-y-8">
+
+      {/* ── 今日箴言 ── */}
+      <DailyQuoteWidget />
 
       {/* ── 暖光问候区 ── */}
       <div>
@@ -116,6 +204,9 @@ export default function DashboardPage() {
           </div>
         ))}
       </div>
+
+      {/* ── 时光种子小组件 ── */}
+      <SeedWidget />
 
       {/* ── 功能导航 2×2 ── */}
       <div>
