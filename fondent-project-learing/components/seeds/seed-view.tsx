@@ -44,13 +44,7 @@ function Toast({ message, onDone }: { message: string; onDone: () => void }) {
   }, [onDone]);
   return (
     <motion.div
-      className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2 rounded-2xl px-5 py-3 text-sm font-medium shadow-xl"
-      style={{
-        background: "oklch(0.20 0.050 145)",
-        border: "1px solid oklch(0.40 0.18 145 / 0.55)",
-        color: "oklch(0.88 0.18 145)",
-        maxWidth: "88vw",
-      }}
+      className="fixed bottom-8 left-1/2 z-50 -translate-x-1/2 rounded-2xl px-5 py-3 text-sm font-medium shadow-xl bg-[oklch(0.20_0.050_145)] border border-[oklch(0.40_0.18_145/0.55)] text-[oklch(0.88_0.18_145)] max-w-[88vw]"
       initial={{ y: 24, opacity: 0, scale: 0.92 }}
       animate={{ y: 0, opacity: 1, scale: 1 }}
       exit={{ y: 12, opacity: 0 }}
@@ -135,26 +129,21 @@ export function SeedView() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <div className="h-6 w-6 rounded-full border-2 border-t-transparent animate-spin"
-          style={{ borderColor: "oklch(0.55 0.18 290 / 0.5)", borderTopColor: "transparent" }} />
+        <div className="h-6 w-6 rounded-full border-2 border-t-transparent animate-spin border-[oklch(0.55_0.18_290/0.5)]" />
       </div>
     );
   }
 
   return (
     <div
-      className="relative min-h-[calc(100vh-4rem)] w-full flex flex-col items-center justify-start overflow-x-hidden"
-      style={{
-        background: "linear-gradient(180deg, oklch(0.18 0.032 290) 0%, oklch(0.12 0.045 120) 100%)",
-        paddingBottom: 32,
-      }}
+      className="relative min-h-[calc(100vh-4rem)] w-full flex flex-col items-center justify-start overflow-x-hidden bg-[linear-gradient(180deg,oklch(0.18_0.032_290)_0%,oklch(0.12_0.045_120)_100%)] pb-8"
     >
       {/* ── Header ── */}
       <div className="w-full max-w-2xl mx-auto pt-8 pb-2 text-center select-none">
-        <h1 className="text-2xl font-bold tracking-wide" style={{ color: "oklch(0.92 0.012 290)" }}>
+        <h1 className="text-2xl font-bold tracking-wide text-pu-text">
           {t("title")} 🌱
         </h1>
-        <p className="text-base mt-1" style={{ color: "oklch(0.60 0.015 290)" }}>
+        <p className="text-base mt-1 text-pu-label">
           {t("subtitle")}
         </p>
       </div>
@@ -162,9 +151,8 @@ export function SeedView() {
       {/* ── Main animation area ── */}
       <div
         className="relative w-full flex flex-col items-center justify-center"
-        style={{ minHeight: 420, height: "40vh", maxHeight: 520 }}
-      >
-        <SeedAnimation
+        style={{ minHeight: 420, height: "40vh", maxHeight: 520 }}>
+      <SeedAnimation
           status={seed?.status ?? null}
           streakDays={seed?.streak_days ?? 0}
           isWatering={isWatering}
@@ -188,20 +176,15 @@ export function SeedView() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
             >
-              <p className="text-base font-medium" style={{ color: "oklch(0.75 0.015 290)" }}>
+              <p className="text-base font-medium text-pu-text-3">
                 {t("noSeed")}
               </p>
-              <p className="text-xs" style={{ color: "oklch(0.48 0.015 290)" }}>
+              <p className="text-xs text-pu-very-dim">
                 {t("noSeedDesc")}
               </p>
               <button
                 onClick={() => setShowPlant(true)}
-                className="inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold transition-all duration-150 hover:scale-[1.03] active:scale-[0.97]"
-                style={{
-                  background: "linear-gradient(135deg, oklch(0.55 0.22 145), oklch(0.50 0.20 165))",
-                  color: "oklch(0.96 0.010 145)",
-                  boxShadow: "0 0 22px oklch(0.45 0.20 145 / 0.40)",
-                }}
+                className="inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold transition-all duration-150 hover:scale-[1.03] active:scale-[0.97] bg-[linear-gradient(135deg,oklch(0.55_0.22_145),oklch(0.50_0.20_165))] text-[oklch(0.96_0.010_145)] shadow-[0_0_22px_oklch(0.45_0.20_145/0.40)]"
               >
                 <Leaf className="h-4 w-4" />
                 {t("plantBtn")}
@@ -220,10 +203,10 @@ export function SeedView() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-base font-semibold" style={{ color: "oklch(0.82 0.015 290)" }}>
+                  <p className="text-base font-semibold text-pu-text-2">
                     {t("streak", { days: seed.streak_days })}
                   </p>
-                  <p className="text-xs mt-0.5" style={{ color: "oklch(0.50 0.015 290)" }}>
+                  <p className="text-xs mt-0.5 text-pu-dim">
                     {t("streakOf", { days: seed.streak_days })}
                   </p>
                 </div>
@@ -231,8 +214,7 @@ export function SeedView() {
               </div>
 
               {seed.task_note && (
-                <p className="text-xs rounded-xl px-3 py-2"
-                  style={{ background: "oklch(0.18 0.028 290)", color: "oklch(0.60 0.015 290)" }}>
+                <p className="text-xs rounded-xl px-3 py-2 bg-[oklch(0.18_0.028_290)] text-pu-label">
                   🎯 {seed.task_note}
                 </p>
               )}
@@ -240,12 +222,7 @@ export function SeedView() {
               <button
                 onClick={handleWater}
                 disabled={isWatering}
-                className="w-full flex items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
-                style={{
-                  background: "linear-gradient(135deg, oklch(0.40 0.18 240), oklch(0.45 0.20 200))",
-                  color: "oklch(0.94 0.010 220)",
-                  boxShadow: "0 0 20px oklch(0.35 0.16 220 / 0.40)",
-                }}
+                className="w-full flex items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 bg-[linear-gradient(135deg,oklch(0.40_0.18_240),oklch(0.45_0.20_200))] text-[oklch(0.94_0.010_220)] shadow-[0_0_20px_oklch(0.35_0.16_220/0.40)]"
               >
                 <Droplets className="h-4 w-4" />
                 {isWatering ? "浇水中…" : t("waterBtn")}
@@ -262,23 +239,18 @@ export function SeedView() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
             >
-              <p className="text-lg font-bold" style={{ color: "oklch(0.88 0.22 80)" }}>
+              <p className="text-lg font-bold text-amber">
                 {t("sproutedTitle")}
               </p>
-              <p className="text-base" style={{ color: "oklch(0.62 0.015 290)" }}>
+              <p className="text-base text-branch-text">
                 {t("sproutedDesc")}
               </p>
-              <p className="text-xs font-semibold" style={{ color: "oklch(0.80 0.18 80)" }}>
+              <p className="text-xs font-semibold text-[oklch(0.80_0.18_80)]">
                 {t("sproutedCoins")}
               </p>
               <button
                 onClick={() => setShowPlant(true)}
-                className="inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold mt-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                style={{
-                  background: "linear-gradient(135deg, oklch(0.55 0.22 145), oklch(0.50 0.20 165))",
-                  color: "oklch(0.96 0.010 145)",
-                  boxShadow: "0 0 18px oklch(0.45 0.20 145 / 0.35)",
-                }}
+                className="inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-semibold mt-2 transition-all hover:scale-[1.02] active:scale-[0.98] bg-[linear-gradient(135deg,oklch(0.55_0.22_145),oklch(0.50_0.20_165))] text-[oklch(0.96_0.010_145)] shadow-[0_0_18px_oklch(0.45_0.20_145/0.35)]"
               >
                 <Leaf className="h-4 w-4" />
                 种下新种子
@@ -295,12 +267,11 @@ export function SeedView() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
             >
-              <div className="rounded-2xl px-4 py-3 text-center"
-                style={{ background: "oklch(0.17 0.022 50)", border: "1px solid oklch(0.30 0.040 50 / 0.40)" }}>
-                <p className="text-sm font-medium" style={{ color: "oklch(0.68 0.10 50)" }}>
+              <div className="rounded-2xl px-4 py-3 text-center bg-[oklch(0.17_0.022_50)] border border-[oklch(0.30_0.040_50/0.40)]">
+                <p className="text-sm font-medium text-[oklch(0.68_0.10_50)]">
                   {t("witherTitle")}
                 </p>
-                <p className="text-xs mt-0.5" style={{ color: "oklch(0.48 0.055 50)" }}>
+                <p className="text-xs mt-0.5 text-[oklch(0.48_0.055_50)]">
                   {t("witherDesc")}
                 </p>
               </div>
@@ -308,12 +279,7 @@ export function SeedView() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowPlant(true)}
-                  className="flex-1 flex items-center justify-center gap-1.5 rounded-2xl py-2.5 text-xs font-medium transition-all hover:scale-[1.02]"
-                  style={{
-                    background: "oklch(0.18 0.030 290)",
-                    border: "1px solid oklch(0.30 0.050 290 / 0.45)",
-                    color: "oklch(0.65 0.015 290)",
-                  }}
+                  className="flex-1 flex items-center justify-center gap-1.5 rounded-2xl py-2.5 text-xs font-medium transition-all hover:scale-[1.02] bg-[oklch(0.18_0.030_290)] border border-[oklch(0.30_0.050_290/0.45)] text-pu-label"
                 >
                   <Leaf className="h-3.5 w-3.5" />
                   {t("plantBtn")}
@@ -322,20 +288,14 @@ export function SeedView() {
                   <button
                     onClick={handleRevive}
                     disabled={isReviving}
-                    className="flex-1 flex items-center justify-center gap-1.5 rounded-2xl py-2.5 text-xs font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                    style={{
-                      background: "linear-gradient(135deg, oklch(0.42 0.18 200), oklch(0.40 0.16 180))",
-                      color: "oklch(0.92 0.010 200)",
-                      boxShadow: "0 0 14px oklch(0.38 0.15 200 / 0.35)",
-                    }}
+                    className="flex-1 flex items-center justify-center gap-1.5 rounded-2xl py-2.5 text-xs font-semibold transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 bg-[linear-gradient(135deg,oklch(0.42_0.18_200),oklch(0.40_0.16_180))] text-[oklch(0.92_0.010_200)] shadow-[0_0_14px_oklch(0.38_0.15_200/0.35)]"
                   >
                     <Sparkles className="h-3.5 w-3.5" />
                     {isReviving ? "复活中…" : t("reviveBtn")}
                   </button>
                 ) : (
                   <div
-                    className="flex-1 flex items-center justify-center gap-1 rounded-2xl py-2.5 text-xs"
-                    style={{ background: "oklch(0.16 0.020 290)", color: "oklch(0.42 0.015 290)" }}
+                    className="flex-1 flex items-center justify-center gap-1 rounded-2xl py-2.5 text-xs bg-[oklch(0.16_0.020_290)] text-[oklch(0.42_0.015_290)]"
                   >
                     <RefreshCw className="h-3 w-3" />
                     {t("noRevivalVoucher")}
@@ -350,7 +310,7 @@ export function SeedView() {
       {/* ── Dead branch records ── */}
       {witherSeeds.length > 0 && (
         <div className="w-full max-w-2xl mx-auto mt-8 space-y-2.5 px-2">
-          <p className="text-xs font-medium tracking-widest" style={{ color: "oklch(0.44 0.018 290)" }}>
+          <p className="text-xs font-medium tracking-widest text-pu-very-dim">
             {t("deadBranchTitle")}
           </p>
           {witherSeeds.map((s) => (

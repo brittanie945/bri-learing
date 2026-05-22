@@ -62,12 +62,8 @@ export function DailyQuoteWidget() {
   if (isLoading) {
     return (
       <div
-        className="rounded-2xl px-5 py-5 animate-pulse"
-        style={{
-          background: "oklch(0.15 0.038 68)",
-          border: "1px solid oklch(0.28 0.065 68 / 0.40)",
-          height: "108px",
-        }}
+        className="rounded-2xl px-5 py-5 animate-pulse bg-quote-bg border border-quote-border"
+        style={{ height: "108px" }}
       />
     );
   }
@@ -80,18 +76,12 @@ export function DailyQuoteWidget() {
   return (
     <div
       onClick={handleCardClick}
-      className="rounded-2xl px-5 pt-4 pb-3 select-none cursor-pointer transition-all duration-200 hover:scale-[1.005] active:scale-[0.995]"
-      style={{
-        background: "oklch(0.15 0.038 68)",
-        border: "1px solid oklch(0.28 0.065 68 / 0.45)",
-        boxShadow: "0 2px 18px oklch(0.07 0.030 68 / 0.50)",
-      }}
+      className="rounded-2xl px-5 pt-4 pb-3 select-none cursor-pointer transition-all duration-200 hover:scale-[1.005] active:scale-[0.995] bg-quote-bg border border-quote-border shadow-glow-amber"
     >
       {/* header row */}
       <div className="flex items-center justify-between mb-2.5">
         <span
-          className="text-[10px] font-semibold tracking-widest uppercase"
-          style={{ color: "oklch(0.55 0.065 68)" }}
+          className="text-[10px] font-semibold tracking-widest uppercase text-quote-label"
         >
           {t("title")}
         </span>
@@ -108,15 +98,12 @@ export function DailyQuoteWidget() {
           }}
         >
           <Bookmark
-            className="h-4 w-4"
+            className={`h-4 w-4 transition-[color,fill] duration-300 ease-in-out ${
+              isCollected
+                ? "text-quote-accent fill-quote-accent"
+                : "text-quote-pin fill-none"
+            }`}
             strokeWidth={1.8}
-            style={{
-              color: isCollected
-                ? "oklch(0.72 0.14 68)"
-                : "oklch(0.42 0.045 68)",
-              fill: isCollected ? "oklch(0.72 0.14 68)" : "none",
-              transition: "color 300ms ease, fill 300ms ease",
-            }}
           />
         </button>
       </div>
@@ -125,15 +112,13 @@ export function DailyQuoteWidget() {
       <div className="mb-2">
         {/* opening mark */}
         <span
-          className="text-2xl font-serif leading-none mr-1"
-          style={{ color: "oklch(0.36 0.055 68)" }}
+          className="text-2xl font-serif leading-none mr-1 text-quote-mark"
           aria-hidden
         >
           "
         </span>
         <span
-          className="text-sm font-medium leading-relaxed"
-          style={{ color: "oklch(0.88 0.022 68)" }}
+          className="text-sm font-medium leading-relaxed text-quote-text"
         >
           {content}
         </span>
@@ -142,8 +127,7 @@ export function DailyQuoteWidget() {
       {/* author + source */}
       {author && (
         <p
-          className="text-right text-[11px] mb-1"
-          style={{ color: "oklch(0.52 0.040 68)" }}
+          className="text-right text-[11px] mb-1 text-quote-muted"
         >
           — {author}
           {quote.source ? ` · ${quote.source}` : ""}
@@ -153,8 +137,7 @@ export function DailyQuoteWidget() {
       {/* feedback toast */}
       {feedback && (
         <p
-          className="text-[11px] mt-1 text-center transition-opacity duration-300"
-          style={{ color: "oklch(0.72 0.14 68)" }}
+          className="text-[11px] mt-1 text-center transition-opacity duration-300 text-quote-accent"
         >
           {feedback}
         </p>
@@ -162,20 +145,17 @@ export function DailyQuoteWidget() {
 
       {/* divider + link */}
       <div
-        className="mt-2.5 pt-2.5 flex items-center justify-between"
-        style={{ borderTop: "1px solid oklch(0.26 0.050 68 / 0.35)" }}
+        className="mt-2.5 pt-2.5 flex items-center justify-between border-t border-quote-border-sub"
       >
         <span
-          className="text-[10px]"
-          style={{ color: "oklch(0.42 0.040 68)" }}
+          className="text-[10px] text-quote-pin"
         >
           {!isCollected && t("collectHint")}
         </span>
         <Link
           href="/quotes"
           onClick={(e) => e.stopPropagation()}
-          className="text-[11px] font-medium transition-colors hover:underline"
-          style={{ color: "oklch(0.60 0.080 68)" }}
+          className="text-[11px] font-medium transition-colors hover:underline text-quote-link"
         >
           {t("viewCollection")} →
         </Link>

@@ -18,12 +18,7 @@ export function MemoryAnchorCard({ refNum, refs }: MemoryAnchorCardProps) {
     <span className="inline-block align-middle mx-0.5">
       <button
         onClick={() => setOpen(!open)}
-        className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded-md transition-all"
-        style={{
-          background: "oklch(0.22 0.070 290 / 0.7)",
-          color: "oklch(0.82 0.22 290)",
-          border: "1px solid oklch(0.40 0.10 290 / 0.4)",
-        }}
+        className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded-md transition-all bg-pu-pill/70 text-pu-accent-2 border border-pu-pill-border"
       >
         <Clock className="h-2.5 w-2.5" />
         {ref.date}
@@ -31,21 +26,17 @@ export function MemoryAnchorCard({ refNum, refs }: MemoryAnchorCardProps) {
       </button>
       {open && (
         <span
-          className="block mt-1 rounded-xl p-3 text-xs leading-relaxed"
-          style={{
-            background: "oklch(0.15 0.040 290)",
-            border: "1px solid oklch(0.32 0.060 290 / 0.50)",
-          }}
+          className="block mt-1 rounded-xl p-3 text-xs leading-relaxed bg-pu-surface border border-pu-border-hi"
         >
-          <span className="block font-semibold mb-1" style={{ color: "oklch(0.82 0.22 290)" }}>
+          <span className="block font-semibold mb-1 text-pu-accent-2">
             《{ref.title}》— {ref.date}
           </span>
           {ref.mood && (
-            <span className="block text-xs mb-1" style={{ color: "oklch(0.60 0.015 290)" }}>
+            <span className="block text-xs mb-1 text-pu-muted">
               心情：{ref.mood}
             </span>
           )}
-          <span className="block" style={{ color: "oklch(0.72 0.012 290)" }}>
+          <span className="block text-pu-new-chat">
             {ref.summary}
             {ref.summary.length >= 300 && "…"}
           </span>

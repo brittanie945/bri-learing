@@ -82,12 +82,7 @@ function SeedWidget() {
 
   return (
     <Link href="/seeds"
-      className="group flex items-center gap-4 rounded-2xl px-5 py-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
-      style={{
-        background: "oklch(0.15 0.032 145)",
-        border: "1px solid oklch(0.30 0.065 145 / 0.45)",
-        boxShadow: "0 2px 16px oklch(0.06 0.025 145 / 0.45)",
-      }}
+      className="group flex items-center gap-4 rounded-2xl px-5 py-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] bg-seed-bg border border-seed-border shadow-glow-green"
     >
       {/* mini animation */}
       <div className="shrink-0">
@@ -100,17 +95,17 @@ function SeedWidget() {
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold" style={{ color: "oklch(0.82 0.18 145)" }}>
+        <p className="text-sm font-semibold text-seed-text">
           {tSeeds("title")}
         </p>
         {msg ? (
-          <p className="text-xs mt-0.5 truncate" style={{ color: "oklch(0.65 0.15 145)" }}>{msg}</p>
+          <p className="text-xs mt-0.5 truncate text-[oklch(0.65_0.15_145)]">{msg}</p>
         ) : seed ? (
-          <p className="text-xs mt-0.5" style={{ color: "oklch(0.52 0.018 290)" }}>
+          <p className="text-xs mt-0.5 text-pu-muted">
             {tSeeds("streakOf", { days: seed.streak_days })}
           </p>
         ) : (
-          <p className="text-xs mt-0.5" style={{ color: "oklch(0.48 0.018 290)" }}>
+          <p className="text-xs mt-0.5 text-pu-very-dim">
             {tSeeds("noSeedDesc")}
           </p>
         )}
@@ -119,11 +114,7 @@ function SeedWidget() {
       {seed?.status === "growing" && (
         <button
           onClick={handleWater}
-          className="shrink-0 flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium transition-all hover:scale-[1.05] active:scale-[0.95]"
-          style={{
-            background: "oklch(0.28 0.065 200)",
-            color: "oklch(0.82 0.16 200)",
-          }}
+          className="shrink-0 flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium transition-all hover:scale-[1.05] active:scale-[0.95] bg-[oklch(0.28_0.065_200)] text-seed-water"
         >
           <Droplets className="h-3.5 w-3.5" />
           {isWatering ? "…" : tSeeds("waterBtn")}
@@ -157,13 +148,13 @@ export default function DashboardPage() {
 
       {/* ── 暖光问候区 ── */}
       <div>
-        <p className="text-xs font-medium tracking-widest mb-2" style={{color: "oklch(0.50 0.012 62)"}}>
+        <p className="text-xs font-medium tracking-widest mb-2 text-[oklch(0.50_0.012_62)]">
           {today}
         </p>
-        <h1 className="text-2xl font-semibold leading-snug" style={{color: "oklch(0.90 0.012 75)"}}>
+        <h1 className="text-2xl font-semibold leading-snug text-[oklch(0.90_0.012_75)]">
           {t(greeting, { username: user?.username || "" })}
         </h1>
-        <p className="mt-1 text-sm" style={{color: "oklch(0.52 0.012 62)"}}>
+        <p className="mt-1 text-sm text-[oklch(0.52_0.012_62)]">
           {t("writePrompt")}
         </p>
       </div>
@@ -171,24 +162,18 @@ export default function DashboardPage() {
       {/* ── 主 CTA ── */}
       <button
         onClick={() => router.push("/diary")}
-        className="group w-full flex items-center gap-4 rounded-2xl px-5 py-4 text-left transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
-        style={{
-          background: "oklch(0.16 0.030 290)",
-          border: "1px solid oklch(0.34 0.055 290 / 0.55)",
-          boxShadow: "0 2px 16px oklch(0.06 0.030 290 / 0.50)",
-        }}
+        className="group w-full flex items-center gap-4 rounded-2xl px-5 py-4 text-left transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] bg-[oklch(0.16_0.030_290)] border border-[oklch(0.34_0.055_290/0.55)] shadow-glow-purple"
       >
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-          style={{background: "linear-gradient(135deg, oklch(0.70 0.24 290), oklch(0.68 0.24 330))", boxShadow: "0 0 16px oklch(0.45 0.28 290 / 0.45)"}}>
-          <Pencil className="h-4.5 w-4.5 text-white" strokeWidth={2} />
-        </div>
-        <div className="flex-1">
-          <p className="text-sm font-medium" style={{color: "oklch(0.88 0.015 290)"}}>{t("writeBtn")}</p>
-          <p className="text-xs mt-0.5" style={{color: "oklch(0.50 0.015 290)"}}>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-logo shadow-icon-glow">
+            <Pencil className="h-4.5 w-4.5 text-white" strokeWidth={2} />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-pu-text-2">{t("writeBtn")}</p>
+            <p className="text-xs mt-0.5 text-pu-muted">
             {t("diaryDesc")}
           </p>
         </div>
-        <span className="text-base transition-transform group-hover:translate-x-1" style={{color: "oklch(0.72 0.22 290)"}}>→</span>
+          <span className="text-base transition-transform group-hover:translate-x-1 text-pu-accent">→</span>
       </button>
 
       {/* ── 数据小条 ── */}
@@ -199,8 +184,8 @@ export default function DashboardPage() {
           { label: t("capsuleCount"), value: capsuleCount, accent: "oklch(0.80 0.18 195)" },
         ].map(({ label, value, accent }) => (
           <div key={label} className="flex flex-col items-center gap-0.5">
-            <span className="text-xl font-bold tabular-nums" style={{color: accent}}>{value}</span>
-            <span className="text-[10px] tracking-wide" style={{color: "oklch(0.48 0.015 290)"}}>{label}</span>
+            <span className="text-xl font-bold tabular-nums" style={{"--c-accent": accent, color: "var(--c-accent)"} as React.CSSProperties}>{value}</span>
+            <span className="text-[10px] tracking-wide text-pu-dim">{label}</span>
           </div>
         ))}
       </div>
@@ -210,24 +195,24 @@ export default function DashboardPage() {
 
       {/* ── 功能导航 2×2 ── */}
       <div>
-        <p className="text-xs font-medium tracking-widest mb-3" style={{color: "oklch(0.44 0.018 290)"}}>
+        <p className="text-xs font-medium tracking-widest mb-3 text-pu-very-dim">
           探索功能
         </p>
         <div className="grid grid-cols-2 gap-3">
           {FEATURES.map(({ key, href, Icon, accent, bg, border }) => (
             <Link key={key} href={href}
               className="group flex flex-col gap-3 rounded-2xl p-4 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              style={{background: bg, border: `1px solid ${border}`, boxShadow: `0 4px 20px ${bg}`}}
+              style={{ "--c-bg": bg, "--c-border": border, "--c-accent": accent, background: "var(--c-bg)", border: "1px solid var(--c-border)", boxShadow: `0 4px 20px ${bg}` } as React.CSSProperties}
             >
               <div className="flex h-9 w-9 items-center justify-center rounded-xl"
                 style={{background: `${accent}26`}}>
-                <Icon className="h-4.5 w-4.5" style={{color: accent}} strokeWidth={1.8} />
+                <Icon className="h-4.5 w-4.5" style={{color: "var(--c-accent)"}} strokeWidth={1.8} />
               </div>
               <div>
-                <p className="text-sm font-semibold" style={{color: "oklch(0.90 0.012 290)"}}>{t(`${key}Title`)}</p>
-                <p className="text-[11px] leading-relaxed mt-0.5" style={{color: "oklch(0.52 0.015 290)"}}>{t(`${key}Desc`)}</p>
+                <p className="text-sm font-semibold text-pu-text-2">{t(`${key}Title`)}</p>
+                <p className="text-[11px] leading-relaxed mt-0.5 text-pu-muted">{t(`${key}Desc`)}</p>
               </div>
-              <span className="text-xs font-medium mt-auto transition-all group-hover:translate-x-0.5" style={{color: accent}}>
+              <span className="text-xs font-medium mt-auto transition-all group-hover:translate-x-0.5" style={{color: "var(--c-accent)"}}>
                 {t(`${key}Action`)} →
               </span>
             </Link>

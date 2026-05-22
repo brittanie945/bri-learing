@@ -19,24 +19,17 @@ function QuoteCard({ item }: { item: CollectedQuoteItem }) {
 
   return (
     <div
-      className="rounded-2xl px-5 py-4 transition-all duration-150 hover:scale-[1.005]"
-      style={{
-        background: "oklch(0.14 0.032 68)",
-        border: "1px solid oklch(0.26 0.055 68 / 0.40)",
-        boxShadow: "0 2px 12px oklch(0.06 0.025 68 / 0.35)",
-      }}
+      className="rounded-2xl px-5 py-4 transition-all duration-150 hover:scale-[1.005] bg-quote-bg-card border border-quote-border-sub shadow-glow-amber"
     >
       <div className="flex items-start gap-2 mb-2">
         <span
-          className="text-2xl font-serif leading-none shrink-0 mt-0.5"
-          style={{ color: "oklch(0.34 0.050 68)" }}
+          className="text-2xl font-serif leading-none shrink-0 mt-0.5 text-quote-mark"
           aria-hidden
         >
           "
         </span>
         <p
-          className="text-sm font-medium leading-relaxed"
-          style={{ color: "oklch(0.88 0.022 68)" }}
+          className="text-sm font-medium leading-relaxed text-quote-text"
         >
           {content}
         </p>
@@ -44,8 +37,7 @@ function QuoteCard({ item }: { item: CollectedQuoteItem }) {
 
       {author && (
         <p
-          className="text-right text-[11px] mb-2"
-          style={{ color: "oklch(0.50 0.038 68)" }}
+          className="text-right text-[11px] mb-2 text-quote-dim"
         >
           — {author}
           {item.quote.source ? ` · ${item.quote.source}` : ""}
@@ -54,11 +46,10 @@ function QuoteCard({ item }: { item: CollectedQuoteItem }) {
 
       <div className="flex items-center gap-1.5 mt-1">
         <Bookmark
-          className="h-3 w-3 shrink-0"
+          className="h-3 w-3 shrink-0 text-quote-icon fill-quote-icon"
           strokeWidth={1.8}
-          style={{ color: "oklch(0.60 0.095 68)", fill: "oklch(0.60 0.095 68)" }}
         />
-        <span className="text-[10px]" style={{ color: "oklch(0.44 0.040 68)" }}>
+        <span className="text-[10px] text-quote-dim">
           {t("collectedAt", { date: collectedDate })}
         </span>
       </div>
@@ -83,24 +74,21 @@ export function QuoteBookView() {
       <div>
         <div className="flex items-center gap-2 mb-1">
           <div
-            className="flex h-8 w-8 items-center justify-center rounded-xl"
-            style={{ background: "oklch(0.22 0.060 68)" }}
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-quote-bg-icon"
           >
             <BookOpen
-              className="h-4 w-4"
+              className="h-4 w-4 text-quote-accent"
               strokeWidth={1.8}
-              style={{ color: "oklch(0.72 0.14 68)" }}
             />
           </div>
           <h1
-            className="text-xl font-semibold"
-            style={{ color: "oklch(0.88 0.022 68)" }}
+            className="text-xl font-semibold text-quote-text"
           >
             {t("bookTitle")}
           </h1>
         </div>
         {items !== null && items.length > 0 && (
-          <p className="text-xs ml-10" style={{ color: "oklch(0.48 0.035 68)" }}>
+          <p className="text-xs ml-10 text-quote-label">
             {items.length} 条
           </p>
         )}
@@ -112,8 +100,7 @@ export function QuoteBookView() {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="rounded-2xl h-24 animate-pulse"
-              style={{ background: "oklch(0.14 0.032 68)" }}
+              className="rounded-2xl h-24 animate-pulse bg-quote-bg-card"
             />
           ))}
         </div>
@@ -122,24 +109,18 @@ export function QuoteBookView() {
       {/* empty state */}
       {items !== null && items.length === 0 && (
         <div
-          className="rounded-2xl px-6 py-10 text-center"
-          style={{
-            background: "oklch(0.14 0.032 68)",
-            border: "1px solid oklch(0.24 0.045 68 / 0.35)",
-          }}
+          className="rounded-2xl px-6 py-10 text-center bg-quote-bg-card border border-[oklch(0.24_0.045_68/0.35)]"
         >
           <Bookmark
-            className="h-8 w-8 mx-auto mb-3"
+            className="h-8 w-8 mx-auto mb-3 text-quote-mark"
             strokeWidth={1.4}
-            style={{ color: "oklch(0.36 0.050 68)" }}
           />
           <p
-            className="text-sm font-medium mb-1"
-            style={{ color: "oklch(0.70 0.018 68)" }}
+            className="text-sm font-medium mb-1 text-[oklch(0.70_0.018_68)]"
           >
             {t("bookEmpty")}
           </p>
-          <p className="text-xs" style={{ color: "oklch(0.44 0.018 68)" }}>
+          <p className="text-xs text-quote-dim">
             {t("bookEmptyDesc")}
           </p>
         </div>

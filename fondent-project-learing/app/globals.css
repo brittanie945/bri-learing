@@ -45,6 +45,84 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* ══════════════════════════════════════════════════════════════════════
+     自定义设计 Token — Tailwind v4 自动生成 bg-* / text-* / border-* / fill-*
+     命名规则：--color-<namespace>-<role>
+     ══════════════════════════════════════════════════════════════════════ */
+
+  /* ─── Quote / 金句 (hue ~68) ─────────────────────────────────────── */
+  --color-quote-bg:         oklch(0.15 0.038 68);
+  --color-quote-bg-card:    oklch(0.14 0.032 68);
+  --color-quote-bg-icon:    oklch(0.22 0.060 68);
+  --color-quote-border:     oklch(0.28 0.065 68 / 0.45);
+  --color-quote-border-sub: oklch(0.26 0.055 68 / 0.40);
+  --color-quote-text:       oklch(0.88 0.022 68);
+  --color-quote-muted:      oklch(0.52 0.040 68);
+  --color-quote-dim:        oklch(0.44 0.040 68);
+  --color-quote-label:      oklch(0.55 0.065 68);
+  --color-quote-mark:       oklch(0.36 0.055 68);
+  --color-quote-accent:     oklch(0.72 0.14 68);
+  --color-quote-icon:       oklch(0.60 0.095 68);
+  --color-quote-link:       oklch(0.60 0.080 68);
+  --color-quote-pin:        oklch(0.42 0.045 68);
+
+  /* ─── Seed / 时光种子 (hue ~145, ~200) ──────────────────────────── */
+  --color-seed-bg:          oklch(0.15 0.032 145);
+  --color-seed-border:      oklch(0.30 0.065 145 / 0.45);
+  --color-seed-text:        oklch(0.82 0.18 145);
+  --color-seed-water:       oklch(0.82 0.16 200);
+
+  /* ─── Branch / 枯枝 (hue ~50) ──────────────────────────────────── */
+  --color-branch-bg:        oklch(0.15 0.020 50);
+  --color-branch-bg-icon:   oklch(0.20 0.028 50);
+  --color-branch-border:    oklch(0.28 0.040 50 / 0.45);
+  --color-branch-text:      oklch(0.62 0.055 50);
+  --color-branch-sub:       oklch(0.48 0.030 50);
+  --color-branch-muted:     oklch(0.44 0.025 50);
+  --color-branch-dim:       oklch(0.40 0.020 50);
+
+  /* ─── Revived / 复活 (hue ~165) ─────────────────────────────────── */
+  --color-revived:          oklch(0.55 0.14 165);
+
+  /* ─── Error / 错误 (hue ~15) ────────────────────────────────────── */
+  --color-err-bg:           oklch(0.20 0.045 15);
+  --color-err-text:         oklch(0.80 0.20 15);
+  --color-err-soft:         oklch(0.72 0.18 15);
+  --color-err-border:       oklch(0.65 0.20 15);
+
+  /* ─── Purple Base / 宇宙紫（全站基底 hue ~290）────────────────── */
+  --color-pu-surface:       oklch(0.14 0.032 290);
+  --color-pu-surface-hi:    oklch(0.17 0.035 290);
+  --color-pu-input:         oklch(0.20 0.035 290);
+  --color-pu-user-msg:      oklch(0.22 0.065 290);
+  --color-pu-pill:          oklch(0.22 0.070 290);
+  --color-pu-border:        oklch(0.28 0.045 290 / 0.50);
+  --color-pu-border-md:     oklch(0.30 0.055 290 / 0.55);
+  --color-pu-border-hi:     oklch(0.32 0.060 290 / 0.50);
+  --color-pu-input-border:  oklch(0.34 0.050 290 / 0.65);
+  --color-pu-pill-border:   oklch(0.40 0.10 290 / 0.40);
+  --color-pu-text:          oklch(0.93 0.010 290);
+  --color-pu-text-2:        oklch(0.88 0.012 290);
+  --color-pu-text-3:        oklch(0.85 0.015 290);
+  --color-pu-active:        oklch(0.85 0.22 290);
+  --color-pu-active-icon:   oklch(0.80 0.22 290);
+  --color-pu-sparkle:       oklch(0.75 0.22 290);
+  --color-pu-new-chat:      oklch(0.72 0.18 290);
+  --color-pu-label:         oklch(0.58 0.015 290);
+  --color-pu-muted:         oklch(0.52 0.015 290);
+  --color-pu-dim:           oklch(0.48 0.015 290);
+  --color-pu-very-dim:      oklch(0.44 0.018 290);
+  --color-pu-ghost:         oklch(0.38 0.010 290);
+  --color-pu-accent:        oklch(0.70 0.24 290);
+  --color-pu-accent-2:      oklch(0.82 0.22 290);
+  --color-pu-link:          oklch(0.76 0.22 290);
+  --color-pu-cursor:        oklch(0.65 0.18 290);
+  --color-pu-app-title:     oklch(0.82 0.018 290);
+  --color-pu-username:      oklch(0.80 0.015 290);
+
+  /* ─── Amber / 金币、时间 (hue ~80) ─────────────────────────────── */
+  --color-amber:            oklch(0.75 0.18 80);
 }
 
 :root {
@@ -255,5 +333,62 @@ html.dark .group:hover .group-hover\:text-green-700 { color: oklch(0.78 0.22 290
   background: radial-gradient(circle, oklch(0.48 0.20 330 / 0.60), transparent 68%);
 }
 
+/* ══════════════════════════════════════════════════════════════════════
+   自定义 @utility — 处理 boxShadow 和 linear-gradient
+   （Tailwind 无法从 @theme 颜色 token 自动生成这两类值）
+   ══════════════════════════════════════════════════════════════════════ */
 
+/* ── 光晕阴影 ── */
+@utility shadow-glow-purple {
+  box-shadow: 0 2px 16px oklch(0.06 0.030 290 / 0.50);
+}
+@utility shadow-glow-green {
+  box-shadow: 0 2px 16px oklch(0.06 0.025 145 / 0.45);
+}
+@utility shadow-glow-amber {
+  box-shadow: 0 2px 18px oklch(0.07 0.030 68 / 0.50);
+}
+@utility shadow-modal {
+  box-shadow: 0 24px 64px oklch(0.05 0.025 290 / 0.70);
+}
+@utility shadow-modal-light {
+  box-shadow: 0 24px 60px oklch(0.05 0.030 290 / 0.80);
+}
+@utility shadow-cta {
+  box-shadow: 0 4px 20px oklch(0.40 0.28 300 / 0.50);
+}
+@utility shadow-icon-glow {
+  box-shadow: 0 0 28px oklch(0.40 0.28 300 / 0.45);
+}
+@utility shadow-seed-dot {
+  box-shadow: 0 0 8px oklch(0.55 0.20 145 / 0.60);
+}
+@utility shadow-chat-empty {
+  box-shadow: 0 0 40px oklch(0.35 0.28 300 / 0.40);
+}
+@utility shadow-chat-cta {
+  box-shadow: 0 4px 20px oklch(0.35 0.28 300 / 0.45);
+}
 
+/* ── 渐变背景 ── */
+@utility bg-gradient-cta {
+  background: linear-gradient(135deg, oklch(0.68 0.24 290), oklch(0.65 0.24 330));
+}
+@utility bg-gradient-cta-alt {
+  background: linear-gradient(135deg, oklch(0.68 0.24 330), oklch(0.70 0.24 290));
+}
+@utility bg-gradient-logo {
+  background: linear-gradient(135deg, oklch(0.70 0.24 290), oklch(0.68 0.24 330));
+}
+@utility bg-gradient-bot {
+  background: linear-gradient(135deg, oklch(0.45 0.20 290), oklch(0.42 0.20 330));
+}
+@utility bg-gradient-icon {
+  background: linear-gradient(135deg, oklch(0.52 0.24 290), oklch(0.48 0.24 330));
+}
+@utility bg-gradient-chat-cta {
+  background: linear-gradient(135deg, oklch(0.60 0.24 290), oklch(0.57 0.24 330));
+}
+@utility bg-gradient-chat-empty {
+  background: linear-gradient(135deg, oklch(0.45 0.22 290), oklch(0.42 0.22 330));
+}

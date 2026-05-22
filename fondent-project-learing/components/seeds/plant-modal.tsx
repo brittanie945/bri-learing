@@ -53,30 +53,24 @@ export function PlantModal({ onClose, onPlant }: Props) {
       >
         {/* backdrop */}
         <motion.div
-          className="absolute inset-0"
-          style={{ background: "oklch(0.08 0.020 290 / 0.75)" }}
+          className="absolute inset-0 bg-[oklch(0.08_0.020_290/0.75)]"
           onClick={onClose}
         />
 
         <motion.div
-          className="relative w-full max-w-sm rounded-3xl p-6 space-y-5"
-          style={{
-            background: "oklch(0.14 0.032 290)",
-            border: "1px solid oklch(0.30 0.055 290 / 0.50)",
-            boxShadow: "0 24px 64px oklch(0.05 0.025 290 / 0.70)",
-          }}
+          className="relative w-full max-w-sm rounded-3xl p-6 space-y-5 bg-pu-surface border border-pu-border-md shadow-modal"
           initial={{ y: 40, opacity: 0, scale: 0.95 }}
           animate={{ y: 0, opacity: 1, scale: 1 }}
           exit={{ y: 40, opacity: 0, scale: 0.95 }}
           transition={{ type: "spring", stiffness: 280, damping: 26 }}
         >
-          <h2 className="text-base font-semibold" style={{ color: "oklch(0.88 0.015 290)" }}>
+          <h2 className="text-base font-semibold text-pu-text-2">
             {t("plantModalTitle")}
           </h2>
 
           {/* mood selector */}
           <div>
-            <p className="text-xs mb-2.5" style={{ color: "oklch(0.52 0.015 290)" }}>
+            <p className="text-xs mb-2.5 text-pu-muted">
               {t("plantModalMoodLabel")}
             </p>
             <div className="grid grid-cols-3 gap-2">
@@ -104,7 +98,7 @@ export function PlantModal({ onClose, onPlant }: Props) {
 
           {/* optional task */}
           <div>
-            <p className="text-xs mb-1.5" style={{ color: "oklch(0.52 0.015 290)" }}>
+            <p className="text-xs mb-1.5 text-pu-muted">
               {t("plantModalTaskLabel")}
             </p>
             <textarea
@@ -113,12 +107,7 @@ export function PlantModal({ onClose, onPlant }: Props) {
               value={taskNote}
               onChange={(e) => setTaskNote(e.target.value)}
               placeholder={t("plantModalTaskPlaceholder")}
-              className="w-full resize-none rounded-xl px-3 py-2.5 text-sm outline-none placeholder:opacity-40 transition-colors"
-              style={{
-                background: "oklch(0.18 0.030 290)",
-                border: "1px solid oklch(0.28 0.040 290 / 0.45)",
-                color: "oklch(0.85 0.012 290)",
-              }}
+              className="w-full resize-none rounded-xl px-3 py-2.5 text-sm outline-none placeholder:opacity-40 transition-colors bg-[oklch(0.18_0.030_290)] border border-[oklch(0.28_0.040_290/0.45)] text-pu-text-3"
             />
           </div>
 
@@ -130,26 +119,18 @@ export function PlantModal({ onClose, onPlant }: Props) {
           <div className="flex gap-2 pt-1">
             <button
               onClick={onClose}
-              className="flex-1 rounded-xl py-2.5 text-sm font-medium transition-colors"
-              style={{
-                background: "oklch(0.18 0.026 290)",
-                border: "1px solid oklch(0.28 0.038 290 / 0.45)",
-                color: "oklch(0.55 0.015 290)",
-              }}
+              className="flex-1 rounded-xl py-2.5 text-sm font-medium transition-colors bg-[oklch(0.18_0.026_290)] border border-[oklch(0.28_0.038_290/0.45)] text-pu-muted"
             >
               {t("plantModalCancel")}
             </button>
             <button
               onClick={handlePlant}
               disabled={!selectedType || loading}
-              className="flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{
-                background: selectedType
-                  ? `linear-gradient(135deg, oklch(0.55 0.22 145), oklch(0.50 0.20 165))`
-                  : "oklch(0.22 0.030 290)",
-                color: "oklch(0.95 0.010 145)",
-                boxShadow: selectedType ? "0 0 20px oklch(0.45 0.20 145 / 0.40)" : "none",
-              }}
+              className={`flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed ${
+                selectedType
+                  ? "bg-[linear-gradient(135deg,oklch(0.55_0.22_145),oklch(0.50_0.20_165))] text-[oklch(0.95_0.010_145)] shadow-[0_0_20px_oklch(0.45_0.20_145/0.40)]"
+                  : "bg-[oklch(0.22_0.030_290)] text-pu-muted"
+              }`}
             >
               {loading ? "种植中…" : t("plantModalConfirm")}
             </button>

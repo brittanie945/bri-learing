@@ -79,28 +79,27 @@ function BuyModal({
           >
             {voucher.icon}
           </div>
-          <h3 className="text-lg font-bold" style={{ color: "oklch(0.88 0.015 290)" }}>{t(voucher.nameKey)}</h3>
-          <p className="text-xs leading-relaxed px-2" style={{ color: "oklch(0.52 0.015 290)" }}>{t(voucher.descKey)}</p>
+          <h3 className="text-lg font-bold text-pu-text-2">{t(voucher.nameKey)}</h3>
+          <p className="text-xs leading-relaxed px-2 text-pu-muted">{t(voucher.descKey)}</p>
         </div>
 
         <div className="flex items-center justify-between rounded-2xl px-4 py-3"
-          style={{ background: "oklch(0.16 0.040 290)" }}>
-          <span className="text-sm" style={{ color: "oklch(0.55 0.015 290)" }}>消耗时光币</span>
+          className="flex items-center justify-between px-3 py-2 rounded-xl bg-[oklch(0.16_0.040_290)]">
+          <span className="text-sm text-pu-label">消耗时光币</span>
           <span className="text-xl font-bold" style={{ color: `oklch(0.78 0.20 ${hue})` }}>{voucher.cost} 🪙</span>
         </div>
 
         {!canAfford && (
-          <p className="text-xs text-center rounded-xl px-3 py-2" style={{ background: "oklch(0.16 0.040 15)", color: "oklch(0.72 0.18 15)" }}>
+          <p className="text-xs text-center rounded-xl px-3 py-2 bg-err-bg text-err-soft">
             {t("insufficientCoins")}（当前 {balance} 🪙）
           </p>
         )}
         {error && (
-          <p className="text-xs text-center" style={{ color: "oklch(0.72 0.18 15)" }}>{error}</p>
+          <p className="text-xs text-center text-err-soft">{error}</p>
         )}
 
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 rounded-2xl py-2.5 text-sm font-medium"
-            style={{ background: "oklch(0.18 0.032 290)", color: "oklch(0.55 0.015 290)" }}>
+          <button onClick={onClose} className="flex-1 rounded-2xl py-2.5 text-sm font-medium bg-[oklch(0.18_0.032_290)] text-pu-label">
             取消
           </button>
           <button onClick={handleBuy} disabled={loading || !canAfford}
@@ -141,13 +140,13 @@ function ShopVoucherCard({ v, onBuy }: { v: (typeof VOUCHERS)[0]; onBuy: () => v
 
       <div className="flex-1 min-w-0 space-y-1.5">
         <div className="flex items-center justify-between gap-2">
-          <h3 className="font-bold text-sm" style={{ color: "oklch(0.88 0.015 290)" }}>{t(v.nameKey)}</h3>
+          <h3 className="font-bold text-sm text-pu-text-2">{t(v.nameKey)}</h3>
           <span className="text-xs font-bold px-2.5 py-0.5 rounded-full shrink-0"
             style={{ background: `oklch(0.22 0.060 ${hue} / 0.60)`, color: `oklch(0.80 0.22 ${hue})` }}>
             {v.cost} 🪙
           </span>
         </div>
-        <p className="text-xs leading-relaxed" style={{ color: "oklch(0.55 0.015 290)" }}>{t(v.descKey)}</p>
+        <p className="text-xs leading-relaxed text-pu-label">{t(v.descKey)}</p>
         <button
           onClick={onBuy}
           className="mt-2 w-full rounded-xl py-1.5 text-xs font-bold transition-all active:scale-95"
@@ -197,8 +196,8 @@ function BagVoucherCard({ v, quantity }: { v: (typeof VOUCHERS)[0]; quantity: nu
         <p className="font-bold text-sm" style={{ color: quantity > 0 ? "oklch(0.88 0.015 290)" : "oklch(0.45 0.012 290)" }}>
           {t(v.nameKey)}
         </p>
-        <p className="text-xs mt-0.5" style={{ color: "oklch(0.50 0.015 290)" }}>{t(v.descKey)}</p>
-        <p className="text-xs mt-1.5" style={{ color: "oklch(0.48 0.015 290)" }}>
+        <p className="text-xs mt-0.5 text-pu-muted">{t(v.descKey)}</p>
+        <p className="text-xs mt-1.5 text-[oklch(0.48_0.015_290)]">
           {quantity > 0 ? (v.type === "REWIND" ? "前往漂流瓶页面使用" : "前往日记页面使用") : "暂无库存，去商店购买"}
         </p>
       </div>
@@ -260,7 +259,7 @@ export default function ShopPage() {
 
       {/* ── 顶部余额区 ── */}
       <div className="relative rounded-3xl overflow-hidden"
-        style={{ background: "linear-gradient(135deg, oklch(0.20 0.075 290), oklch(0.13 0.045 290))" }}>
+        className="rounded-2xl p-5 space-y-3 bg-[linear-gradient(135deg,oklch(0.20_0.075_290),oklch(0.13_0.045_290)])">
         <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full opacity-20"
           style={{ background: "radial-gradient(circle, oklch(0.75 0.28 290), transparent)" }} />
         <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full opacity-15"
@@ -269,21 +268,21 @@ export default function ShopPage() {
         <div className="relative p-6">
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-xs font-semibold tracking-widest uppercase" style={{ color: "oklch(0.52 0.015 290)" }}>
+              <p className="text-xs font-semibold tracking-widest uppercase text-pu-muted">
                 时光币余额
               </p>
-              <p className="mt-1 text-5xl font-black tabular-nums" style={{ color: "oklch(0.92 0.22 290)" }}>
+              <p className="mt-1 text-5xl font-black tabular-nums text-pu-active">
                 {loading ? "—" : balance?.balance ?? 0}
               </p>
-              <p className="mt-0.5 text-xs" style={{ color: "oklch(0.48 0.015 290)" }}>每天写日记打卡获取</p>
+              <p className="mt-0.5 text-xs text-pu-very-dim">每天写日记打卡获取</p>
             </div>
             {balance && (
               <div className="text-right space-y-1 pb-1">
-                <p className="text-xs" style={{ color: "oklch(0.48 0.015 290)" }}>
-                  累计获得 <span style={{ color: "oklch(0.72 0.18 140)" }}>+{balance.total_earned}</span>
+                <p className="text-xs text-pu-very-dim">
+                  累计获得 <span className="text-[oklch(0.72_0.18_140)]">+{balance.total_earned}</span>
                 </p>
-                <p className="text-xs" style={{ color: "oklch(0.48 0.015 290)" }}>
-                  累计消费 <span style={{ color: "oklch(0.72 0.18 15)" }}>-{balance.total_spent}</span>
+                <p className="text-xs text-pu-very-dim">
+                  累计消费 <span className="text-err-soft">-{balance.total_spent}</span>
                 </p>
               </div>
             )}
@@ -293,7 +292,7 @@ export default function ShopPage() {
 
       {/* ── Tab 切换 ── */}
       <div className="flex gap-1 rounded-2xl p-1.5"
-        style={{ background: "oklch(0.13 0.028 290)" }}>
+        className="rounded-2xl p-5 space-y-4 bg-[oklch(0.13_0.028_290)]">
         {(["shop", "bag"] as const).map((key) => (
           <button
             key={key}
@@ -318,8 +317,8 @@ export default function ShopPage() {
           </div>
 
           <div className="rounded-2xl p-4 space-y-3"
-            style={{ background: "oklch(0.12 0.024 290)", border: "1px solid oklch(0.22 0.032 290 / 0.40)" }}>
-            <p className="text-xs font-semibold" style={{ color: "oklch(0.60 0.015 290)" }}>💡 如何赚取时光币</p>
+            className="rounded-xl px-3 py-2.5 space-y-1 bg-[oklch(0.12_0.024_290)] border border-[oklch(0.22_0.032_290/0.40)]">
+            <p className="text-xs font-semibold text-pu-label">💡 如何赚取时光币</p>
             <div className="grid grid-cols-2 gap-2 text-xs">
               {[
                 ["📝", "写日记打卡", "+5"],
@@ -327,11 +326,10 @@ export default function ShopPage() {
                 ["⭐", "连续 7 天", "+5"],
                 ["🏆", "连续 30 天", "+10"],
               ].map(([icon, label, bonus]) => (
-                <div key={label} className="flex items-center gap-2 rounded-xl px-3 py-2"
-                  style={{ background: "oklch(0.16 0.032 290)" }}>
+                <div key={label} className="flex items-center gap-2 rounded-xl px-3 py-2 bg-[oklch(0.16_0.032_290)]">
                   <span>{icon}</span>
-                  <span style={{ color: "oklch(0.55 0.015 290)" }}>{label}</span>
-                  <span className="ml-auto font-bold" style={{ color: "oklch(0.70 0.18 140)" }}>{bonus}</span>
+                  <span className="text-pu-label">{label}</span>
+                  <span className="ml-auto font-bold text-[oklch(0.70_0.18_140)]">{bonus}</span>
                 </div>
               ))}
             </div>
@@ -345,7 +343,7 @@ export default function ShopPage() {
           {VOUCHERS.map((v) => (
             <BagVoucherCard key={v.type} v={v} quantity={getQty(v.type)} />
           ))}
-          <p className="text-xs text-center pt-2" style={{ color: "oklch(0.40 0.012 290)" }}>
+          <p className="text-xs text-center pt-2 text-pu-ghost">
             日记页面使用 ⚡❄️ · 漂流瓶页面使用 🔄
           </p>
         </div>
@@ -353,24 +351,23 @@ export default function ShopPage() {
 
       {/* ── 流水记录 ── */}
       <div className="space-y-2">
-        <p className="text-xs font-semibold" style={{ color: "oklch(0.50 0.015 290)" }}>{t("history")}</p>
+        <p className="text-xs font-semibold text-pu-muted">{t("history")}</p>
         {history.length === 0 ? (
-          <p className="text-xs text-center py-6" style={{ color: "oklch(0.36 0.012 290)" }}>{t("noHistory")}</p>
+          <p className="text-xs text-center py-6 text-pu-ghost">{t("noHistory")}</p>
         ) : (
           <ul className="space-y-1.5">
             {history.map((tx) => (
-              <li key={tx.id} className="flex items-center justify-between rounded-2xl px-4 py-2.5"
-                style={{ background: "oklch(0.13 0.026 290)", border: "1px solid oklch(0.22 0.030 290 / 0.30)" }}>
+              <li key={tx.id}
+                className="flex items-center justify-between rounded-xl px-3 py-2.5 bg-[oklch(0.13_0.026_290)] border border-[oklch(0.22_0.030_290/0.30)]">
                 <div>
-                  <p className="text-xs font-medium" style={{ color: "oklch(0.66 0.015 290)" }}>
+                  <p className="text-xs font-medium text-[oklch(0.66_0.015_290)]">
                     {REASON_MAP[tx.reason] ?? tx.reason}
                   </p>
-                  <p className="text-xs" style={{ color: "oklch(0.38 0.012 290)" }}>
+                  <p className="text-xs text-pu-ghost">
                     {new Date(tx.created_at).toLocaleDateString("zh-CN")}
                   </p>
                 </div>
-                <span className="text-sm font-bold tabular-nums"
-                  style={{ color: tx.type === "EARN" ? "oklch(0.70 0.18 140)" : "oklch(0.70 0.18 15)" }}>
+                <span className={`text-sm font-bold tabular-nums ${tx.type === "EARN" ? "text-[oklch(0.70_0.18_140)]" : "text-[oklch(0.70_0.18_15)]"}`}>
                   {tx.type === "EARN" ? "+" : ""}{tx.amount}
                 </span>
               </li>
@@ -404,7 +401,7 @@ export default function ShopPage() {
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
           <div className="rounded-2xl px-5 py-3 text-sm font-semibold shadow-2xl"
-            style={{ background: "linear-gradient(135deg, oklch(0.22 0.075 290), oklch(0.18 0.050 290))", color: "oklch(0.85 0.22 290)", border: "1px solid oklch(0.42 0.16 290 / 0.50)" }}>
+                  className="rounded-2xl px-5 py-3 shadow-2xl text-sm font-bold flex items-center gap-2 bg-[linear-gradient(135deg,oklch(0.22_0.075_290),oklch(0.18_0.050_290))] text-pu-accent border border-[oklch(0.42_0.16_290/0.50)]">
             ✓ {toast}
           </div>
         </div>

@@ -79,8 +79,7 @@ function StampBadge({
         {icon}
         {unlocked && (
           <span
-            className="absolute -bottom-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full text-[9px] font-bold"
-            style={{ background: "oklch(0.55 0.22 145)", color: "oklch(0.96 0.010 145)" }}
+            className="absolute -bottom-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full text-[9px] font-bold bg-[oklch(0.55_0.22_145)] text-[oklch(0.96_0.010_145)]"
           >
             ✓
           </span>
@@ -176,8 +175,7 @@ export default function SettingsPage() {
 
         {/* watermark */}
         <div
-          className="pointer-events-none absolute -right-4 -top-2 text-[88px] font-black select-none rotate-12"
-          style={{ color: "oklch(0.22 0.040 290 / 0.30)", lineHeight: 1 }}
+          className="pointer-events-none absolute -right-4 -top-2 text-[88px] font-black select-none rotate-12 text-[oklch(0.22_0.040_290/0.30)] leading-none"
           aria-hidden
         >
           档案
@@ -186,16 +184,14 @@ export default function SettingsPage() {
         {/* archive number badge */}
         <div className="flex items-center justify-between mb-5">
           <span
-            className="rounded-lg px-2.5 py-1 font-mono text-[10px] tracking-widest"
-            style={{ background: "oklch(0.20 0.040 290)", color: "oklch(0.55 0.12 290)", border: "1px solid oklch(0.30 0.055 290 / 0.50)" }}
+            className="rounded-lg px-2.5 py-1 font-mono text-[10px] tracking-widest bg-[oklch(0.20_0.040_290)] text-[oklch(0.55_0.12_290)] border border-[oklch(0.30_0.055_290/0.50)]"
           >
             #{archiveId}
           </span>
           <span
-            className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium"
-            style={{ background: "oklch(0.18 0.055 145)", color: "oklch(0.72 0.18 145)", border: "1px solid oklch(0.35 0.12 145 / 0.50)" }}
+            className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-medium bg-[oklch(0.18_0.055_145)] text-[oklch(0.72_0.18_145)] border border-[oklch(0.35_0.12_145/0.50)]"
           >
-            <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: "oklch(0.65 0.20 145)" }} />
+            <span className="h-1.5 w-1.5 rounded-full animate-pulse bg-[oklch(0.65_0.20_145)]" />
             {t("archiveStatus")}
           </span>
         </div>
@@ -213,15 +209,15 @@ export default function SettingsPage() {
             {user?.username?.charAt(0)?.toUpperCase() ?? "?"}
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-lg font-bold truncate" style={{ color: "oklch(0.92 0.015 290)" }}>
+            <h1 className="text-lg font-bold truncate text-pu-text">
               {user?.username ?? "—"}
             </h1>
-            <p className="text-xs truncate mt-0.5" style={{ color: "oklch(0.50 0.018 290)" }}>
+            <p className="text-xs truncate mt-0.5 text-pu-dim">
               {user?.email ?? "—"}
             </p>
             <div className="flex items-center gap-1.5 mt-2">
-              <Clock className="h-3 w-3 shrink-0" style={{ color: "oklch(0.44 0.018 290)" }} />
-              <span className="text-[10px]" style={{ color: "oklch(0.44 0.018 290)" }}>
+              <Clock className="h-3 w-3 shrink-0 text-pu-very-dim" />
+              <span className="text-[10px] text-pu-very-dim">
                 {t("archiveCreated")} {createdDate}
               </span>
             </div>
@@ -229,12 +225,12 @@ export default function SettingsPage() {
         </div>
 
         {/* divider — dashed like a tear line */}
-        <div className="mt-5 border-t" style={{ borderColor: "oklch(0.28 0.040 290 / 0.50)", borderStyle: "dashed" }} />
+        <div className="mt-5 border-t border-dashed border-[oklch(0.28_0.040_290/0.50)]" />
 
         {/* file stamp at bottom */}
         <div className="mt-4 flex items-center gap-2">
-          <Stamp className="h-3.5 w-3.5 shrink-0" style={{ color: "oklch(0.45 0.055 290)" }} />
-          <span className="font-mono text-[10px] tracking-widest" style={{ color: "oklch(0.38 0.040 290)" }}>
+          <Stamp className="h-3.5 w-3.5 shrink-0 text-[oklch(0.45_0.055_290)]" />
+          <span className="font-mono text-[10px] tracking-widest text-[oklch(0.38_0.040_290)]">
             HEARTCAVE · PERSONAL ARCHIVE · {new Date().getFullYear()}
           </span>
         </div>
@@ -248,8 +244,7 @@ export default function SettingsPage() {
         }}
       >
         <CornerDots color="oklch(0.35 0.050 290 / 0.45)" />
-        <p className="text-xs font-semibold tracking-widest mb-4" style={{ color: "oklch(0.44 0.018 290)" }}>
-          {t("statsTitle")}
+        <p className="text-xs font-semibold tracking-widest mb-4 text-pu-very-dim">
         </p>
         <div className="grid grid-cols-3 gap-3">
           {STATS.map(({ icon, label, value, accent }) => (
@@ -262,7 +257,7 @@ export default function SettingsPage() {
               <span className="text-lg font-bold tabular-nums leading-none" style={{ color: accent }}>
                 {value}
               </span>
-              <span className="text-[10px] text-center leading-tight px-1" style={{ color: "oklch(0.48 0.015 290)" }}>
+              <span className="text-[10px] text-center leading-tight px-1 text-pu-very-dim">
                 {label}
               </span>
             </div>
@@ -278,12 +273,11 @@ export default function SettingsPage() {
         }}
       >
         <CornerDots color="oklch(0.35 0.050 290 / 0.45)" />
-        <p className="text-xs font-semibold tracking-widest mb-4" style={{ color: "oklch(0.44 0.018 290)" }}>
-          {t("moodTitle")}
+        <p className="text-xs font-semibold tracking-widest mb-4 text-pu-very-dim">
         </p>
 
         {sortedMoods.length === 0 ? (
-          <p className="text-xs text-center py-3" style={{ color: "oklch(0.40 0.015 290)" }}>
+          <p className="text-xs text-center py-3 text-pu-ghost">
             {t("moodEmpty")}
           </p>
         ) : (
@@ -294,8 +288,7 @@ export default function SettingsPage() {
               return (
                 <div key={mood} className="flex items-center gap-3">
                   <span className="w-5 text-center text-base leading-none">{meta.icon}</span>
-                  <div className="flex-1 relative h-5 rounded-full overflow-hidden"
-                    style={{ background: "oklch(0.18 0.028 290)" }}>
+                  <div className="flex-1 relative h-5 rounded-full overflow-hidden bg-[oklch(0.18_0.028_290)]">
                     <motion.div
                       className="absolute inset-y-0 left-0 rounded-full"
                       style={{ background: meta.color, opacity: 0.75 }}
@@ -303,13 +296,11 @@ export default function SettingsPage() {
                       animate={{ width: `${pct}%` }}
                       transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
                     />
-                    <span className="absolute inset-0 flex items-center px-2.5 text-[10px] font-medium"
-                      style={{ color: "oklch(0.88 0.012 290)" }}>
+                    <span className="absolute inset-0 flex items-center px-2.5 text-[10px] font-medium text-pu-text-2">
                       {tMood(mood ?? "neutral")} · {count}
                     </span>
                   </div>
-                  <span className="w-7 text-right text-[10px] tabular-nums shrink-0"
-                    style={{ color: "oklch(0.48 0.015 290)" }}>
+                  <span className="w-7 text-right text-[10px] tabular-nums shrink-0 text-pu-very-dim">
                     {pct}%
                   </span>
                 </div>
@@ -328,10 +319,10 @@ export default function SettingsPage() {
       >
         <CornerDots color="oklch(0.35 0.050 290 / 0.45)" />
         <div className="flex items-center justify-between mb-5">
-          <p className="text-xs font-semibold tracking-widest" style={{ color: "oklch(0.44 0.018 290)" }}>
+          <p className="text-xs font-semibold tracking-widest text-pu-very-dim">
             {t("badgesTitle")}
           </p>
-          <span className="text-[10px]" style={{ color: "oklch(0.40 0.015 290)" }}>
+          <span className="text-[10px] text-pu-ghost">
             {BADGES.filter((b) => b.unlocked).length} / {BADGES.length}
           </span>
         </div>

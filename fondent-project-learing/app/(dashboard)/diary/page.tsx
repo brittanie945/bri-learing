@@ -20,8 +20,7 @@ function CoinToast({ amount, onDone }: { amount: number; onDone: () => void }) {
   }, [onDone]);
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-bounce">
-      <div className="rounded-2xl px-5 py-3 shadow-2xl text-sm font-bold flex items-center gap-2"
-        style={{ background: "linear-gradient(135deg, oklch(0.22 0.070 290), oklch(0.18 0.050 290))", color: "oklch(0.82 0.22 290)", border: "1px solid oklch(0.40 0.14 290 / 0.60)" }}>
+      <div className="rounded-2xl px-5 py-3 shadow-2xl text-sm font-bold flex items-center gap-2 bg-[linear-gradient(135deg,oklch(0.22_0.070_290),oklch(0.18_0.050_290))] text-pu-accent border border-[oklch(0.40_0.14_290/0.60)]">
         🪙 +{amount} 时光币
       </div>
     </div>
@@ -79,25 +78,24 @@ function VoucherModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4" onClick={onClose}>
       <div className="absolute inset-0 bg-[oklch(0.04_0.020_290/0.80)] backdrop-blur-md" />
-      <div className="relative rounded-3xl p-6 max-w-sm w-full space-y-4"
-        style={{ background: "oklch(0.11 0.030 290)", border: `1px solid oklch(0.32 0.060 ${hue} / 0.50)` }}
+      <div className="relative rounded-3xl p-6 max-w-sm w-full space-y-4 bg-[oklch(0.11_0.030_290)]"
+        style={{ border: `1px solid oklch(0.32 0.060 ${hue} / 0.50)` }}
         onClick={(e) => e.stopPropagation()}>
         <div className="text-center space-y-2">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl text-3xl"
             style={{ background: `linear-gradient(135deg, oklch(0.26 0.070 ${hue}), oklch(0.18 0.045 ${hue}))`, boxShadow: `0 0 20px oklch(0.50 0.18 ${hue} / 0.35)` }}>
             {icons[type]}
           </div>
-          <h3 className="text-base font-bold" style={{ color: "oklch(0.88 0.015 290)" }}>{names[type]}</h3>
-          <p className="text-xs leading-relaxed" style={{ color: "oklch(0.55 0.015 290)" }}>{warnings[type]}</p>
+          <h3 className="text-base font-bold text-pu-text-2">{names[type]}</h3>
+          <p className="text-xs leading-relaxed text-pu-label">{warnings[type]}</p>
           <p className="text-xs font-semibold rounded-xl px-3 py-1.5 inline-block"
             style={{ background: `oklch(0.20 0.055 ${hue} / 0.50)`, color: `oklch(0.78 0.20 ${hue})` }}>
             消耗 1 张 {icons[type]}（背包库存）
           </p>
         </div>
-        {error && <p className="text-xs text-center" style={{ color: "oklch(0.72 0.18 15)" }}>{error}</p>}
+        {error && <p className="text-xs text-center text-err-soft">{error}</p>}
         <div className="flex gap-2">
-          <button onClick={onClose} className="flex-1 rounded-2xl py-2 text-sm font-medium"
-            style={{ background: "oklch(0.18 0.032 290)", color: "oklch(0.55 0.015 290)" }}>
+          <button onClick={onClose} className="flex-1 rounded-2xl py-2 text-sm font-medium bg-[oklch(0.18_0.032_290)] text-pu-label">
             {t("cancel")}
           </button>
           <button onClick={handleConfirm} disabled={loading} className="flex-1 rounded-2xl py-2 text-sm font-semibold disabled:opacity-50"
@@ -126,21 +124,20 @@ function DiaryCard({
   const freezeQty = inventory.find((i) => i.voucher_type === "TIME_FREEZE")?.quantity ?? 0;
 
   return (
-    <div className="rounded-2xl border p-4 transition-all"
-      style={{ background: "oklch(0.14 0.030 290)", borderColor: "oklch(0.26 0.038 290 / 0.50)" }}>
+    <div className="rounded-2xl border p-4 transition-all bg-[oklch(0.14_0.030_290)] border-[oklch(0.26_0.038_290/0.50)]">
       <div className="flex items-start justify-between gap-3 cursor-pointer" onClick={onClick}>
         <div className="flex-1 min-w-0">
           {isLocked ? (
-            <p className="text-sm font-semibold" style={{ color: "oklch(0.52 0.015 290)" }}>{t("locked")}</p>
+            <p className="text-sm font-semibold text-pu-muted">{t("locked")}</p>
           ) : (
-            <h3 className="font-semibold truncate" style={{ color: "oklch(0.85 0.015 290)" }}>
+            <h3 className="font-semibold truncate text-pu-text-3">
               {entry.title}
             </h3>
           )}
-          <p className="text-xs mt-0.5" style={{ color: "oklch(0.44 0.015 290)" }}>
+          <p className="text-xs mt-0.5 text-pu-very-dim">
             {new Date(entry.created_at).toLocaleDateString()}
             {isLocked && entry.unlock_at && (
-              <span className="ml-2" style={{ color: "oklch(0.70 0.18 70)" }}>
+              <span className="ml-2 text-[oklch(0.70_0.18_70)]">
                 {t("unlocksOn")} {new Date(entry.unlock_at).toLocaleDateString()}
               </span>
             )}
@@ -151,8 +148,7 @@ function DiaryCard({
             <span className={`text-xs px-2 py-0.5 rounded-full border ${moodColor}`}>{entry.mood}</span>
           )}
           {entry.is_capsule && (
-            <span className="text-xs px-2 py-0.5 rounded-full"
-              style={{ background: "oklch(0.22 0.055 70 / 0.40)", color: "oklch(0.72 0.18 70)" }}>⏰</span>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-[oklch(0.22_0.055_70/0.40)] text-[oklch(0.72_0.18_70)]">⏰</span>
           )}
         </div>
       </div>
@@ -162,15 +158,13 @@ function DiaryCard({
         <div className="mt-3 flex gap-2" onClick={(e) => e.stopPropagation()}>
           {accelQty > 0 && (
             <button onClick={() => onVoucher("TIME_ACCELERATE", entry.id)}
-              className="flex-1 rounded-xl py-1.5 text-xs font-medium transition-colors"
-              style={{ background: "oklch(0.22 0.050 70 / 0.50)", color: "oklch(0.75 0.18 70)", border: "1px solid oklch(0.40 0.14 70 / 0.40)" }}>
+              className="flex-1 rounded-xl py-1.5 text-xs font-medium transition-colors bg-[oklch(0.22_0.050_70/0.50)] text-[oklch(0.75_0.18_70)] border border-[oklch(0.40_0.14_70/0.40)]">
               ⚡ 加速开启 <span className="opacity-70">({accelQty}张)</span>
             </button>
           )}
           {freezeQty > 0 && (
             <button onClick={() => onVoucher("TIME_FREEZE", entry.id)}
-              className="flex-1 rounded-xl py-1.5 text-xs font-medium transition-colors"
-              style={{ background: "oklch(0.18 0.040 220 / 0.50)", color: "oklch(0.72 0.18 220)", border: "1px solid oklch(0.38 0.12 220 / 0.40)" }}>
+              className="flex-1 rounded-xl py-1.5 text-xs font-medium transition-colors bg-[oklch(0.18_0.040_220/0.50)] text-[oklch(0.72_0.18_220)] border border-[oklch(0.38_0.12_220/0.40)]">
               ❄️ 冻结延期 <span className="opacity-70">({freezeQty}张)</span>
             </button>
           )}
@@ -180,8 +174,7 @@ function DiaryCard({
       {!isLocked && entry.tags && entry.tags.length > 0 && (
         <div className="flex flex-wrap gap-1 mt-3">
           {entry.tags.slice(0, 4).map((tag) => (
-            <span key={tag} className="text-xs px-1.5 py-0.5 rounded"
-              style={{ background: "oklch(0.20 0.045 290 / 0.60)", color: "oklch(0.62 0.015 290)" }}>
+              <span key={tag} className="text-xs px-1.5 py-0.5 rounded bg-[oklch(0.20_0.045_290/0.60)] text-pu-label">
               #{tag}
             </span>
           ))}
@@ -249,12 +242,10 @@ export default function DiaryPage() {
   if (view !== "list") {
     return (
       <div className="space-y-6 max-w-2xl mx-auto">
-        <button onClick={() => setView("list")} className="text-sm flex items-center gap-1 transition-colors"
-          style={{ color: "oklch(0.65 0.18 290)" }}>
+        <button onClick={() => setView("list")} className="text-sm flex items-center gap-1 transition-colors text-pu-cursor">
           ← {t("cancel")}
         </button>
-        <h1 className="text-2xl font-bold" style={{ color: "oklch(0.88 0.015 290)" }}>
-          {view === "capsule" ? t("newCapsule") : t("newDiary")}
+        <h1 className="text-2xl font-bold text-pu-text-2">
         </h1>
         <DiaryEditor
           onSave={handleSave}
@@ -269,16 +260,14 @@ export default function DiaryPage() {
     <div className="space-y-6 max-w-2xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold" style={{ color: "oklch(0.88 0.015 290)" }}>{t("title")}</h1>
+        <h1 className="text-2xl font-bold text-pu-text-2">{t("title")}</h1>
         <div className="flex gap-2">
           <button onClick={() => setView("capsule")}
-            className="px-3 py-1.5 text-sm rounded-xl inline-flex items-center gap-1 font-medium transition-colors"
-            style={{ background: "oklch(0.22 0.055 70 / 0.40)", color: "oklch(0.75 0.18 70)", border: "1px solid oklch(0.40 0.14 70 / 0.40)" }}>
+            className="px-3 py-1.5 text-sm rounded-xl inline-flex items-center gap-1 font-medium transition-colors bg-[oklch(0.22_0.055_70/0.40)] text-[oklch(0.75_0.18_70)] border border-[oklch(0.40_0.14_70/0.40)]">
             <Timer className="h-4 w-4" /> {t("newCapsule")}
           </button>
           <button onClick={() => setView("new")}
-            className="px-3 py-1.5 text-sm rounded-xl inline-flex items-center gap-1 font-semibold transition-colors"
-            style={{ background: "linear-gradient(135deg, oklch(0.68 0.24 290), oklch(0.65 0.24 330))", color: "white" }}>
+            className="px-3 py-1.5 text-sm rounded-xl inline-flex items-center gap-1 font-semibold transition-colors bg-gradient-cta text-white">
             <Plus className="h-4 w-4" /> {t("newDiary")}
           </button>
         </div>
@@ -287,17 +276,15 @@ export default function DiaryPage() {
       {/* Filters */}
       <div className="flex flex-wrap gap-2">
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("search")}
-          className="flex-1 min-w-40 rounded-xl px-3 py-1.5 text-sm focus:outline-none"
-          style={{ background: "oklch(0.17 0.035 290)", border: "1px solid oklch(0.30 0.045 290 / 0.50)", color: "oklch(0.85 0.012 290)" }} />
+          className="flex-1 min-w-40 rounded-xl px-3 py-1.5 text-sm focus:outline-none bg-[oklch(0.17_0.035_290)] border border-[oklch(0.30_0.045_290/0.50)] text-pu-text-3" />
         <select value={filterMood} onChange={(e) => setFilterMood(e.target.value)}
-          className="rounded-xl px-3 py-1.5 text-sm focus:outline-none"
-          style={{ background: "oklch(0.17 0.035 290)", border: "1px solid oklch(0.30 0.045 290 / 0.50)", color: "oklch(0.75 0.012 290)" }}>
+          className="rounded-xl px-3 py-1.5 text-sm focus:outline-none bg-[oklch(0.17_0.035_290)] border border-[oklch(0.30_0.045_290/0.50)] text-[oklch(0.75_0.012_290)]">
           <option value="">{t("all")}</option>
           {["happy", "sad", "anxious", "calm", "angry", "neutral"].map((m) => (
             <option key={m} value={m}>{tm(m)}</option>
           ))}
         </select>
-        <label className="flex items-center gap-2 text-sm px-2" style={{ color: "oklch(0.60 0.015 290)" }}>
+        <label className="flex items-center gap-2 text-sm px-2 text-pu-label">
           <input type="checkbox" checked={showCapsuleOnly} onChange={(e) => setShowCapsuleOnly(e.target.checked)} className="accent-amber-500" />
           {t("filterCapsule")}
         </label>
@@ -305,7 +292,7 @@ export default function DiaryPage() {
 
       {/* Voucher success msg */}
       {voucherMsg && (
-        <p className="rounded-xl px-4 py-2.5 text-sm" style={{ background: "oklch(0.16 0.045 140)", color: "oklch(0.75 0.18 140)", border: "1px solid oklch(0.35 0.12 140 / 0.40)" }}>
+        <p className="rounded-xl px-4 py-2.5 text-sm bg-[oklch(0.16_0.045_140)] text-[oklch(0.75_0.18_140)] border border-[oklch(0.35_0.12_140/0.40)]">
           ✓ {voucherMsg}
         </p>
       )}
@@ -313,13 +300,13 @@ export default function DiaryPage() {
       {/* List */}
       {loading ? (
         <div className="flex justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: "oklch(0.65 0.18 290)", borderTopColor: "transparent" }} />
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-t-transparent border-pu-cursor" />
         </div>
       ) : error ? (
-        <p className="text-sm rounded-xl px-4 py-3" style={{ color: "oklch(0.75 0.18 15)", background: "oklch(0.16 0.040 15)" }}>{error}</p>
+        <p className="text-sm rounded-xl px-4 py-3 text-err-soft bg-err-bg">{error}</p>
       ) : entries.length === 0 ? (
-        <div className="rounded-2xl border-dashed border p-12 text-center" style={{ borderColor: "oklch(0.28 0.038 290 / 0.50)" }}>
-          <p className="text-sm" style={{ color: "oklch(0.44 0.015 290)" }}>{t("noEntries")}</p>
+        <div className="rounded-2xl border-dashed border p-12 text-center border-[oklch(0.28_0.038_290/0.50)]">
+          <p className="text-sm text-pu-very-dim">{t("noEntries")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3">

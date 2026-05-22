@@ -127,28 +127,25 @@ export function ChatView() {
 
   return (
     <div
-      className="flex flex-col h-[calc(100vh-7rem)] md:h-[calc(100vh-4rem)] overflow-hidden rounded-2xl"
-      style={{ border: "1px solid oklch(0.26 0.040 290 / 0.45)" }}
+      className="flex flex-col h-[calc(100vh-7rem)] md:h-[calc(100vh-4rem)] overflow-hidden rounded-2xl border border-[oklch(0.26_0.040_290/0.45)]"
     >
       {/* ── 聊天主区域 ── */}
-      <div className="flex flex-1 flex-col min-w-0 overflow-hidden" style={{ background: "oklch(0.13 0.028 290)" }}>
+        <div className="flex flex-1 flex-col min-w-0 overflow-hidden bg-[oklch(0.13_0.028_290)]">
         {!activeSession && !loadingSession && (
           <div className="flex flex-1 flex-col items-center justify-center gap-6 p-8">
             <div
-              className="flex h-20 w-20 items-center justify-center rounded-3xl"
-              style={{ background: "linear-gradient(135deg, oklch(0.45 0.22 290), oklch(0.42 0.22 330))", boxShadow: "0 0 40px oklch(0.35 0.28 300 / 0.40)" }}
+              className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-chat-empty shadow-chat-empty"
             >
               <Sparkles className="h-10 w-10 text-white" />
             </div>
             <div className="text-center">
-              <h2 className="text-xl font-bold mb-2" style={{ color: "oklch(0.90 0.010 290)" }}>{t("title")}</h2>
-              <p className="text-sm max-w-xs" style={{ color: "oklch(0.50 0.015 290)" }}>{t("emptyDesc")}</p>
+              <h2 className="text-xl font-bold mb-2 text-pu-text">{t("title")}</h2>
+              <p className="text-sm max-w-xs text-pu-muted">{t("emptyDesc")}</p>
             </div>
             <button
               onClick={() => setShowTimeModal(true)}
               disabled={creating}
-              className="flex items-center gap-2 rounded-xl px-6 py-3 font-semibold text-sm transition-all"
-              style={{ background: "linear-gradient(135deg, oklch(0.60 0.24 290), oklch(0.57 0.24 330))", color: "white", boxShadow: "0 4px 20px oklch(0.35 0.28 300 / 0.45)" }}
+              className="flex items-center gap-2 rounded-xl px-6 py-3 font-semibold text-sm transition-all bg-gradient-chat-cta text-white shadow-chat-cta"
             >
               <Plus className="h-4 w-4" />
               {t("startNewSession")}
@@ -158,7 +155,7 @@ export function ChatView() {
 
         {loadingSession && !activeSession && (
           <div className="flex flex-1 items-center justify-center">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: "oklch(0.55 0.20 290)", borderTopColor: "transparent" }} />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent border-pu-cursor" />
           </div>
         )}
 
@@ -166,18 +163,16 @@ export function ChatView() {
           <>
             {/* 标题栏 */}
             <div
-              className="shrink-0 flex items-center gap-3 px-5 py-3 border-b"
-              style={{ borderColor: "oklch(0.22 0.034 290 / 0.45)" }}
+              className="shrink-0 flex items-center gap-3 px-5 py-3 border-b border-[oklch(0.22_0.034_290/0.45)]"
             >
-              <Sparkles className="h-4 w-4 shrink-0" style={{ color: "oklch(0.75 0.22 290)" }} />
-              <span className="text-sm font-semibold truncate flex-1" style={{ color: "oklch(0.88 0.012 290)" }}>
+              <Sparkles className="h-4 w-4 shrink-0 text-pu-sparkle" />
+              <span className="text-sm font-semibold truncate flex-1 text-pu-text-2">
                 {activeSession.title}
               </span>
               <button
                 onClick={handleDeleteActiveSession}
-                className="shrink-0 flex items-center justify-center h-7 w-7 rounded-lg transition-colors hover:bg-[oklch(0.20_0.040_290)]"
+                className="shrink-0 flex items-center justify-center h-7 w-7 rounded-lg transition-colors hover:bg-[oklch(0.20_0.040_290)] text-pu-very-dim"
                 title={t("confirmDelete")}
-                style={{ color: "oklch(0.44 0.012 290)" }}
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -186,12 +181,12 @@ export function ChatView() {
             <div className="flex-1 overflow-y-auto px-4 py-5">
               {loadingSession && (
                 <div className="flex justify-center py-8">
-                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: "oklch(0.55 0.20 290)", borderTopColor: "transparent" }} />
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent border-pu-cursor" />
                 </div>
               )}
               {activeSession.messages.length === 0 && !loadingSession && (
                 <div className="text-center py-8">
-                  <p className="text-sm" style={{ color: "oklch(0.45 0.012 290)" }}>{t("firstMessage")}</p>
+                  <p className="text-sm text-pu-ghost">{t("firstMessage")}</p>
                 </div>
               )}
               {activeSession.messages.map((msg) => (
@@ -201,10 +196,9 @@ export function ChatView() {
               <div ref={bottomRef} />
             </div>
 
-            <div className="shrink-0 p-4 border-t" style={{ borderColor: "oklch(0.22 0.034 290 / 0.45)" }}>
+            <div className="shrink-0 p-4 border-t border-[oklch(0.22_0.034_290/0.45)]">
               <div
-                className="flex items-end gap-3 rounded-2xl px-4 py-3"
-                style={{ background: "oklch(0.17 0.038 290)", border: "1px solid oklch(0.30 0.055 290 / 0.50)" }}
+                  className="flex items-end gap-3 rounded-2xl px-4 py-3 bg-pu-surface-hi border border-pu-border-md"
               >
                 <textarea
                   ref={textareaRef}
@@ -214,19 +208,17 @@ export function ChatView() {
                   placeholder={t("inputPlaceholder")}
                   disabled={sending}
                   rows={1}
-                  className="flex-1 resize-none bg-transparent text-sm outline-none min-h-6 max-h-32"
-                  style={{ color: "oklch(0.88 0.012 290)" }}
+                  className="flex-1 resize-none bg-transparent text-sm outline-none min-h-6 max-h-32 text-pu-text-2"
                 />
                 <button
                   onClick={handleSend}
                   disabled={!input.trim() || sending}
-                  className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl transition-all disabled:opacity-40"
-                  style={{ background: "linear-gradient(135deg, oklch(0.60 0.24 290), oklch(0.57 0.24 330))", color: "white" }}
+                  className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl transition-all disabled:opacity-40 bg-gradient-chat-cta text-white"
                 >
                   <Send className="h-3.5 w-3.5" />
                 </button>
               </div>
-              <p className="mt-1.5 text-center text-xs" style={{ color: "oklch(0.38 0.010 290)" }}>
+              <p className="mt-1.5 text-center text-xs text-pu-ghost">
                 {t("sendHint")}
               </p>
             </div>

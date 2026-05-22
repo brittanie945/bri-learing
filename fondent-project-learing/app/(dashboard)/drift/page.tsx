@@ -16,12 +16,11 @@ function MyBottleCard({
   rewindQty: number;
 }) {
   return (
-    <div className="rounded-2xl p-4 space-y-3 transition-all"
-      style={{ background: "oklch(0.14 0.030 290)", border: "1px solid oklch(0.26 0.038 290 / 0.50)" }}>
+    <div className="rounded-2xl p-4 space-y-3 transition-all bg-[oklch(0.14_0.030_290)] border border-[oklch(0.26_0.038_290/0.50)]">
       <div className="cursor-pointer" onClick={onExpand}>
-        <p className="text-sm line-clamp-2" style={{ color: "oklch(0.75 0.012 290)" }}>{bottle.content}</p>
+        <p className="text-sm line-clamp-2 text-[oklch(0.75_0.012_290)]">{bottle.content}</p>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-xs" style={{ color: "oklch(0.44 0.015 290)" }}>
+          <span className="text-xs text-pu-very-dim">
             {new Date(bottle.created_at).toLocaleDateString()}
           </span>
           <span className="text-xs px-2 py-0.5 rounded-full"
@@ -34,14 +33,13 @@ function MyBottleCard({
       </div>
       {!bottle.is_picked && rewindQty > 0 && (
         <button onClick={(e) => { e.stopPropagation(); onRewind(bottle.id); }}
-          className="w-full rounded-xl py-1.5 text-xs font-medium transition-colors"
-          style={{ background: "oklch(0.20 0.045 15 / 0.50)", color: "oklch(0.72 0.18 15)", border: "1px solid oklch(0.38 0.12 15 / 0.35)" }}>
+          className="w-full rounded-xl py-1.5 text-xs font-medium transition-colors bg-[oklch(0.20_0.045_15/0.50)] text-err-soft border border-[oklch(0.38_0.12_15/0.35)]">
           🔄 倒带召回 <span className="opacity-70">({rewindQty}张)</span>
         </button>
       )}
       {!bottle.is_picked && rewindQty === 0 && (
-        <p className="text-xs text-center" style={{ color: "oklch(0.40 0.012 290)" }}>
-          无倒带券，去<a href="/shop" className="underline" style={{ color: "oklch(0.62 0.18 290)" }}>商城</a>购买
+        <p className="text-xs text-center text-pu-ghost">
+          无倒带券，去<a href="/shop" className="underline text-pu-cursor">商城</a>购买
         </p>
       )}
     </div>
@@ -71,24 +69,23 @@ function BottleDetailModal({ bottle, t, onClose, onReply }: {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div className="absolute inset-0 bg-[oklch(0.06_0.028_290/0.75)] backdrop-blur-sm" />
-      <div className="relative w-full max-w-md rounded-2xl p-6 space-y-5"
-        style={{ background: "oklch(0.13 0.030 290)", border: "1px solid oklch(0.28 0.045 290 / 0.60)" }}
+      <div className="relative w-full max-w-md rounded-2xl p-6 space-y-5 bg-[oklch(0.13_0.030_290)] border border-[oklch(0.28_0.045_290/0.60)]"
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold" style={{ color: "oklch(0.85 0.015 290)" }}>{t("bottleDetail")}</h3>
-          <button onClick={onClose} className="text-xl leading-none" style={{ color: "oklch(0.50 0.015 290)" }}>×</button>
+          <h3 className="font-semibold text-pu-text-3">{t("bottleDetail")}</h3>
+          <button onClick={onClose} className="text-xl leading-none text-pu-muted">×</button>
         </div>
-        <div className="rounded-xl p-4" style={{ background: "oklch(0.18 0.045 220 / 0.40)", border: "1px solid oklch(0.35 0.10 220 / 0.40)" }}>
-          <p className="text-sm leading-relaxed" style={{ color: "oklch(0.78 0.012 290)" }}>{bottle.content}</p>
-          <p className="text-xs mt-2" style={{ color: "oklch(0.44 0.015 290)" }}>{new Date(bottle.created_at).toLocaleString()}</p>
+        <div className="rounded-xl p-4 bg-[oklch(0.18_0.045_220/0.40)] border border-[oklch(0.35_0.10_220/0.40)]">
+          <p className="text-sm leading-relaxed text-[oklch(0.78_0.012_290)]">{bottle.content}</p>
+          <p className="text-xs mt-2 text-pu-very-dim">{new Date(bottle.created_at).toLocaleString()}</p>
         </div>
         {bottle.replies && bottle.replies.length > 0 && (
           <div className="space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: "oklch(0.50 0.015 290)" }}>{t("replies")}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-pu-muted">{t("replies")}</p>
             {bottle.replies.map((r) => (
-              <div key={r.id} className="rounded-lg p-3" style={{ background: "oklch(0.17 0.032 290)", border: "1px solid oklch(0.26 0.038 290 / 0.45)" }}>
-                <p className="text-sm" style={{ color: "oklch(0.72 0.012 290)" }}>{r.content}</p>
-                <p className="text-xs mt-1" style={{ color: "oklch(0.42 0.015 290)" }}>{new Date(r.created_at).toLocaleString()}</p>
+              <div key={r.id} className="rounded-lg p-3 bg-[oklch(0.17_0.032_290)] border border-[oklch(0.26_0.038_290/0.45)]">
+                <p className="text-sm text-[oklch(0.72_0.012_290)]">{r.content}</p>
+                <p className="text-xs mt-1 text-[oklch(0.42_0.015_290)]">{new Date(r.created_at).toLocaleString()}</p>
               </div>
             ))}
           </div>
@@ -96,11 +93,9 @@ function BottleDetailModal({ bottle, t, onClose, onReply }: {
         <div className="space-y-2">
           <textarea value={replyText} onChange={(e) => setReplyText(e.target.value)}
             placeholder={t("replyPlaceholder")} rows={3}
-            className="w-full rounded-xl px-3 py-2 text-sm focus:outline-none resize-none"
-            style={{ background: "oklch(0.18 0.038 290)", border: "1px solid oklch(0.30 0.045 290 / 0.55)", color: "oklch(0.82 0.012 290)" }} />
+            className="w-full rounded-xl px-3 py-2 text-sm focus:outline-none resize-none bg-[oklch(0.18_0.038_290)] border border-[oklch(0.30_0.045_290/0.55)] text-pu-text-2" />
           <button onClick={submitReply} disabled={sending || !replyText.trim()}
-            className="w-full py-2 text-sm rounded-xl disabled:opacity-50 font-medium"
-            style={{ background: "linear-gradient(135deg, oklch(0.68 0.24 290), oklch(0.65 0.24 330))", color: "white" }}>
+            className="w-full py-2 text-sm rounded-xl disabled:opacity-50 font-medium bg-gradient-cta text-white">
             {sending ? "…" : t("sendReply")}
           </button>
         </div>
@@ -133,26 +128,22 @@ function RewindConfirmModal({ bottleId, onClose, onSuccess }: {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4" onClick={onClose}>
       <div className="absolute inset-0 bg-[oklch(0.06_0.028_290/0.75)] backdrop-blur-sm" />
-      <div className="relative rounded-2xl p-6 max-w-sm w-full space-y-4"
-        style={{ background: "oklch(0.13 0.030 290)", border: "1px solid oklch(0.28 0.045 290 / 0.60)" }}
+      <div className="relative rounded-2xl p-6 max-w-sm w-full space-y-4 bg-[oklch(0.13_0.030_290)] border border-[oklch(0.28_0.045_290/0.60)]"
         onClick={(e) => e.stopPropagation()}>
         <div className="text-center space-y-2">
           <span className="text-4xl">🔄</span>
-          <h3 className="text-base font-bold" style={{ color: "oklch(0.85 0.015 290)" }}>{tc("rewind")}</h3>
-          <p className="text-xs leading-relaxed" style={{ color: "oklch(0.55 0.015 290)" }}>{tc("rewindWarning")}</p>
-          <p className="text-xs font-semibold rounded-xl px-3 py-1.5 inline-block"
-            style={{ background: "oklch(0.20 0.045 15 / 0.50)", color: "oklch(0.72 0.18 15)" }}>
+          <h3 className="text-base font-bold text-pu-text-3">{tc("rewind")}</h3>
+          <p className="text-xs leading-relaxed text-pu-label">{tc("rewindWarning")}</p>
+          <p className="text-xs font-semibold rounded-xl px-3 py-1.5 inline-block bg-[oklch(0.20_0.045_15/0.50)] text-err-soft">
             消耗 1 张 🔄（背包库存）
           </p>
         </div>
-        {error && <p className="text-xs text-center" style={{ color: "oklch(0.72 0.18 15)" }}>{error}</p>}
+        {error && <p className="text-xs text-center text-err-soft">{error}</p>}
         <div className="flex gap-2">
-          <button onClick={onClose} className="flex-1 rounded-xl py-2 text-sm font-medium"
-            style={{ background: "oklch(0.20 0.035 290)", color: "oklch(0.60 0.015 290)" }}>
+          <button onClick={onClose} className="flex-1 rounded-xl py-2 text-sm font-medium bg-[oklch(0.20_0.035_290)] text-pu-label">
             {tc("cancel")}
           </button>
-          <button onClick={handleConfirm} disabled={loading} className="flex-1 rounded-xl py-2 text-sm font-semibold disabled:opacity-50"
-            style={{ background: "linear-gradient(135deg, oklch(0.65 0.22 15), oklch(0.60 0.22 30))", color: "white" }}>
+          <button onClick={handleConfirm} disabled={loading} className="flex-1 rounded-xl py-2 text-sm font-semibold disabled:opacity-50 bg-[linear-gradient(135deg,oklch(0.65_0.22_15),oklch(0.60_0.22_30))] text-white">
             {loading ? "召回中…" : tc("confirmUse")}
           </button>
         </div>
@@ -250,52 +241,45 @@ export default function DriftPage() {
 
   return (
     <div className="space-y-8 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold" style={{ color: "oklch(0.88 0.015 290)" }}>{t("title")}</h1>
+      <h1 className="text-2xl font-bold text-pu-text-2">{t("title")}</h1>
 
       {/* Throw a bottle */}
-      <section className="rounded-2xl p-6 space-y-4"
-        style={{ background: "oklch(0.13 0.030 290)", border: "1px solid oklch(0.26 0.038 290 / 0.50)" }}>
-        <h2 className="font-semibold" style={{ color: "oklch(0.78 0.015 290)" }}>{t("throwTitle")}</h2>
+      <section className="rounded-2xl p-6 space-y-4 bg-[oklch(0.13_0.030_290)] border border-[oklch(0.26_0.038_290/0.50)]">
+        <h2 className="font-semibold text-[oklch(0.78_0.015_290)]">{t("throwTitle")}</h2>
         <textarea value={throwContent} onChange={(e) => setThrowContent(e.target.value)}
           placeholder={t("throwPlaceholder")} rows={5}
-          className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none resize-none"
-          style={{ background: "oklch(0.18 0.038 290)", border: "1px solid oklch(0.30 0.045 290 / 0.55)", color: "oklch(0.82 0.012 290)" }} />
+          className="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none resize-none bg-[oklch(0.18_0.038_290)] border border-[oklch(0.30_0.045_290/0.55)] text-pu-text-2" />
         <button onClick={handleThrow} disabled={throwing || !throwContent.trim()}
-          className="px-5 py-2 text-sm rounded-xl font-semibold disabled:opacity-50 transition-all"
-          style={{ background: "linear-gradient(135deg, oklch(0.68 0.24 290), oklch(0.65 0.24 330))", color: "white" }}>
+          className="px-5 py-2 text-sm rounded-xl font-semibold disabled:opacity-50 transition-all bg-gradient-cta text-white">
           {throwing ? t("throwing") : t("throw")}
         </button>
       </section>
 
       {/* Pick a bottle */}
-      <section className="rounded-2xl p-6 space-y-4"
-        style={{ background: "oklch(0.13 0.030 290)", border: "1px solid oklch(0.26 0.038 290 / 0.50)" }}>
-        <h2 className="font-semibold" style={{ color: "oklch(0.78 0.015 290)" }}>{t("pickTitle")}</h2>
-        <p className="text-sm" style={{ color: "oklch(0.50 0.015 290)" }}>{t("pickDesc")}</p>
+      <section className="rounded-2xl p-6 space-y-4 bg-[oklch(0.13_0.030_290)] border border-[oklch(0.26_0.038_290/0.50)]">
+        <h2 className="font-semibold text-[oklch(0.78_0.015_290)]">{t("pickTitle")}</h2>
+        <p className="text-sm text-pu-muted">{t("pickDesc")}</p>
         {pickError && (
-          <p className="text-sm rounded-xl px-3 py-2" style={{ color: "oklch(0.72 0.18 70)", background: "oklch(0.18 0.045 70 / 0.50)" }}>{pickError}</p>
+          <p className="text-sm rounded-xl px-3 py-2 text-[oklch(0.72_0.18_70)] bg-[oklch(0.18_0.045_70/0.50)]">{pickError}</p>
         )}
         {!pickedBottle ? (
           <button onClick={handlePick} disabled={picking}
-            className="px-5 py-2 text-sm rounded-xl font-medium disabled:opacity-50 transition-colors"
-            style={{ background: "oklch(0.20 0.050 220 / 0.60)", color: "oklch(0.72 0.18 220)", border: "1px solid oklch(0.38 0.12 220 / 0.45)" }}>
+            className="px-5 py-2 text-sm rounded-xl font-medium disabled:opacity-50 transition-colors bg-[oklch(0.20_0.050_220/0.60)] text-[oklch(0.72_0.18_220)] border border-[oklch(0.38_0.12_220/0.45)]">
             {picking ? t("picking") : t("pick")}
           </button>
         ) : (
           <div className="space-y-3">
-            <div className="rounded-xl p-4" style={{ background: "oklch(0.18 0.045 220 / 0.40)", border: "1px solid oklch(0.35 0.10 220 / 0.40)" }}>
-              <p className="text-sm leading-relaxed" style={{ color: "oklch(0.78 0.012 290)" }}>{pickedBottle.content}</p>
-              <p className="text-xs mt-2" style={{ color: "oklch(0.44 0.015 290)" }}>{new Date(pickedBottle.created_at).toLocaleString()}</p>
+            <div className="rounded-xl p-4 bg-[oklch(0.18_0.045_220/0.40)] border border-[oklch(0.35_0.10_220/0.40)]">
+              <p className="text-sm leading-relaxed text-[oklch(0.78_0.012_290)]">{pickedBottle.content}</p>
+              <p className="text-xs mt-2 text-pu-very-dim">{new Date(pickedBottle.created_at).toLocaleString()}</p>
             </div>
             <div className="flex gap-2">
               <button onClick={() => setExpandedBottle(pickedBottle)}
-                className="px-3 py-1.5 text-sm rounded-xl transition-colors"
-                style={{ background: "oklch(0.18 0.038 290)", color: "oklch(0.65 0.015 290)", border: "1px solid oklch(0.28 0.040 290 / 0.50)" }}>
+                className="px-3 py-1.5 text-sm rounded-xl transition-colors bg-[oklch(0.18_0.038_290)] text-pu-label border border-[oklch(0.28_0.040_290/0.50)]">
                 {t("replyBtn")}
               </button>
               <button onClick={() => { setPickedBottle(null); setPickError(""); }}
-                className="px-3 py-1.5 text-sm rounded-xl transition-colors"
-                style={{ background: "oklch(0.18 0.038 290)", color: "oklch(0.58 0.015 290)", border: "1px solid oklch(0.26 0.038 290 / 0.45)" }}>
+                className="px-3 py-1.5 text-sm rounded-xl transition-colors bg-[oklch(0.18_0.038_290)] text-pu-muted border border-[oklch(0.26_0.038_290/0.45)]">
                 {t("pickAnother")}
               </button>
             </div>
@@ -305,14 +289,14 @@ export default function DriftPage() {
 
       {/* My bottles */}
       <section className="space-y-4">
-        <h2 className="font-semibold" style={{ color: "oklch(0.78 0.015 290)" }}>{t("myBottles")}</h2>
+        <h2 className="font-semibold text-[oklch(0.78_0.015_290)]">{t("myBottles")}</h2>
         {loadingMine ? (
           <div className="flex justify-center py-8">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent" style={{ borderColor: "oklch(0.65 0.18 290)", borderTopColor: "transparent" }} />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent border-pu-cursor" />
           </div>
         ) : myBottles.length === 0 ? (
-          <div className="rounded-2xl border-dashed border p-8 text-center" style={{ borderColor: "oklch(0.28 0.038 290 / 0.50)" }}>
-            <p className="text-sm" style={{ color: "oklch(0.44 0.015 290)" }}>{t("noBottles")}</p>
+          <div className="rounded-2xl border-dashed border p-8 text-center border-[oklch(0.28_0.038_290/0.50)]">
+            <p className="text-sm text-pu-very-dim">{t("noBottles")}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

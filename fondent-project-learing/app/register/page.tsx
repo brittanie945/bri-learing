@@ -49,9 +49,9 @@ export default function RegisterPage() {
   return (
     <AuthShell
       footer={(
-        <p className="text-center text-xs" style={{ color: "oklch(0.48 0.015 290)" }}>
+        <p className="text-center text-xs text-pu-dim">
           {t("hasAccount")}{" "}
-          <Link href="/login" className="font-medium transition-colors" style={{ color: "oklch(0.76 0.22 290)" }}>
+          <Link href="/login" className="font-medium transition-colors text-pu-link">
             {t("login")}
           </Link>
         </p>
@@ -65,7 +65,7 @@ export default function RegisterPage() {
           { id: "confirmPassword", label: t("confirmPassword"), type: "password", placeholder: t("confirmPasswordPlaceholder"), key: "confirmPassword" },
         ].map(({ id, label, type, placeholder, key }) => (
           <div key={id} className="space-y-1.5">
-            <label className="text-xs font-medium tracking-wide" style={{ color: "oklch(0.58 0.015 290)" }}>
+            <label className="text-xs font-medium tracking-wide text-pu-label">
               {label}
             </label>
             <Input
@@ -86,7 +86,7 @@ export default function RegisterPage() {
         ))}
 
         {error && (
-          <p className="rounded-xl px-3 py-2 text-sm" style={{ color: "oklch(0.80 0.20 15)", background: "oklch(0.20 0.045 15)" }}>
+          <p className="rounded-xl px-3 py-2 text-sm text-err-text bg-err-bg">
             {error}
           </p>
         )}
@@ -95,13 +95,9 @@ export default function RegisterPage() {
           type="submit"
           disabled={loading}
           className="h-10 w-full rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50"
-          style={{
-            background: loading
-              ? "oklch(0.45 0.18 310)"
-              : "linear-gradient(135deg, oklch(0.68 0.24 330), oklch(0.70 0.24 290))",
-            color: "white",
-            boxShadow: loading ? "none" : "0 4px 20px oklch(0.40 0.28 310 / 0.50)",
-          }}
+          className={`h-10 w-full rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 text-white ${
+            loading ? "bg-[oklch(0.45_0.18_310)]" : "bg-gradient-cta-alt shadow-cta"
+          }`}
         >
           {loading ? t("submitting") : t("submit")}
         </button>

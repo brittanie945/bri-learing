@@ -55,9 +55,9 @@ export default function LoginPage() {
   return (
     <AuthShell
       footer={(
-        <p className="text-center text-xs" style={{ color: "oklch(0.48 0.015 290)" }}>
+        <p className="text-center text-xs text-pu-dim">
           {t("noAccount")}{" "}
-          <Link href="/register" className="font-medium transition-colors" style={{ color: "oklch(0.76 0.22 290)" }}>
+          <Link href="/register" className="font-medium transition-colors text-pu-link">
             {t("register")}
           </Link>
         </p>
@@ -65,7 +65,7 @@ export default function LoginPage() {
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <label className="text-xs font-medium tracking-wide" style={{ color: "oklch(0.58 0.015 290)" }}>
+          <label className="text-xs font-medium tracking-wide text-pu-label">
             {t("loginField")}
           </label>
           <Input
@@ -81,14 +81,14 @@ export default function LoginPage() {
             }}
           />
           {fieldErrors.login && (
-            <p className="text-xs" style={{ color: "oklch(0.72 0.18 15)" }}>
+            <p className="text-xs text-err-soft">
               {fieldErrors.login}
             </p>
           )}
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-xs font-medium tracking-wide" style={{ color: "oklch(0.58 0.015 290)" }}>
+          <label className="text-xs font-medium tracking-wide text-pu-label">
             {t("password")}
           </label>
           <Input
@@ -105,14 +105,14 @@ export default function LoginPage() {
             }}
           />
           {fieldErrors.password && (
-            <p className="text-xs" style={{ color: "oklch(0.72 0.18 15)" }}>
+            <p className="text-xs text-err-soft">
               {fieldErrors.password}
             </p>
           )}
         </div>
 
         {error && (
-          <p className="rounded-xl px-3 py-2 text-sm" style={{ color: "oklch(0.80 0.20 15)", background: "oklch(0.20 0.045 15)" }}>
+          <p className="rounded-xl px-3 py-2 text-sm text-err-text bg-err-bg">
             {error}
           </p>
         )}
@@ -120,14 +120,9 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="mt-1 h-10 w-full rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50"
-          style={{
-            background: loading
-              ? "oklch(0.45 0.18 290)"
-              : "linear-gradient(135deg, oklch(0.68 0.24 290), oklch(0.65 0.24 330))",
-            color: "white",
-            boxShadow: loading ? "none" : "0 4px 20px oklch(0.40 0.28 300 / 0.50)",
-          }}
+          className={`mt-1 h-10 w-full rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 text-white ${
+            loading ? "bg-[oklch(0.45_0.18_290)]" : "bg-gradient-cta shadow-cta"
+          }`}
         >
           {loading ? t("submitting") : t("submit")}
         </button>

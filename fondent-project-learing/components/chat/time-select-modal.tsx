@@ -23,33 +23,23 @@ export function TimeSelectModal({ onSelect, onClose, t }: TimeSelectModalProps) 
       onClick={onClose}
     >
       <div
-        className="absolute inset-0"
-        style={{ background: "oklch(0.06 0.028 290 / 0.75)", backdropFilter: "blur(8px)" }}
+        className="absolute inset-0 backdrop-blur-[8px] bg-[oklch(0.06_0.028_290/0.75)]"
       />
       <div
-        className="relative w-full max-w-md rounded-2xl p-6"
-        style={{
-          background: "oklch(0.14 0.032 290)",
-          border: "1px solid oklch(0.30 0.055 290 / 0.55)",
-          boxShadow: "0 24px 60px oklch(0.05 0.030 290 / 0.80)",
-        }}
+        className="relative w-full max-w-md rounded-2xl p-6 bg-pu-surface border border-pu-border-md shadow-modal-light"
         onClick={(e) => e.stopPropagation()}
       >
         {/* 图标 + 标题 */}
         <div className="text-center mb-6">
           <div
-            className="inline-flex h-14 w-14 items-center justify-center rounded-2xl mb-3"
-            style={{
-              background: "linear-gradient(135deg, oklch(0.52 0.24 290), oklch(0.48 0.24 330))",
-              boxShadow: "0 0 28px oklch(0.40 0.28 300 / 0.45)",
-            }}
+            className="inline-flex h-14 w-14 items-center justify-center rounded-2xl mb-3 bg-gradient-icon shadow-icon-glow"
           >
             <Sparkles className="h-7 w-7 text-white" />
           </div>
-          <h2 className="text-lg font-bold" style={{ color: "oklch(0.93 0.010 290)" }}>
+          <h2 className="text-lg font-bold text-pu-text">
             {t("selectTime")}
           </h2>
-          <p className="mt-1 text-sm" style={{ color: "oklch(0.52 0.015 290)" }}>
+          <p className="mt-1 text-sm text-pu-muted">
             {t("selectTimeDesc")}
           </p>
         </div>
@@ -60,12 +50,7 @@ export function TimeSelectModal({ onSelect, onClose, t }: TimeSelectModalProps) 
             <button
               key={key}
               onClick={() => onSelect(key)}
-              className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all duration-150 hover:scale-[1.01]"
-              style={{
-                background: "oklch(0.18 0.040 290)",
-                border: "1px solid oklch(0.32 0.055 290 / 0.45)",
-                color: "oklch(0.85 0.015 290)",
-              }}
+              className="flex items-center gap-3 rounded-xl px-4 py-3.5 text-left transition-all duration-150 hover:scale-[1.01] bg-[oklch(0.18_0.040_290)] border border-[oklch(0.32_0.055_290/0.45)] text-pu-text-3"
             >
               <span className="text-xl">{icon}</span>
               <span className="font-medium text-sm">{t(labelKey)}</span>
