@@ -90,6 +90,7 @@ function SeedWidget() {
           status={seed?.status ?? null}
           streakDays={seed?.streak_days ?? 0}
           isWatering={isWatering}
+          seedType={seed?.seed_type ?? null}
           size={52}
         />
       </div>

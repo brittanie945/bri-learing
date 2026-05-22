@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment, Suspense, useCallback, useEffect, useState, startTransition } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Home, BookOpen, Calendar, Mail, LogOut, TreePine, Menu, X, MessageSquare, ShoppingBag, Coins, Archive, ChevronDown, Plus } from "lucide-react";
@@ -13,8 +13,8 @@ import { chatApi, type ChatSession } from "@/lib/api/chat";
 // ── 对话列表子面板 ──
 function ChatSubPanel({ onNavigate }: { onNavigate?: () => void }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentSid = searchParams.get("sid");
+  const pathname = usePathname();
+  const currentSid = pathname.startsWith("/chat/") ? pathname.slice(6) : null;
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [collapsed, setCollapsed] = useState(false);
 
@@ -33,8 +33,14 @@ function ChatSubPanel({ onNavigate }: { onNavigate?: () => void }) {
     return () => window.removeEventListener("chat-sessions-updated", h);
   }, [load]);
 
-  function nav(url: string) {
-    router.push(url);
+  function switchSession(sid: string) {
+    router.push(`/chat/${sid}`);
+    onNavigate?.();
+  }
+
+  function newSession() {
+    router.push("/chat");
+    window.dispatchEvent(new Event("chat-new-session"));
     onNavigate?.();
   }
 
@@ -57,7 +63,7 @@ function ChatSubPanel({ onNavigate }: { onNavigate?: () => void }) {
           {/* + 新对话 */}
           <div className="px-2 pb-1.5">
             <button
-              onClick={() => nav("/chat?new=1")}
+              onClick={newSession}
               className="w-full flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium transition-all hover:scale-[1.01] bg-[oklch(0.20_0.055_290/0.70)] text-pu-new-chat"
             >
               <Plus className="h-3 w-3" />
@@ -75,7 +81,7 @@ function ChatSubPanel({ onNavigate }: { onNavigate?: () => void }) {
             {sessions.map((s) => (
               <button
                 key={s.id}
-                onClick={() => nav(`/chat?sid=${s.id}`)}
+                onClick={() => switchSession(s.id)}
                 className={`group relative w-full text-left px-3 py-2 flex items-center gap-2 transition-colors rounded-lg ${
                   currentSid === s.id
                     ? "bg-[oklch(0.20_0.050_290)] text-[oklch(0.82_0.015_290)]"
@@ -113,12 +119,12 @@ function SidebarNav({
   t: (key: string) => string;
   onNavigate?: () => void;
 }) {
-  const isChatPage = pathname === "/chat";
+  const isChatPage = pathname === "/chat" || pathname.startsWith("/chat/");
   return (
     <nav className="flex-1 px-3 py-4 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
       <div className="space-y-0.5">
         {navConfig.map(({ key, href, Icon }) => {
-          const isActive = pathname === href;
+          const isActive = key === "chat" ? pathname === href || pathname.startsWith("/chat/") : pathname === href;
           return (
             <Fragment key={href}>
               <Link

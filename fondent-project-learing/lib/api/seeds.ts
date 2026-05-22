@@ -47,6 +47,7 @@ export interface Seed {
 export interface CurrentSeedResponse {
   active_seed: Seed | null;
   withered_seeds: Seed[];
+  sprouted_seeds: Seed[];
 }
 
 export interface WaterSeedResponse {

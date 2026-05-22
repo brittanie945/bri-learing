@@ -33,10 +33,11 @@ _SPROUT_ENCOURAGEMENTS = [
 
 
 async def svc_get_current(db: AsyncSession, user_id: UUID) -> CurrentSeedResponse:
-    """获取当前种子状态 + 枯枝记录（惰性枯萎检测在此触发）。"""
+    """获取当前种子状态 + 枯枝记录 + 已发芽大树历史（惰性枯萎检测在此触发）。"""
     all_seeds = await get_all_seeds(db, user_id)
     active = None
     withered = []
+    sprouted = []
     for seed in all_seeds:
         if seed.status == "growing":
             withered_now = await auto_wither_if_missed(db, seed)
@@ -46,9 +47,12 @@ async def svc_get_current(db: AsyncSession, user_id: UUID) -> CurrentSeedRespons
                 active = seed
         elif seed.status == "withered":
             withered.append(seed)
+        elif seed.status == "sprouted":
+            sprouted.append(seed)
     return CurrentSeedResponse(
         active_seed=SeedResponse.model_validate(active) if active else None,
         withered_seeds=[SeedResponse.model_validate(s) for s in withered],
+        sprouted_seeds=[SeedResponse.model_validate(s) for s in sprouted],
     )
 
 

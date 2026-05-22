@@ -52,4 +52,5 @@ class WaterSeedResponse(BaseModel):
 
 class CurrentSeedResponse(BaseModel):
     active_seed: Optional[SeedResponse]
-    withered_seeds: List[SeedResponse]  # 枯枝记录
+    withered_seeds: List[SeedResponse]   # 枯枝记录
+    sprouted_seeds: List[SeedResponse]   # 已发芽成大树的历史记录

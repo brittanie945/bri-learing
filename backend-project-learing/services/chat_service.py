@@ -134,17 +134,14 @@ async def svc_create_session(
 
     if data.time_preset and data.time_preset != "all":
         now = datetime.now(timezone.utc)
+        from dateutil.relativedelta import relativedelta
         if data.time_preset == "3m":
-            from dateutil.relativedelta import relativedelta
             time_from = now - relativedelta(months=3)
         elif data.time_preset == "6m":
-            from dateutil.relativedelta import relativedelta
             time_from = now - relativedelta(months=6)
         elif data.time_preset == "1y":
-            from dateutil.relativedelta import relativedelta
             time_from = now - relativedelta(years=1)
         elif data.time_preset == "2y":
-            from dateutil.relativedelta import relativedelta
             time_from = now - relativedelta(years=2)
         time_to = now
 

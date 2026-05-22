@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, startTransition } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Plus, Trash2, Sparkles, Send } from "lucide-react";
 import { chatApi, type ChatSessionDetail, type ChatMessage } from "@/lib/api/chat";
 import { MessageBubble } from "./message-bubble";
@@ -12,9 +12,8 @@ import { TimeSelectModal, type TimePreset } from "./time-select-modal";
 export function ChatView() {
   const t = useTranslations("chat");
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const sid = searchParams.get("sid");
-  const isNew = searchParams.get("new") === "1";
+  const params = useParams();
+  const sid = params.sid as string | undefined;
 
   const [activeSession, setActiveSession] = useState<ChatSessionDetail | null>(null);
   const [showTimeModal, setShowTimeModal] = useState(false);
@@ -26,22 +25,22 @@ export function ChatView() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // 根据 URL 中的 sid 加载对应会话
+  // URL sid 变化时加载对应会话
   useEffect(() => {
     if (!sid) { startTransition(() => setActiveSession(null)); return; }
-    if (activeSession?.id === sid) return;
     startTransition(() => setLoadingSession(true));
     chatApi.getSession(sid)
       .then(setActiveSession)
       .catch(() => setActiveSession(null))
       .finally(() => setLoadingSession(false));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sid]);
 
-  // ?new=1 自动弹出新对话 Modal
+  // 监听侧边栏"新对话"事件
   useEffect(() => {
-    if (isNew) startTransition(() => setShowTimeModal(true));
-  }, [isNew]);
+    const handler = () => setShowTimeModal(true);
+    window.addEventListener("chat-new-session", handler);
+    return () => window.removeEventListener("chat-new-session", handler);
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,9 +51,8 @@ export function ChatView() {
     setCreating(true);
     try {
       const session = await chatApi.createSession({ time_preset: preset });
-      setActiveSession(session);
-      router.push(`/chat?sid=${session.id}`);
       window.dispatchEvent(new Event("chat-sessions-updated"));
+      router.push(`/chat/${session.id}`);
     } catch (e) {
       alert(e instanceof Error ? e.message : "创建失败");
     } finally {
@@ -66,9 +64,8 @@ export function ChatView() {
     if (!activeSession || !confirm(t("confirmDelete"))) return;
     try {
       await chatApi.deleteSession(activeSession.id);
-      setActiveSession(null);
-      router.push("/chat");
       window.dispatchEvent(new Event("chat-sessions-updated"));
+      router.push("/chat");
     } catch { /* ignore */ }
   };
 
@@ -226,16 +223,12 @@ export function ChatView() {
         )}
       </div>
 
-      {showTimeModal && (
-        <TimeSelectModal
-          onSelect={handleTimeSelect}
-          onClose={() => {
-            setShowTimeModal(false);
-            if (isNew) router.replace("/chat");
-          }}
-          t={t}
-        />
-      )}
+      <TimeSelectModal
+        open={showTimeModal}
+        onSelect={handleTimeSelect}
+        onClose={() => setShowTimeModal(false)}
+        t={t}
+      />
     </div>
   );
 }

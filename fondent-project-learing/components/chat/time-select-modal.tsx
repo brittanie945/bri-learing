@@ -1,4 +1,11 @@
 import { Sparkles } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export const TIME_PRESETS = [
   { key: "all", labelKey: "allTime",     icon: "🌌" },
@@ -11,41 +18,33 @@ export const TIME_PRESETS = [
 export type TimePreset = (typeof TIME_PRESETS)[number]["key"];
 
 interface TimeSelectModalProps {
+  open: boolean;
   onSelect: (preset: TimePreset) => void;
   onClose: () => void;
   t: (key: string) => string;
 }
 
-export function TimeSelectModal({ onSelect, onClose, t }: TimeSelectModalProps) {
+export function TimeSelectModal({ open, onSelect, onClose, t }: TimeSelectModalProps) {
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      onClick={onClose}
-    >
-      <div
-        className="absolute inset-0 backdrop-blur-[8px] bg-[oklch(0.06_0.028_290/0.75)]"
-      />
-      <div
-        className="relative w-full max-w-md rounded-2xl p-6 bg-pu-surface border border-pu-border-md shadow-modal-light"
-        onClick={(e) => e.stopPropagation()}
+    <Dialog open={open} onOpenChange={(o) => { if (!o) onClose(); }}>
+      <DialogContent
+        showCloseButton
+        className="max-w-md bg-pu-surface border border-pu-border-md p-6"
       >
-        {/* 图标 + 标题 */}
-        <div className="text-center mb-6">
-          <div
-            className="inline-flex h-14 w-14 items-center justify-center rounded-2xl mb-3 bg-gradient-icon shadow-icon-glow"
-          >
+        <DialogHeader className="items-center text-center">
+          <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl mb-1 bg-gradient-icon shadow-icon-glow">
             <Sparkles className="h-7 w-7 text-white" />
           </div>
-          <h2 className="text-lg font-bold text-pu-text">
+          <DialogTitle className="text-lg font-bold text-pu-text">
             {t("selectTime")}
-          </h2>
-          <p className="mt-1 text-sm text-pu-muted">
+          </DialogTitle>
+          <DialogDescription className="text-sm text-pu-muted">
             {t("selectTimeDesc")}
-          </p>
-        </div>
+          </DialogDescription>
+        </DialogHeader>
 
         {/* 预设选项 */}
-        <div className="grid grid-cols-1 gap-2.5">
+        <div className="grid grid-cols-1 gap-2.5 mt-2">
           {TIME_PRESETS.map(({ key, labelKey, icon }) => (
             <button
               key={key}
@@ -57,7 +56,7 @@ export function TimeSelectModal({ onSelect, onClose, t }: TimeSelectModalProps) 
             </button>
           ))}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

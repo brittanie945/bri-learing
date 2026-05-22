@@ -3,9 +3,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Leaf, Droplets, Sparkles, RefreshCw } from "lucide-react";
+import { Leaf, Droplets, Sparkles, RefreshCw, TreePine } from "lucide-react";
 import { seedsApi, type Seed, type CurrentSeedResponse } from "@/lib/api/seeds";
 import { coinsApi } from "@/lib/api/coins";
+import { useRouter } from "next/navigation";
 import { SeedAnimation } from "./seed-animation";
 import { PlantModal } from "./plant-modal";
 import { DeadBranchCard } from "./dead-branch-card";
@@ -57,6 +58,7 @@ function Toast({ message, onDone }: { message: string; onDone: () => void }) {
 
 export function SeedView() {
   const t = useTranslations("seeds");
+  const router = useRouter();
   const [data, setData] = useState<CurrentSeedResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [showPlant, setShowPlant] = useState(false);
@@ -124,6 +126,7 @@ export function SeedView() {
 
   const seed: Seed | null = data?.active_seed ?? null;
   const witherSeeds = data?.withered_seeds ?? [];
+  const sproutedSeeds = data?.sprouted_seeds ?? [];
   const latestWithered = witherSeeds.find((s) => !s.is_revived) ?? null;
 
   if (loading) {
@@ -156,6 +159,7 @@ export function SeedView() {
           status={seed?.status ?? null}
           streakDays={seed?.streak_days ?? 0}
           isWatering={isWatering}
+          seedType={seed?.seed_type ?? null}
           size={Math.min(window?.innerWidth ? window.innerWidth * 0.7 : 340, 420)}
         />
         {/* 预留大树空间，可后续扩展为大树动画 */}
@@ -306,6 +310,27 @@ export function SeedView() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* ── 时光森林入口 ── */}
+      {sproutedSeeds.length > 0 && (
+        <div className="w-full max-w-2xl mx-auto mt-8 px-2">
+          <button
+            onClick={() => router.push("/seeds/forest")}
+            className="w-full flex items-center gap-4 rounded-2xl px-5 py-4 transition-all hover:scale-[1.01] active:scale-[0.99] bg-[oklch(0.17_0.038_145/0.50)] border border-[oklch(0.38_0.14_145/0.35)] shadow-[0_4px_20px_oklch(0.38_0.14_145/0.15)]"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[oklch(0.22_0.060_145/0.60)] text-xl shrink-0">
+              🌳
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-semibold text-[oklch(0.82_0.14_145)]">我的时光森林</p>
+              <p className="text-xs mt-0.5 text-[oklch(0.55_0.08_145)]">
+                已种下 {sproutedSeeds.length} 棵大树，查看全部记录
+              </p>
+            </div>
+            <TreePine className="h-4 w-4 shrink-0 text-[oklch(0.65_0.16_145)]" strokeWidth={1.8} />
+          </button>
+        </div>
+      )}
 
       {/* ── Dead branch records ── */}
       {witherSeeds.length > 0 && (
