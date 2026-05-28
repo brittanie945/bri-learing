@@ -24,21 +24,26 @@ from services.diary_service import (
     svc_mood_stats,
     svc_memory_lane,
 )
+import logging
+from core.response import ok, created
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/diary", tags=["diary"])
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)
+@router.post("")
 async def create_diary(
     data: DiaryCreate,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
+    logger.info("POST /diary user_id=%s", user_id)
     diary, coins_earned = await svc_create_diary(db, user_id, data)
-    return {**diary.model_dump(), "coins_earned": coins_earned}
+    return created({**diary.model_dump(), "coins_earned": coins_earned})
 
 
-@router.get("", response_model=list[DiaryListResponse])
+@router.get("")
 async def list_diaries(
     mood: Optional[str] = Query(None),
     is_capsule: Optional[bool] = Query(None),
@@ -49,48 +54,55 @@ async def list_diaries(
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await svc_list_diaries(db, user_id, mood, is_capsule, tag, search, limit, offset)
+    logger.info("GET /diary user_id=%s mood=%s search=%s", user_id, mood, search)
+    return ok(await svc_list_diaries(db, user_id, mood, is_capsule, tag, search, limit, offset))
 
 
-@router.get("/memory-lane", response_model=list[DiaryListResponse])
+@router.get("/memory-lane")
 async def memory_lane(
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await svc_memory_lane(db, user_id)
+    logger.info("GET /diary/memory-lane user_id=%s", user_id)
+    return ok(await svc_memory_lane(db, user_id))
 
 
-@router.get("/stats/mood", response_model=MoodStats)
+@router.get("/stats/mood")
 async def mood_stats(
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await svc_mood_stats(db, user_id)
+    logger.info("GET /diary/stats/mood user_id=%s", user_id)
+    return ok(await svc_mood_stats(db, user_id))
 
 
-@router.get("/{diary_id}", response_model=DiaryResponse)
+@router.get("/{diary_id}")
 async def get_diary(
     diary_id: UUID,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await svc_get_diary(db, user_id, diary_id)
+    logger.info("GET /diary/%s user_id=%s", diary_id, user_id)
+    return ok(await svc_get_diary(db, user_id, diary_id))
 
 
-@router.patch("/{diary_id}", response_model=DiaryResponse)
+@router.patch("/{diary_id}")
 async def update_diary(
     diary_id: UUID,
     data: DiaryUpdate,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await svc_update_diary(db, user_id, diary_id, data)
+    logger.info("PATCH /diary/%s user_id=%s", diary_id, user_id)
+    return ok(await svc_update_diary(db, user_id, diary_id, data))
 
 
-@router.delete("/{diary_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{diary_id}")
 async def delete_diary(
     diary_id: UUID,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
+    logger.info("DELETE /diary/%s user_id=%s", diary_id, user_id)
     await svc_delete_diary(db, user_id, diary_id)
+    return ok()

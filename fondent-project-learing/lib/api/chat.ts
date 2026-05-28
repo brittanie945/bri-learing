@@ -1,28 +1,5 @@
-import { getToken, logout } from "@/lib/auth-client";
-
-const BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-
-function authHeaders() {
-  const token = getToken();
-  return {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-}
-
-async function req<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    ...init,
-    headers: { ...authHeaders(), ...(init?.headers ?? {}) },
-  });
-  if (res.status === 401) {
-    logout();
-    throw new Error("登录已过期，请重新登录");
-  }
-  const json = await res.json();
-  if (!res.ok) throw new Error(json.detail || "请求失败");
-  return json as T;
-}
+import { req, BASE, authHeaders } from "@/lib/api/request";
+import { logout } from "@/lib/auth-client";
 
 // ────── Types ──────
 
@@ -102,13 +79,9 @@ export const chatApi = {
     onDone: () => void,
     onError?: (msg: string) => void,
   ) => {
-    const token = getToken();
     const res = await fetch(`${BASE}/chat/sessions/${sessionId}/messages`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
+      headers: authHeaders(),
       body: JSON.stringify({ content }),
     });
 

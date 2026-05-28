@@ -26,8 +26,8 @@ export async function register(data: {
     body: JSON.stringify(data),
   });
   const json = await res.json();
-  if (!res.ok) throw new Error(json.detail || "注册失败");
-  return json;
+  if (!res.ok || json.code >= 400) throw new Error(json.message || json.detail || "注册失败");
+  return json.data as UserResponse;
 }
 
 export async function login(data: {
@@ -40,12 +40,13 @@ export async function login(data: {
     body: JSON.stringify(data),
   });
   const json = await res.json();
-  if (!res.ok) throw new Error(json.detail || "登录失败");
+  if (!res.ok || json.code >= 400) throw new Error(json.message || json.detail || "登录失败");
+  const tokenData = json.data as TokenResponse;
   if (typeof window !== 'undefined') {
-    localStorage.setItem("token", json.access_token);
-    localStorage.setItem("user", JSON.stringify(json.user));
+    localStorage.setItem("token", tokenData.access_token);
+    localStorage.setItem("user", JSON.stringify(tokenData.user));
   }
-  return json;
+  return tokenData;
 }
 
 export function logout() {

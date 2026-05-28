@@ -21,18 +21,23 @@ from schemas.chat_schemas import (
     MessageCreate,
 )
 from services.chat_service import svc_create_session, svc_stream_message
+import logging
+from core.response import ok as ok_response, created
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
 
-@router.post("/sessions", response_model=SessionDetailResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/sessions")
 async def create_session(
     data: SessionCreate,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
+    logger.info("POST /chat/sessions user_id=%s", user_id)
     session = await svc_create_session(db, user_id, data)
-    return SessionDetailResponse(
+    return created(SessionDetailResponse(
         id=session.id,
         user_id=session.user_id,
         title=session.title,
@@ -42,29 +47,31 @@ async def create_session(
         system_prompt=session.system_prompt,
         created_at=session.created_at,
         messages=[],
-    )
+    ))
 
 
-@router.get("/sessions", response_model=list[SessionResponse])
+@router.get("/sessions")
 async def list_my_sessions(
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await list_sessions(db, user_id)
+    logger.info("GET /chat/sessions user_id=%s", user_id)
+    return ok_response([SessionResponse.model_validate(s) for s in await list_sessions(db, user_id)])
 
 
-@router.get("/sessions/{session_id}", response_model=SessionDetailResponse)
+@router.get("/sessions/{session_id}")
 async def get_session_detail(
     session_id: UUID,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
+    logger.info("GET /chat/sessions/%s user_id=%s", session_id, user_id)
     from fastapi import HTTPException
     session = await get_session(db, session_id, user_id)
     if not session:
         raise HTTPException(status_code=404, detail="会话不存在")
     messages = await get_session_messages(db, session_id)
-    return SessionDetailResponse(
+    return ok_response(SessionDetailResponse(
         id=session.id,
         user_id=session.user_id,
         title=session.title,
@@ -74,7 +81,7 @@ async def get_session_detail(
         system_prompt=session.system_prompt,
         created_at=session.created_at,
         messages=[ChatMessageResponse.model_validate(m) for m in messages],
-    )
+    ))
 
 
 @router.post("/sessions/{session_id}/messages")
@@ -84,6 +91,7 @@ async def send_message(
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
+    logger.info("POST /chat/sessions/%s/messages user_id=%s", session_id, user_id)
     generator = svc_stream_message(db, user_id, session_id, data.content)
     return StreamingResponse(
         generator,
@@ -95,13 +103,15 @@ async def send_message(
     )
 
 
-@router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/sessions/{session_id}")
 async def remove_session(
     session_id: UUID,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
+    logger.info("DELETE /chat/sessions/%s user_id=%s", session_id, user_id)
     from fastapi import HTTPException
-    ok = await delete_session(db, session_id, user_id)
-    if not ok:
+    deleted = await delete_session(db, session_id, user_id)
+    if not deleted:
         raise HTTPException(status_code=404, detail="会话不存在")
+    return ok_response()

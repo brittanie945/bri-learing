@@ -16,30 +16,37 @@ from services.quote_service import (
     svc_get_collection,
     svc_get_today,
 )
+import logging
+from core.response import ok, created
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/quotes", tags=["quotes"])
 
 
-@router.get("/today", response_model=TodayQuoteResponse)
+@router.get("/today")
 async def get_today_quote(
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await svc_get_today(db, user_id)
+    logger.info("GET /quotes/today user_id=%s", user_id)
+    return ok(await svc_get_today(db, user_id))
 
 
-@router.post("/{quote_id}/collect", response_model=CollectQuoteResponse)
+@router.post("/{quote_id}/collect")
 async def collect_quote(
     quote_id: int,
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await svc_collect(db, user_id, quote_id)
+    logger.info("POST /quotes/%s/collect user_id=%s", quote_id, user_id)
+    return ok(await svc_collect(db, user_id, quote_id))
 
 
-@router.get("/my-collection", response_model=list[CollectedQuoteItem])
+@router.get("/my-collection")
 async def my_collection(
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
-    return await svc_get_collection(db, user_id)
+    logger.info("GET /quotes/my-collection user_id=%s", user_id)
+    return ok(await svc_get_collection(db, user_id))
