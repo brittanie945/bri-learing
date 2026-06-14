@@ -140,6 +140,7 @@
     "tagsLabel": "Tags",
     "tagsPlaceholder": "Add tag, press Enter",
     "capsuleLabel": "Make this a Time Capsule",
+    "aiGenerated": "AI Written",
     "unlockAtLabel": "Unlock Date",
     "selfDestructLabel": "Self-destruct days (0 = never)",
     "save": "Save",
@@ -159,7 +160,14 @@
     "back": "Back",
     "editDiary": "Edit Entry",
     "capsuleStillLocked": "This time capsule is still sealed",
-    "confirmDelete": "Delete this entry? This cannot be undone."
+    "confirmDelete": "Delete this entry? This cannot be undone.",
+    "viewInJournal": "View in Journal",
+    "semanticSearch": "Semantic",
+    "keywordSearch": "Keyword",
+    "relevanceLabel": "{pct}% match",
+    "relatedMemories": "Related Memories",
+    "relatedMemoriesDesc": "Similar entries from your past",
+    "noRelatedMemories": "No related memories found"
   },
   "mood": {
     "happy": "😊 Happy",
@@ -237,7 +245,18 @@
     "inputPlaceholder": "Ask your past self something… (Enter to send, Shift+Enter for newline)",
     "sendHint": "Enter to send · Shift+Enter for newline",
     "confirmDelete": "Delete this chat session?",
-    "thinking": "Your past self is remembering…"
+    "thinking": "Your past self is remembering…",
+    "stopGeneration": "Stop",
+    "diarySaved": "✨ Diary \"{title}\" has been saved to your journal",
+    "diarySavedCard": "Diary saved to your journal",
+    "canvasDiaryTitle": "Diary",
+    "closeCanvas": "Close",
+    "smartTopic": "Smart Search",
+    "smartTopicDesc": "Describe a topic, and I'll find related memories",
+    "smartTopicPlaceholder": "e.g., memories of the beach, my graduation...",
+    "smartTopicLabel": "What do you want to talk about?",
+    "useTime": "By Time",
+    "useSmart": "Smart Search"
   },
   "coins": {
     "balance": "Time Coins",

@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
 
-from sqlalchemy import select, and_, func, cast, Date
+from sqlalchemy import select, and_, func, cast, Date, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import DiaryEntry
@@ -123,4 +123,53 @@ async def get_diary_on_date(
             )
         ).order_by(DiaryEntry.created_at.desc())
     )
+    return list(result.scalars().all())
+
+
+async def hybrid_search_diaries(
+    db: AsyncSession,
+    user_id: UUID,
+    query_embedding: list[float],
+    keyword: Optional[str] = None,
+    mood: Optional[str] = None,
+    limit: int = 20,
+) -> list[DiaryEntry]:
+    """
+    混合搜索：向量相似度 + 可选关键词加权 + 过滤条件。
+
+    使用 pgvector 余弦距离运算符 <=> 进行语义排序。
+    当有关键词时，同时匹配标题和内容做 ILIKE 过滤。
+    """
+    sql_parts = [
+        "SELECT DISTINCT ON (de.id) de.*, "
+        "  1 - (demb.embedding <=> :query_embedding) AS similarity "
+        "FROM diary_entries de "
+        "JOIN diary_embeddings demb ON de.id = demb.diary_id "
+        "WHERE de.user_id = :user_id "
+        "  AND de.is_deleted = FALSE "
+        "  AND de.is_capsule = FALSE "
+    ]
+
+    params: dict = {
+        "query_embedding": query_embedding,
+        "user_id": user_id,
+        "limit": limit,
+    }
+
+    if mood:
+        sql_parts.append("  AND de.mood = :mood")
+        params["mood"] = mood
+
+    if keyword:
+        sql_parts.append(
+            "  AND (de.title ILIKE :kw OR de.content ILIKE :kw)"
+        )
+        params["kw"] = f"%{keyword}%"
+
+    sql_parts.append(
+        "ORDER BY demb.embedding <=> :query_embedding, de.created_at DESC "
+        "LIMIT :limit"
+    )
+
+    result = await db.execute(text("\n".join(sql_parts)), params)
     return list(result.scalars().all())

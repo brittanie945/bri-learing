@@ -9,6 +9,8 @@ class SessionCreate(BaseModel):
     time_preset: Optional[str] = None   # all / 3m / 6m / 1y / 2y
     time_from: Optional[datetime] = None
     time_to: Optional[datetime] = None
+    query: Optional[str] = None         # RAG 语义搜索查询
+    use_semantic: bool = False          # 是否使用语义检索（默认 false 保持向后兼容）
 
 
 class DiaryRefItem(BaseModel):

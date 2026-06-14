@@ -28,7 +28,16 @@ export async function req<T>(path: string, init?: RequestInit): Promise<T> {
     throw new Error("登录已过期，请重新登录");
   }
   if (res.status === 204) return undefined as T;
-  const json: ApiResponse<T> = await res.json();
-  if (json.code >= 400) throw new Error(json.message || "请求失败");
+
+  let json: ApiResponse<T>;
+  try {
+    json = await res.json();
+  } catch {
+    throw new Error(res.ok ? "响应解析失败" : `请求失败 (${res.status})`);
+  }
+
+  if (!res.ok || json.code >= 400) {
+    throw new Error(json.message || "请求失败");
+  }
   return json.data;
 }

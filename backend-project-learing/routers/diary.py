@@ -24,6 +24,7 @@ from services.diary_service import (
     svc_mood_stats,
     svc_memory_lane,
 )
+from services.rag_service import svc_semantic_search, svc_get_related_diaries
 import logging
 from core.response import ok, created
 
@@ -56,6 +57,35 @@ async def list_diaries(
 ):
     logger.info("GET /diary user_id=%s mood=%s search=%s", user_id, mood, search)
     return ok(await svc_list_diaries(db, user_id, mood, is_capsule, tag, search, limit, offset))
+
+
+@router.get("/search/semantic")
+async def semantic_search(
+    query: str = Query(..., min_length=1, max_length=500),
+    mood: Optional[str] = Query(None),
+    tag: Optional[str] = Query(None),
+    limit: int = Query(10, ge=1, le=50),
+    offset: int = Query(0, ge=0),
+    db: AsyncSession = Depends(get_db),
+    user_id: UUID = Depends(get_current_user_id),
+):
+    logger.info("GET /diary/search/semantic user_id=%s query=%s", user_id, query[:50])
+    results = await svc_semantic_search(
+        db, user_id, query, mood=mood, tag=tag, limit=limit, offset=offset
+    )
+    return ok(results)
+
+
+@router.get("/{diary_id}/related")
+async def related_diaries(
+    diary_id: UUID,
+    limit: int = Query(5, ge=1, le=20),
+    db: AsyncSession = Depends(get_db),
+    user_id: UUID = Depends(get_current_user_id),
+):
+    logger.info("GET /diary/%s/related user_id=%s", diary_id, user_id)
+    results = await svc_get_related_diaries(db, user_id, diary_id, limit=limit)
+    return ok(results)
 
 
 @router.get("/memory-lane")

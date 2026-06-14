@@ -1,7 +1,17 @@
+"use client";
+
 import { Bot, User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { ChatMessage, DiaryRef } from "@/lib/api/chat";
+import type { DiaryRef } from "@/lib/api/chat";
 import { MemoryAnchorCard } from "./memory-anchor-card";
+
+// ── AI SDK Message 兼容类型 ──
+export interface SimpleMessage {
+  id: string;
+  role: "user" | "assistant";
+  content?: string;
+  parts?: Array<{ type: string; text?: string; state?: string }>;
+}
 
 // ── 内容解析 ──
 interface TextSegment { type: "text"; content: string }
@@ -17,14 +27,47 @@ function parseContent(content: string): Segment[] {
   });
 }
 
-interface MessageBubbleProps {
-  msg: ChatMessage;
-  refs: Record<string, DiaryRef> | null;
+/**
+ * 从 AI SDK UIMessage 中提取文本内容
+ *
+ * 支持旧格式（content 字符串）和新格式（parts 数组）
+ */
+function getMessageText(msg: SimpleMessage): string {
+  // 旧格式兼容
+  if (msg.content !== undefined) return msg.content;
+  // AI SDK 新格式：从 parts 中提取文本
+  if (msg.parts) {
+    return msg.parts
+      .filter((p) => p.type === "text")
+      .map((p) => p.text ?? "")
+      .join("");
+  }
+  return "";
 }
 
-export function MessageBubble({ msg, refs }: MessageBubbleProps) {
+/**
+ * 判断消息是否处于流式状态
+ */
+function isMessageStreaming(msg: SimpleMessage): boolean {
+  if (msg.parts) {
+    return msg.parts.some(
+      (p) => p.type === "text" && p.state === "streaming",
+    );
+  }
+  return false;
+}
+
+interface MessageBubbleProps {
+  msg: SimpleMessage;
+  refs: Record<string, DiaryRef> | null;
+  isStreaming?: boolean;
+}
+
+export function MessageBubble({ msg, refs, isStreaming }: MessageBubbleProps) {
   const isUser = msg.role === "user";
-  const segments = parseContent(msg.content);
+  const textContent = getMessageText(msg);
+  const segments = parseContent(textContent);
+  const streaming = isStreaming ?? isMessageStreaming(msg);
 
   return (
     <div className={cn("flex gap-2.5 mb-4", isUser ? "flex-row-reverse" : "flex-row")}>
@@ -60,7 +103,7 @@ export function MessageBubble({ msg, refs }: MessageBubbleProps) {
         }
       >
         {isUser ? (
-          <span>{msg.content}</span>
+          <span>{textContent}</span>
         ) : (
           <span>
             {segments.map((seg, i) =>
@@ -69,6 +112,9 @@ export function MessageBubble({ msg, refs }: MessageBubbleProps) {
               ) : (
                 <MemoryAnchorCard key={i} refNum={seg.num} refs={refs} />
               )
+            )}
+            {streaming && textContent && (
+              <span className="ml-0.5 inline-block h-4 w-0.5 animate-pulse align-middle bg-pu-cursor" />
             )}
           </span>
         )}

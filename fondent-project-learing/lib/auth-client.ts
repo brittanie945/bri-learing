@@ -25,8 +25,9 @@ export async function register(data: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  const json = await res.json();
-  if (!res.ok || json.code >= 400) throw new Error(json.message || json.detail || "注册失败");
+  let json: { code?: number; message?: string; detail?: string; data?: UserResponse };
+  try { json = await res.json(); } catch { throw new Error("注册失败"); }
+  if (!res.ok || (json.code !== undefined && json.code >= 400)) throw new Error(json.message || json.detail || "注册失败");
   return json.data as UserResponse;
 }
 
@@ -39,8 +40,9 @@ export async function login(data: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  const json = await res.json();
-  if (!res.ok || json.code >= 400) throw new Error(json.message || json.detail || "登录失败");
+  let json: { code?: number; message?: string; detail?: string; data?: TokenResponse };
+  try { json = await res.json(); } catch { throw new Error("登录失败"); }
+  if (!res.ok || (json.code !== undefined && json.code >= 400)) throw new Error(json.message || json.detail || "登录失败");
   const tokenData = json.data as TokenResponse;
   if (typeof window !== 'undefined') {
     localStorage.setItem("token", tokenData.access_token);

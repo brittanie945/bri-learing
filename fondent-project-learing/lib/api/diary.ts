@@ -12,6 +12,7 @@ export interface DiaryListItem {
   weather: Weather | null;
   tags: string[] | null;
   is_capsule: boolean;
+  is_ai_generated: boolean;
   unlock_at: string | null;
   created_at: string;
   updated_at: string;
@@ -55,6 +56,24 @@ export interface MoodStats {
   total: number;
 }
 
+export interface SemanticSearchItem {
+  id: string;
+  title: string;
+  content_preview: string;
+  mood: string | null;
+  similarity: number;
+  created_at: string;
+}
+
+export interface RelatedDiaryItem {
+  id: string;
+  title: string;
+  content_preview: string;
+  mood: string | null;
+  similarity: number;
+  created_at: string;
+}
+
 // ────── API ──────
 
 export const diaryApi = {
@@ -96,4 +115,25 @@ export const diaryApi = {
   moodStats: () => req<MoodStats>("/diary/stats/mood"),
 
   memoryLane: () => req<DiaryListItem[]>("/diary/memory-lane"),
+
+  semanticSearch: (params: {
+    query: string;
+    mood?: string;
+    tag?: string;
+    limit?: number;
+    offset?: number;
+  }) => {
+    const qs = new URLSearchParams();
+    qs.set("query", params.query);
+    if (params.mood) qs.set("mood", params.mood);
+    if (params.tag) qs.set("tag", params.tag);
+    if (params.limit) qs.set("limit", String(params.limit));
+    if (params.offset) qs.set("offset", String(params.offset));
+    return req<SemanticSearchItem[]>(`/diary/search/semantic?${qs}`);
+  },
+
+  getRelated: (diaryId: string, limit?: number) => {
+    const qs = limit ? `?limit=${limit}` : "";
+    return req<RelatedDiaryItem[]>(`/diary/${diaryId}/related${qs}`);
+  },
 };

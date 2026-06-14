@@ -4,6 +4,7 @@ from typing import Optional
 from sqlalchemy import String, Text, DateTime, Boolean, Integer, ForeignKey, func, Date
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
+from pgvector.sqlalchemy import Vector  # type: ignore
 from database import Base
 
 
@@ -39,6 +40,30 @@ class DiaryEntry(Base):
     )
     self_destruct_days: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    is_ai_generated: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class DiaryEmbedding(Base):
+    """日记条目的向量嵌入 — 用于语义搜索 (pgvector)"""
+    __tablename__ = "diary_embeddings"
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    diary_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("diary_entries.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    embedding: Mapped[list[float]] = mapped_column(Vector(1024), nullable=False)
+    text_snapshot: Mapped[str] = mapped_column(Text, nullable=False)
+    model: Mapped[str] = mapped_column(String(100), nullable=False, default="embedding-3")
+    tokens_used: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

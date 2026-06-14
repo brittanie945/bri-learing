@@ -150,6 +150,9 @@ function DiaryCard({
           {entry.is_capsule && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-[oklch(0.22_0.055_70/0.40)] text-[oklch(0.72_0.18_70)]">⏰</span>
           )}
+          {entry.is_ai_generated && (
+            <span className="text-xs px-2 py-0.5 rounded-full bg-[oklch(0.22_0.055_290/0.50)] text-[oklch(0.72_0.18_290)] border border-[oklch(0.40_0.14_290/0.40)]">✨ AI</span>
+          )}
         </div>
       </div>
 
@@ -192,6 +195,7 @@ export default function DiaryPage() {
   const [view, setView] = useState<View>("list");
   const [entries, setEntries] = useState<DiaryListItem[]>([]);
   const [search, setSearch] = useState("");
+  const [searchMode, setSearchMode] = useState<"keyword" | "semantic">("keyword");
   const [filterMood, setFilterMood] = useState<string>("");
   const [showCapsuleOnly, setShowCapsuleOnly] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -209,18 +213,39 @@ export default function DiaryPage() {
     setLoading(true);
     setError("");
     try {
-      const data = await diaryApi.list({
-        search: search || undefined,
-        mood: filterMood || undefined,
-        is_capsule: showCapsuleOnly || undefined,
-      });
-      setEntries(data);
+      if (searchMode === "semantic" && search.trim()) {
+        const data = await diaryApi.semanticSearch({
+          query: search,
+          mood: filterMood || undefined,
+        });
+        // 将语义搜索结果映射为 DiaryListItem 兼容格式
+        const mapped: DiaryListItem[] = data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          mood: item.mood as DiaryListItem["mood"],
+          weather: null,
+          tags: null,
+          is_capsule: false,
+          is_ai_generated: false,
+          unlock_at: null,
+          created_at: item.created_at,
+          updated_at: item.created_at,
+        }));
+        setEntries(mapped);
+      } else {
+        const data = await diaryApi.list({
+          search: search || undefined,
+          mood: filterMood || undefined,
+          is_capsule: showCapsuleOnly || undefined,
+        });
+        setEntries(data);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "加载失败");
     } finally {
       setLoading(false);
     }
-  }, [search, filterMood, showCapsuleOnly]);
+  }, [search, filterMood, showCapsuleOnly, searchMode]);
 
   useEffect(() => { fetchEntries(); }, [fetchEntries]);
   useEffect(() => { refreshInventory(); }, [refreshInventory]);
@@ -275,8 +300,21 @@ export default function DiaryPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-2">
-        <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("search")}
-          className="flex-1 min-w-40 rounded-xl px-3 py-1.5 text-sm focus:outline-none bg-[oklch(0.17_0.035_290)] border border-[oklch(0.30_0.045_290/0.50)] text-pu-text-3" />
+        <div className="flex flex-1 min-w-40 rounded-xl overflow-hidden border border-[oklch(0.30_0.045_290/0.50)]">
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("search")}
+            className="flex-1 px-3 py-1.5 text-sm focus:outline-none bg-[oklch(0.17_0.035_290)] text-pu-text-3" />
+          <button
+            onClick={() => setSearchMode(searchMode === "keyword" ? "semantic" : "keyword")}
+            className={`px-2.5 text-xs font-medium transition-colors whitespace-nowrap ${
+              searchMode === "semantic"
+                ? "bg-[oklch(0.28_0.070_290)] text-[oklch(0.78_0.18_290)]"
+                : "bg-[oklch(0.20_0.040_290)] text-pu-label"
+            }`}
+            title={t(searchMode === "keyword" ? "semanticSearch" : "keywordSearch")}
+          >
+            {t(searchMode === "keyword" ? "keywordSearch" : "semanticSearch")}
+          </button>
+        </div>
         <select value={filterMood} onChange={(e) => setFilterMood(e.target.value)}
           className="rounded-xl px-3 py-1.5 text-sm focus:outline-none bg-[oklch(0.17_0.035_290)] border border-[oklch(0.30_0.045_290/0.50)] text-[oklch(0.75_0.012_290)]">
           <option value="">{t("all")}</option>

@@ -1,4 +1,6 @@
 """业务逻辑层：日记 & 时间胶囊"""
+import asyncio
+import logging
 from datetime import datetime, timezone
 from typing import Optional
 from uuid import UUID
@@ -25,6 +27,8 @@ from schemas.diary_schemas import (
     MoodStatsItem,
 )
 
+logger = logging.getLogger(__name__)
+
 
 async def _compute_streak(db: AsyncSession, user_id: UUID) -> int:
     """计算连续打卡天数（复用逻辑，供多处调用）。"""
@@ -42,7 +46,7 @@ async def _compute_streak(db: AsyncSession, user_id: UUID) -> int:
 
 
 async def svc_create_diary(
-    db: AsyncSession, user_id: UUID, data: DiaryCreate
+    db: AsyncSession, user_id: UUID, data: DiaryCreate, is_ai_generated: bool = False
 ) -> tuple[DiaryResponse, int]:
     """创建日记，返回 (diary, coins_earned)。"""
     # 时间胶囊：unlock_at 必须在未来
@@ -68,12 +72,19 @@ async def svc_create_diary(
         is_capsule=data.is_capsule,
         unlock_at=data.unlock_at,
         self_destruct_days=data.self_destruct_days,
+        is_ai_generated=is_ai_generated,
     )
 
     # 打卡奖励（每天首次写日记才奖励）
     from services.coin_service import svc_diary_checkin_coins
     streak = await _compute_streak(db, user_id)
     checkin = await svc_diary_checkin_coins(db, user_id, streak)
+
+    # 异步生成 embedding（fire-and-forget，不影响日记创建）
+    from services.rag_service import svc_ensure_diary_embedding
+    asyncio.ensure_future(
+        svc_ensure_diary_embedding(db, entry.id, entry.title, entry.content)
+    )
 
     return DiaryResponse.model_validate(entry), checkin.coins_earned
 
@@ -124,6 +135,14 @@ async def svc_update_diary(
     updated = await update_diary(
         db, entry, **{k: v for k, v in data.model_dump().items() if v is not None}
     )
+
+    # 标题或内容变更时重新生成 embedding
+    if data.title or data.content:
+        from services.rag_service import svc_ensure_diary_embedding
+        asyncio.ensure_future(
+            svc_ensure_diary_embedding(db, updated.id, updated.title, updated.content)
+        )
+
     return DiaryResponse.model_validate(updated)
 
 
@@ -134,6 +153,10 @@ async def svc_delete_diary(
     if not entry:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="日记不存在")
     await soft_delete_diary(db, entry)
+
+    # 同步删除对应 embedding
+    from repositories.embedding_repository import delete_embedding
+    await delete_embedding(db, diary_id)
 
 
 async def svc_mood_stats(db: AsyncSession, user_id: UUID) -> MoodStats:

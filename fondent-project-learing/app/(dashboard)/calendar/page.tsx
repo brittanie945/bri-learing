@@ -101,7 +101,7 @@ export default function CalendarPage() {
               {moodStats.stats.slice(0, 2).map((s) => (
                 <div key={s.mood} className={`rounded-xl border p-4 text-center ${MOOD_COLORS[s.mood as Mood] ?? "bg-slate-50 border-slate-200"}`}>
                   <p className="text-2xl font-bold">{s.count}</p>
-                  <p className="text-xs mt-0.5">{tm(s.mood)}</p>
+                  <p className="text-xs mt-0.5">{s.mood != null ? tm(s.mood) : ""}</p>
                 </div>
               ))}
             </div>

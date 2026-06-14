@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter, useParams } from "next/navigation";
 import { diaryApi, type DiaryDetail, type DiaryCreatePayload } from "@/lib/api/diary";
 import DiaryEditor from "@/components/diary-editor";
+import RelatedDiaries from "@/components/related-diaries";
 import { MOOD_COLORS } from "@/components/mood-picker";
 import type { Mood } from "@/lib/api/diary";
 
@@ -87,7 +88,7 @@ export default function DiaryDetailPage() {
         </button>
         <h1 className="text-2xl font-bold text-slate-900">{t("editDiary")}</h1>
         <DiaryEditor
-          initialValues={entry}
+          initialValues={{ ...entry, mood: entry.mood ?? undefined, weather: entry.weather ?? undefined } as Partial<import("@/lib/api/diary").DiaryCreatePayload>}
           onSave={handleUpdate}
           onCancel={() => setEditing(false)}
           isCapsuleMode={!!entry.is_capsule}
@@ -139,6 +140,11 @@ export default function DiaryDetailPage() {
             ⏰ {t("capsuleLabel")}
           </span>
         )}
+        {entry.is_ai_generated && (
+          <span className="text-xs px-2.5 py-1 rounded-full bg-purple-50 text-purple-600 border border-purple-200">
+            ✨ {t("aiGenerated")}
+          </span>
+        )}
       </div>
 
       {/* Content */}
@@ -155,6 +161,15 @@ export default function DiaryDetailPage() {
             </span>
           ))}
         </div>
+      )}
+
+      {/* Related Memories */}
+      {!entry.is_capsule && (
+        <section className="pt-6 border-t border-[oklch(0.26_0.038_290/0.40)]">
+          <h2 className="text-lg font-bold mb-1 text-pu-text-2">{t("relatedMemories")}</h2>
+          <p className="text-sm mb-4 text-pu-muted">{t("relatedMemoriesDesc")}</p>
+          <RelatedDiaries diaryId={entry.id} />
+        </section>
       )}
     </div>
   );

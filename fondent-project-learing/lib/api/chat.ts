@@ -1,5 +1,4 @@
-import { req, BASE, authHeaders } from "@/lib/api/request";
-import { logout } from "@/lib/auth-client";
+import { req } from "@/lib/api/request";
 
 // ────── Types ──────
 
@@ -14,7 +13,7 @@ export interface DiaryRef {
 export interface ChatMessage {
   id: string;
   session_id: string;
-  role: "user" | "assistant";
+  role: "user" | "assistant" | "diary_saved";
   content: string;
   ref_ids: number[] | null;
   created_at: string;
@@ -39,13 +38,9 @@ export interface SessionCreatePayload {
   time_preset?: "all" | "3m" | "6m" | "1y" | "2y";
   time_from?: string;
   time_to?: string;
+  query?: string;
+  use_semantic?: boolean;
 }
-
-export type SSEChunk =
-  | { type: "chunk"; content: string }
-  | { type: "refs"; ids: number[] }
-  | { type: "done" }
-  | { type: "error"; message: string };
 
 // ────── API ──────
 
@@ -61,64 +56,5 @@ export const chatApi = {
   getSession: (id: string) => req<ChatSessionDetail>(`/chat/sessions/${id}`),
 
   deleteSession: (id: string) =>
-    fetch(`${BASE}/chat/sessions/${id}`, {
-      method: "DELETE",
-      headers: authHeaders(),
-    }).then((r) => {
-      if (r.status === 401) { logout(); }
-    }),
-
-  /**
-   * 流式发送消息，通过回调函数逐步处理 SSE 事件
-   */
-  streamMessage: async (
-    sessionId: string,
-    content: string,
-    onChunk: (text: string) => void,
-    onRefs: (ids: number[]) => void,
-    onDone: () => void,
-    onError?: (msg: string) => void,
-  ) => {
-    const res = await fetch(`${BASE}/chat/sessions/${sessionId}/messages`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify({ content }),
-    });
-
-    if (res.status === 401) {
-      logout();
-      return;
-    }
-
-    if (!res.body) {
-      onError?.("无法建立流式连接");
-      return;
-    }
-
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      buffer = lines.pop() ?? "";
-
-      for (const line of lines) {
-        if (!line.startsWith("data: ")) continue;
-        try {
-          const evt = JSON.parse(line.slice(6)) as SSEChunk;
-          if (evt.type === "chunk") onChunk(evt.content);
-          else if (evt.type === "refs") onRefs(evt.ids);
-          else if (evt.type === "done") onDone();
-          else if (evt.type === "error") onError?.(evt.message);
-        } catch {
-          // 忽略解析失败的行
-        }
-      }
-    }
-  },
+    req<void>(`/chat/sessions/${id}`, { method: "DELETE" }).catch(() => {}),
 };

@@ -142,6 +142,7 @@
     "tagsLabel": "标签",
     "tagsPlaceholder": "添加标签，按 Enter 确认",
     "capsuleLabel": "设为时间胶囊",
+    "aiGenerated": "AI 执笔",
     "unlockAtLabel": "解锁日期",
     "selfDestructLabel": "自毁天数（0 = 不自毁）",
     "save": "保存",
@@ -161,7 +162,14 @@
     "back": "返回",
     "editDiary": "编辑日记",
     "capsuleStillLocked": "时间胶囊尚未到解锁时间",
-    "confirmDelete": "确认删除这篇日记吗？此操作不可恢复。"
+    "confirmDelete": "确认删除这篇日记吗？此操作不可恢复。",
+    "viewInJournal": "在日记本中查看",
+    "semanticSearch": "语义搜索",
+    "keywordSearch": "关键词",
+    "relevanceLabel": "相关度 {pct}%",
+    "relatedMemories": "相关记忆",
+    "relatedMemoriesDesc": "你写过的相似内容",
+    "noRelatedMemories": "暂无相关记忆"
   },
   "mood": {
     "happy": "😊 开心",
@@ -239,7 +247,18 @@
     "inputPlaceholder": "向过去的自己提问…（Enter 发送，Shift+Enter 换行）",
     "sendHint": "Enter 发送 · Shift+Enter 换行",
     "confirmDelete": "确认删除这段对话记录吗？",
-    "thinking": "过去的我正在回忆…"
+    "thinking": "过去的我正在回忆…",
+    "stopGeneration": "停止生成",
+    "diarySaved": "✨ 日记《{title}》已保存到你的日记本",
+    "diarySavedCard": "日记已保存至日记本",
+    "canvasDiaryTitle": "日记",
+    "closeCanvas": "关闭",
+    "smartTopic": "智能搜索",
+    "smartTopicDesc": "描述一个话题，我会为你找到相关记忆",
+    "smartTopicPlaceholder": "比如：关于海边的回忆、毕业那天…",
+    "smartTopicLabel": "你想聊什么话题？",
+    "useTime": "按时间",
+    "useSmart": "智能搜索"
   },
   "coins": {
     "balance": "时光币",

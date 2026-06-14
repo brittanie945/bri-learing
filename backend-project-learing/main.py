@@ -18,12 +18,28 @@ from database import get_db as _get_db
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # 在独立连接中尝试启用 pgvector 扩展（失败不影响主流程）
+    try:
+        async with engine.begin() as pg_conn:
+            from sqlalchemy import text
+            await pg_conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+    except Exception:
+        pass
+
+    # 创建所有表（独立事务）
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-    # 初始化金句词库（若为空则写入预置数据，不足 30 条则 AI 补充）
-    async for db in _get_db():
-        await svc_seed_and_maybe_generate(db)
-        break
+
+    # 初始化金句词库（后台执行，不阻塞启动）
+    import asyncio
+    async def _seed():
+        async for db in _get_db():
+            try:
+                await svc_seed_and_maybe_generate(db)
+            except Exception:
+                pass
+            break
+    asyncio.ensure_future(_seed())
     yield
 
 

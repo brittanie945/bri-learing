@@ -39,6 +39,7 @@ class DiaryResponse(BaseModel):
     unlock_at: Optional[datetime]
     self_destruct_days: int
     is_deleted: bool
+    is_ai_generated: bool
     created_at: datetime
     updated_at: datetime
 
@@ -52,6 +53,7 @@ class DiaryListResponse(BaseModel):
     weather: Optional[str]
     tags: Optional[List[str]]
     is_capsule: bool
+    is_ai_generated: bool
     unlock_at: Optional[datetime]
     created_at: datetime
     updated_at: datetime
