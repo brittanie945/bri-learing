@@ -94,8 +94,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading}
-          className="h-10 w-full rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50"
-          className={`h-10 w-full rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 text-white ${
+          className={`h-10 w-full rounded-xl text-sm font-semibold text-white transition-all duration-200 disabled:opacity-50 ${
             loading ? "bg-[oklch(0.45_0.18_310)]" : "bg-gradient-cta-alt shadow-cta"
           }`}
         >

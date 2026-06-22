@@ -5,6 +5,16 @@ import { cn } from "@/lib/utils";
 import type { DiaryRef } from "@/lib/api/chat";
 import { MemoryAnchorCard } from "./memory-anchor-card";
 
+function ThinkingIndicator() {
+  return (
+    <span className="inline-flex items-center gap-1.5 align-middle">
+      <span className="inline-flex h-2.5 w-2.5 rounded-full bg-pu-cursor/70 animate-[pulse_1s_ease-in-out_infinite]" />
+      <span className="inline-flex h-2.5 w-2.5 rounded-full bg-pu-cursor/50 animate-[pulse_1s_ease-in-out_infinite_200ms]" />
+      <span className="inline-flex h-2.5 w-2.5 rounded-full bg-pu-cursor/30 animate-[pulse_1s_ease-in-out_infinite_400ms]" />
+    </span>
+  );
+}
+
 // ── AI SDK Message 兼容类型 ──
 export interface SimpleMessage {
   id: string;
@@ -45,77 +55,74 @@ function getMessageText(msg: SimpleMessage): string {
   return "";
 }
 
-/**
- * 判断消息是否处于流式状态
- */
-function isMessageStreaming(msg: SimpleMessage): boolean {
-  if (msg.parts) {
-    return msg.parts.some(
-      (p) => p.type === "text" && p.state === "streaming",
-    );
-  }
-  return false;
-}
-
 interface MessageBubbleProps {
   msg: SimpleMessage;
   refs: Record<string, DiaryRef> | null;
-  isStreaming?: boolean;
+  isThinking?: boolean;
 }
 
-export function MessageBubble({ msg, refs, isStreaming }: MessageBubbleProps) {
+export function MessageBubble({ msg, refs, isThinking }: MessageBubbleProps) {
   const isUser = msg.role === "user";
   const textContent = getMessageText(msg);
   const segments = parseContent(textContent);
-  const streaming = isStreaming ?? isMessageStreaming(msg);
+  const showThinking = Boolean(isThinking && !textContent);
 
   return (
-    <div className={cn("flex gap-2.5 mb-4", isUser ? "flex-row-reverse" : "flex-row")}>
-      {/* 头像 */}
+    <div
+      className={cn(
+        "group flex items-end gap-3 pb-5",
+        isUser ? "flex-row-reverse" : "flex-row"
+      )}
+    >
       <div
-        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm"
-        style={
+        className={cn(
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-[1rem] border text-sm shadow-sm ring-1 ring-inset",
           isUser
-            ? { background: "oklch(0.22 0.070 290)", color: "oklch(0.85 0.22 290)" }
-            : { background: "linear-gradient(135deg, oklch(0.45 0.20 290), oklch(0.42 0.20 330))", color: "white" }
-        }
+            ? "border-cyan-300/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.14),rgba(59,130,246,0.08))] text-cyan-50 shadow-black/10 ring-white/5"
+            : "border-white/10 bg-[linear-gradient(135deg,rgba(120,119,198,0.18),rgba(56,189,248,0.12))] text-white shadow-black/20 ring-white/5"
+        )}
       >
         {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
       </div>
 
-      {/* 气泡 */}
       <div
         className={cn(
-          "max-w-[72%] rounded-2xl px-4 py-3 text-sm leading-relaxed",
-          isUser ? "rounded-tr-sm" : "rounded-tl-sm"
+          "max-w-[min(72%,42rem)] rounded-[1.4rem] px-4 py-3.5 text-sm leading-relaxed shadow-lg ring-1 ring-inset backdrop-blur-sm md:max-w-[68%]",
+          isUser ? "rounded-br-md" : "rounded-bl-md"
         )}
         style={
           isUser
             ? {
-                background: "linear-gradient(135deg, oklch(0.42 0.20 290), oklch(0.40 0.20 330))",
-                color: "oklch(0.97 0.005 290)",
+                background:
+                  "linear-gradient(135deg, rgba(34,211,238,0.88), rgba(59,130,246,0.96))",
+                color: "white",
+                borderColor: "rgba(255,255,255,0.12)",
               }
             : {
-                background: "oklch(0.17 0.035 290)",
-                border: "1px solid oklch(0.28 0.045 290 / 0.50)",
-                color: "oklch(0.88 0.012 290)",
+                background:
+                  "linear-gradient(180deg, rgba(17,24,39,0.96), rgba(15,23,42,0.92))",
+                color: "oklch(0.92 0.01 250)",
+                borderColor: "rgba(255,255,255,0.08)",
               }
         }
       >
         {isUser ? (
-          <span>{textContent}</span>
+          <span className="whitespace-pre-wrap">{textContent}</span>
         ) : (
-          <span>
+          <span className="whitespace-pre-wrap">
             {segments.map((seg, i) =>
               seg.type === "text" ? (
-                <span key={i} style={{ whiteSpace: "pre-wrap" }}>{seg.content}</span>
+                <span key={i}>{seg.content}</span>
               ) : (
                 <MemoryAnchorCard key={i} refNum={seg.num} refs={refs} />
               )
             )}
-            {streaming && textContent && (
-              <span className="ml-0.5 inline-block h-4 w-0.5 animate-pulse align-middle bg-pu-cursor" />
-            )}
+            {showThinking ? (
+              <span className="ml-2 inline-flex min-w-16 items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 align-middle text-[11px] text-white/70">
+                <ThinkingIndicator />
+                <span className="whitespace-nowrap">思考中</span>
+              </span>
+            ) : null}
           </span>
         )}
       </div>

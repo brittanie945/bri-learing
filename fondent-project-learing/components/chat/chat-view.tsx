@@ -20,11 +20,15 @@ function ChatArea({
   onDeleteSession,
   canvasDiaryId,
   onCanvasToggle,
+  onStartNewSession,
+  creating,
 }: {
   session: ChatSessionDetail;
   onDeleteSession: () => void;
   canvasDiaryId: string | null;
   onCanvasToggle: (diaryId: string) => void;
+  onStartNewSession: () => void;
+  creating: boolean;
 }) {
   const t = useTranslations("chat");
   const [input, setInput] = useState("");
@@ -55,20 +59,18 @@ function ChatArea({
     () =>
       session.messages
         .filter((m) => m.role === "user" || m.role === "assistant")
-        .map(
-          (m) =>
-            ({
-              id: String(m.id),
-              role: m.role as "user" | "assistant",
-              parts: [
-                {
-                  type: "text",
-                  text: m.content,
-                  state: "done",
-                },
-              ],
-            }) as SimpleMessage,
-        ),
+        .map((m) => ({
+          id: String(m.id),
+          role: m.role as "user" | "assistant",
+          content: m.content,
+          parts: [
+            {
+              type: "text",
+              text: m.content,
+              state: "done",
+            },
+          ],
+        })) as SimpleMessage[],
     [session.id],
   );
 
@@ -86,7 +88,7 @@ function ChatArea({
         "Content-Type": "application/json",
       }),
     }),
-    messages: initialMessages,
+    messages: initialMessages as any,
     onFinish: ({ messages: updatedMessages }) => {
       // 检查 write_diary 工具调用
       for (const msg of updatedMessages) {
@@ -153,53 +155,65 @@ function ChatArea({
   };
 
   return (
-    <div className="flex flex-1 flex-col min-w-0 overflow-hidden bg-[oklch(0.13_0.028_290)]">
-      {/* 标题栏 */}
-      <div className="shrink-0 flex items-center gap-3 px-5 py-3 border-b border-[oklch(0.22_0.034_290/0.45)]">
-        <Sparkles className="h-4 w-4 shrink-0 text-pu-sparkle" />
-        <span className="text-sm font-semibold truncate flex-1 text-pu-text-2">
-          {session.title}
-        </span>
-        <button
-          onClick={onDeleteSession}
-          className="shrink-0 flex items-center justify-center h-7 w-7 rounded-lg transition-colors hover:bg-[oklch(0.20_0.040_290)] text-pu-very-dim"
-          title={t("confirmDelete")}
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
+    <div className="flex flex-1 min-w-0 flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.14),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.08),_transparent_26%),linear-gradient(180deg,rgba(2,6,23,0.98),rgba(15,23,42,0.94))] shadow-[0_28px_90px_rgba(2,6,23,0.46)]">
+      <div className="shrink-0 border-b border-white/8 bg-white/4 px-5 py-4 backdrop-blur-xl md:px-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[1.1rem] border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.18),rgba(59,130,246,0.12))] text-cyan-100 shadow-[0_10px_28px_rgba(15,23,42,0.18)]">
+            <Sparkles className="h-4.5 w-4.5 shrink-0" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold tracking-tight text-white">
+              {session.title}
+            </p>
+            <p className="text-xs text-slate-400">{t("title")}</p>
+          </div>
+          <button
+            onClick={onDeleteSession}
+            className="shrink-0 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/8 text-slate-400 transition-all hover:border-white/15 hover:bg-white/8 hover:text-white active:scale-[0.98]"
+            title={t("confirmDelete")}
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
       </div>
 
-      {/* 消息列表 */}
-      <div className="flex-1 overflow-y-auto px-4 py-5">
+      <div className="flex-1 overflow-y-auto px-4 py-6 md:px-6">
         {session.messages.length === 0 && !isLoading && (
-          <div className="text-center py-8">
-            <p className="text-sm text-pu-ghost">{t("firstMessage")}</p>
+          <div className="flex min-h-[24rem] flex-col items-center justify-center rounded-[1.75rem] border border-dashed border-white/10 bg-white/[0.03] px-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-[1.1rem] bg-cyan-400/10 text-cyan-200 ring-1 ring-inset ring-cyan-300/10">
+              <Sparkles className="h-6 w-6" />
+            </div>
+            <h2 className="text-lg font-semibold text-white">{t("title")}</h2>
+            <p className="mt-2 max-w-sm text-sm leading-6 text-slate-400">
+              {t("emptyDesc")}
+            </p>
+            <button
+              onClick={onStartNewSession}
+              disabled={creating}
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_12px_30px_rgba(34,211,238,0.22)] transition-all hover:bg-cyan-300 active:scale-[0.98] disabled:opacity-60"
+            >
+              <Plus className="h-4 w-4" />
+              {t("startNewSession")}
+            </button>
           </div>
         )}
 
         {messages
-          .filter(
-            (m) =>
-              m.role === "user" ||
-              m.role === "assistant",
-          )
-          .map((msg, i) => {
-            const isLast = i === messages.length - 1;
-            const msgIsStreaming =
-              isLast &&
-              status === "streaming" &&
-              msg.role === "assistant";
+          .filter((m) => m.role === "user" || m.role === "assistant")
+          .map((msg, i, filteredMessages) => {
+            const isLast = i === filteredMessages.length - 1;
+            const msgIsThinking =
+              isLast && status === "submitted" && msg.role === "assistant";
             return (
               <MessageBubble
                 key={msg.id}
                 msg={msg as SimpleMessage}
                 refs={session.diary_refs as Record<string, DiaryRef> | null}
-                isStreaming={msgIsStreaming}
+                isThinking={msgIsThinking}
               />
             );
           })}
 
-        {/* 日记保存卡片 */}
         {allSavedDiaries.map((info) => (
           <DiarySavedCard
             key={info.diary_id || info.title}
@@ -209,19 +223,17 @@ function ChatArea({
           />
         ))}
 
-        {/* 错误显示 */}
         {error && (
-          <div className="text-center py-2">
-            <p className="text-xs text-red-400">{error.message}</p>
+          <div className="py-2 text-center">
+            <p className="text-xs text-rose-300">{error.message}</p>
           </div>
         )}
 
         <div ref={bottomRef} />
       </div>
 
-      {/* 输入区域 */}
-      <div className="shrink-0 p-4 border-t border-[oklch(0.22_0.034_290/0.45)]">
-        <div className="flex items-end gap-3 rounded-2xl px-4 py-3 bg-pu-surface-hi border border-pu-border-md">
+      <div className="shrink-0 border-t border-white/8 bg-[linear-gradient(180deg,rgba(15,23,42,0.68),rgba(2,6,23,0.94))] p-4 backdrop-blur-xl md:p-5">
+        <div className="flex items-end gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.045] px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
           <textarea
             ref={textareaRef}
             value={input}
@@ -230,12 +242,12 @@ function ChatArea({
             placeholder={t("inputPlaceholder")}
             disabled={isLoading}
             rows={1}
-            className="flex-1 resize-none bg-transparent text-sm outline-none min-h-6 max-h-32 text-pu-text-2"
+            className="min-h-6 max-h-32 flex-1 resize-none bg-transparent text-sm leading-6 text-white outline-none placeholder:text-slate-500"
           />
           {isLoading ? (
             <button
               onClick={handleStop}
-              className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl transition-all bg-[oklch(0.45_0.18_15)] hover:bg-[oklch(0.52_0.20_15)] text-white"
+              className="shrink-0 inline-flex h-11 w-11 items-center justify-center rounded-[1rem] border border-rose-400/20 bg-rose-500 text-white shadow-[0_10px_24px_rgba(244,63,94,0.16)] transition-all hover:bg-rose-400 active:scale-[0.98]"
               title={t("stopGeneration")}
             >
               <Square className="h-3.5 w-3.5 fill-current" />
@@ -244,15 +256,13 @@ function ChatArea({
             <button
               onClick={handleSend}
               disabled={!input.trim()}
-              className="shrink-0 flex h-8 w-8 items-center justify-center rounded-xl transition-all disabled:opacity-40 bg-gradient-chat-cta text-white"
+              className="shrink-0 inline-flex h-11 w-11 items-center justify-center rounded-[1rem] bg-cyan-400 text-slate-950 shadow-[0_12px_28px_rgba(34,211,238,0.24)] transition-all hover:bg-cyan-300 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40"
             >
               <Send className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
-        <p className="mt-1.5 text-center text-xs text-pu-ghost">
-          {t("sendHint")}
-        </p>
+        <p className="mt-2 text-center text-xs text-slate-500">{t("sendHint")}</p>
       </div>
     </div>
   );
@@ -326,25 +336,28 @@ export function ChatView() {
     }
   };
 
+  const startNewSession = useCallback(() => setShowTimeModal(true), []);
+
   return (
-    <div className="flex h-[calc(100vh-7rem)] md:h-[calc(100vh-4rem)] overflow-hidden rounded-2xl border border-[oklch(0.26_0.040_290/0.45)]">
-      {/* ── 聊天主区域 ── */}
-      <div className="flex flex-1 flex-col min-w-0 overflow-hidden bg-[oklch(0.13_0.028_290)]">
+    <div className="flex min-h-[calc(100dvh-7rem)] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950 shadow-[0_28px_90px_rgba(2,6,23,0.42)] md:min-h-[calc(100dvh-4rem)]">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(56,189,248,0.12),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(168,85,247,0.08),_transparent_28%),linear-gradient(180deg,rgba(7,11,20,0.98),rgba(15,23,42,0.94))]">
         {!activeSession && !loadingSession && (
-          <div className="flex flex-1 flex-col items-center justify-center gap-6 p-8">
-            <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-chat-empty shadow-chat-empty">
-              <Sparkles className="h-10 w-10 text-white" />
+          <div className="flex min-h-[24rem] flex-col items-center justify-center gap-6 px-8 py-16 text-center md:min-h-[32rem]">
+            <div className="flex h-20 w-20 items-center justify-center rounded-[1.75rem] border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.18),rgba(59,130,246,0.10))] text-white shadow-[0_18px_40px_rgba(8,15,28,0.25)]">
+              <Sparkles className="h-10 w-10" />
             </div>
-            <div className="text-center">
-              <h2 className="text-xl font-bold mb-2 text-pu-text">{t("title")}</h2>
-              <p className="text-sm max-w-xs text-pu-muted">
+            <div className="max-w-md">
+              <h2 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">
+                {t("title")}
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-slate-400 md:text-base">
                 {t("emptyDesc")}
               </p>
             </div>
             <button
-              onClick={() => setShowTimeModal(true)}
+              onClick={startNewSession}
               disabled={creating}
-              className="flex items-center gap-2 rounded-xl px-6 py-3 font-semibold text-sm transition-all bg-gradient-chat-cta text-white shadow-chat-cta"
+              className="inline-flex items-center gap-2 rounded-xl bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-[0_12px_30px_rgba(34,211,238,0.22)] transition-all hover:bg-cyan-300 active:scale-[0.98] disabled:opacity-60"
             >
               <Plus className="h-4 w-4" />
               {t("startNewSession")}
@@ -354,7 +367,7 @@ export function ChatView() {
 
         {loadingSession && !activeSession && (
           <div className="flex flex-1 items-center justify-center">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-t-transparent border-pu-cursor" />
+            <div className="h-7 w-7 animate-spin rounded-full border-2 border-white/15 border-t-cyan-300" />
           </div>
         )}
 
@@ -365,6 +378,8 @@ export function ChatView() {
             onDeleteSession={handleDeleteActiveSession}
             canvasDiaryId={canvasDiaryId}
             onCanvasToggle={handleCanvasToggle}
+            onStartNewSession={startNewSession}
+            creating={creating}
           />
         )}
       </div>

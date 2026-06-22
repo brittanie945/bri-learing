@@ -45,11 +45,11 @@ function ChatSubPanel({ onNavigate }: { onNavigate?: () => void }) {
   }
 
   return (
-    <div className="mx-1 mb-1 rounded-xl overflow-hidden bg-[oklch(0.12_0.025_290/0.60)]">
+    <div className="mx-1 mb-1 overflow-hidden rounded-2xl border border-white/8 bg-[linear-gradient(180deg,oklch(0.12_0.025_290/0.82),oklch(0.10_0.022_290/0.92))] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
       {/* header */}
       <button
         onClick={() => setCollapsed((c) => !c)}
-        className="w-full flex items-center justify-between px-3 py-1.5 text-[10px] font-semibold tracking-widest uppercase transition-colors hover:bg-[oklch(0.17_0.032_290)] text-pu-very-dim"
+        className="flex w-full items-center justify-between px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-pu-very-dim transition-colors hover:bg-[oklch(0.17_0.032_290)]"
       >
         <span>历史对话</span>
         <ChevronDown
@@ -64,7 +64,7 @@ function ChatSubPanel({ onNavigate }: { onNavigate?: () => void }) {
           <div className="px-2 pb-1.5">
             <button
               onClick={newSession}
-              className="w-full flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs font-medium transition-all hover:scale-[1.01] bg-[oklch(0.20_0.055_290/0.70)] text-pu-new-chat"
+              className="flex w-full items-center gap-1.5 rounded-xl border border-white/8 bg-[linear-gradient(135deg,oklch(0.20_0.055_290/0.88),oklch(0.16_0.040_290/0.94))] px-3 py-2 text-xs font-medium text-pu-new-chat transition-all hover:scale-[1.01] hover:border-white/12"
             >
               <Plus className="h-3 w-3" />
               新对话
@@ -82,14 +82,14 @@ function ChatSubPanel({ onNavigate }: { onNavigate?: () => void }) {
               <button
                 key={s.id}
                 onClick={() => switchSession(s.id)}
-                className={`group relative w-full text-left px-3 py-2 flex items-center gap-2 transition-colors rounded-lg ${
+                className={`group relative flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left transition-all ${
                   currentSid === s.id
-                    ? "bg-[oklch(0.20_0.050_290)] text-[oklch(0.82_0.015_290)]"
-                    : "text-[oklch(0.48_0.012_290)]"
+                    ? "border border-white/10 bg-[oklch(0.20_0.050_290)] text-[oklch(0.86_0.020_290)] shadow-[0_8px_18px_rgba(2,6,23,0.18)]"
+                    : "border border-transparent text-[oklch(0.48_0.012_290)] hover:border-white/8 hover:bg-[oklch(0.15_0.032_290)] hover:text-[oklch(0.82_0.015_290)]"
                 }`}
               >
                 <MessageSquare className="h-3 w-3 shrink-0" strokeWidth={1.8} />
-                <span className="text-[11px] truncate flex-1">{s.title}</span>
+                <span className="flex-1 truncate text-[11px]">{s.title}</span>
               </button>
             ))}
           </div>
@@ -121,8 +121,8 @@ function SidebarNav({
 }) {
   const isChatPage = pathname === "/chat" || pathname.startsWith("/chat/");
   return (
-    <nav className="flex-1 px-3 py-4 overflow-y-auto" style={{ scrollbarWidth: "none" }}>
-      <div className="space-y-0.5">
+    <nav className="flex-1 overflow-y-auto px-3 py-4" style={{ scrollbarWidth: "none" }}>
+      <div className="space-y-1">
         {navConfig.map(({ key, href, Icon }) => {
           const isActive = key === "chat" ? pathname === href || pathname.startsWith("/chat/") : pathname === href;
           return (
@@ -132,8 +132,8 @@ function SidebarNav({
                 onClick={onNavigate}
                 className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
                   isActive
-                    ? "bg-[oklch(0.22_0.070_290)] text-[oklch(0.85_0.22_290)]"
-                    : "text-[oklch(0.52_0.015_290)] hover:bg-[oklch(0.17_0.032_290)] hover:text-[oklch(0.85_0.015_290)]"
+                    ? "border border-white/10 bg-[oklch(0.22_0.070_290)] text-[oklch(0.88_0.020_290)] shadow-[0_10px_20px_rgba(2,6,23,0.18)]"
+                    : "border border-transparent text-[oklch(0.52_0.015_290)] hover:border-white/8 hover:bg-[oklch(0.17_0.032_290)] hover:text-[oklch(0.85_0.015_290)]"
                 }`}
               >
                 <Icon className={`h-4.5 w-4.5 shrink-0 ${ isActive ? "text-[oklch(0.80_0.22_290)]" : "text-[oklch(0.44_0.018_290)]" }`} strokeWidth={1.8} />
@@ -154,8 +154,8 @@ function SidebarNav({
 
 function SidebarUser({ user, logoutLabel, coinBalance }: { user: ReturnType<typeof getUser>; logoutLabel: string; coinBalance: number }) {
   return (
-    <div className="border-t border-[oklch(0.26_0.036_290/0.45)] p-4 space-y-3">
-      <Link href="/shop" className="flex items-center gap-2 rounded-lg px-3 py-2 transition-colors hover:bg-[oklch(0.17_0.032_290)]">
+    <div className="space-y-3 border-t border-[oklch(0.26_0.036_290/0.45)] p-4">
+      <Link href="/shop" className="flex items-center gap-2 rounded-xl border border-white/6 px-3 py-2 transition-all hover:border-white/10 hover:bg-[oklch(0.17_0.032_290)]">
         <Coins className="h-4 w-4 shrink-0 text-amber" strokeWidth={1.8} />
         <span className="text-sm font-semibold text-amber">{coinBalance}</span>
         <span className="text-xs text-pu-dim">时光币</span>

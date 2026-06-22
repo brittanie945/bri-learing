@@ -142,20 +142,20 @@ export default function DashboardPage() {
   const today = new Date().toLocaleDateString("zh-CN", { year: "numeric", month: "long", day: "numeric", weekday: "long" });
 
   return (
-    <div className="max-w-xl mx-auto space-y-8">
+    <div className="mx-auto max-w-5xl space-y-8 lg:space-y-10">
 
       {/* ── 今日箴言 ── */}
       <DailyQuoteWidget />
 
       {/* ── 暖光问候区 ── */}
-      <div>
-        <p className="text-xs font-medium tracking-widest mb-2 text-[oklch(0.50_0.012_62)]">
+      <div className="space-y-3">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-pu-very-dim">
           {today}
         </p>
-        <h1 className="text-2xl font-semibold leading-snug text-[oklch(0.90_0.012_75)]">
+        <h1 className="max-w-3xl text-3xl font-semibold tracking-[-0.03em] text-[oklch(0.95_0.012_290)] md:text-4xl md:leading-[1.05]">
           {t(greeting, { username: user?.username || "" })}
         </h1>
-        <p className="mt-1 text-sm text-[oklch(0.52_0.012_62)]">
+        <p className="max-w-2xl text-sm leading-6 text-pu-muted md:text-base">
           {t("writePrompt")}
         </p>
       </div>
@@ -163,18 +163,18 @@ export default function DashboardPage() {
       {/* ── 主 CTA ── */}
       <button
         onClick={() => router.push("/diary")}
-        className="group w-full flex items-center gap-4 rounded-2xl px-5 py-4 text-left transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] bg-[oklch(0.16_0.030_290)] border border-[oklch(0.34_0.055_290/0.55)] shadow-glow-purple"
+        className="group flex w-full items-center gap-4 rounded-[1.5rem] border border-white/8 bg-[linear-gradient(135deg,oklch(0.17_0.030_290),oklch(0.13_0.025_290))] px-5 py-4 text-left transition-all duration-200 hover:border-white/12 hover:shadow-[0_18px_40px_rgba(2,6,23,0.22)] active:scale-[0.99]"
       >
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-logo shadow-icon-glow">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[1rem] bg-gradient-logo shadow-icon-glow">
             <Pencil className="h-4.5 w-4.5 text-white" strokeWidth={2} />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-medium text-pu-text-2">{t("writeBtn")}</p>
-            <p className="text-xs mt-0.5 text-pu-muted">
+            <p className="text-sm font-semibold text-pu-text-2">{t("writeBtn")}</p>
+            <p className="mt-0.5 text-xs leading-5 text-pu-muted">
             {t("diaryDesc")}
           </p>
         </div>
-          <span className="text-base transition-transform group-hover:translate-x-1 text-pu-accent">→</span>
+          <span className="text-base text-pu-accent transition-transform group-hover:translate-x-1">→</span>
       </button>
 
       {/* ── 数据小条 ── */}
