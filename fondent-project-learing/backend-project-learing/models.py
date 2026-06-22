@@ -46,38 +46,6 @@ class DiaryEntry(Base):
     )
 
 
-class DriftBottle(Base):
-    """漂流瓶 — 匿名投放（用 sha256(user_id+salt) 代替原始 user_id）"""
-    __tablename__ = "drift_bottles"
-
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    author_hash: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    is_picked: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    picked_by_hash: Mapped[Optional[str]] = mapped_column(String(64), nullable=True)
-    picked_at: Mapped[Optional[datetime]] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
-
-
-class BottleReply(Base):
-    """漂流瓶回复"""
-    __tablename__ = "bottle_replies"
-
-    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
-    bottle_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("drift_bottles.id", ondelete="CASCADE"), nullable=False, index=True
-    )
-    replier_hash: Mapped[str] = mapped_column(String(64), nullable=False)
-    content: Mapped[str] = mapped_column(Text, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
-
-
 class ChatSession(Base):
     """AI时空对话会话"""
     __tablename__ = "chat_sessions"

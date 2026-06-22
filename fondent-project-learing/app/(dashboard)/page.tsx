@@ -4,11 +4,9 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { BookOpen, Calendar, Mail, Timer, Pencil, Droplets } from "lucide-react";
+import { BookOpen, Timer, Pencil } from "lucide-react";
 import { getUser } from "@/lib/auth-client";
 import { diaryApi, type MoodStats } from "@/lib/api/diary";
-import { seedsApi, type Seed } from "@/lib/api/seeds";
-import { SeedAnimation } from "@/components/seeds/seed-animation";
 import { DailyQuoteWidget } from "@/components/quote/daily-quote-widget";
 
 // 根据小时返回时段
@@ -29,20 +27,6 @@ const FEATURES = [
     border: "oklch(0.32 0.090 290 / 0.50)",
   },
   {
-    key: "calendar", href: "/calendar", Icon: Calendar,
-    // 品红
-    accent: "oklch(0.78 0.22 330)",
-    bg:     "oklch(0.19 0.050 330)",
-    border: "oklch(0.32 0.085 330 / 0.50)",
-  },
-  {
-    key: "drift",    href: "/drift",    Icon: Mail,
-    // 电光蓝
-    accent: "oklch(0.76 0.22 256)",
-    bg:     "oklch(0.19 0.048 256)",
-    border: "oklch(0.32 0.080 256 / 0.50)",
-  },
-  {
     key: "capsule",  href: "/diary",   Icon: Timer,
     // 霓虹青
     accent: "oklch(0.80 0.18 195)",
@@ -50,80 +34,6 @@ const FEATURES = [
     border: "oklch(0.32 0.075 195 / 0.50)",
   },
 ] as const;
-
-// ── 种子小组件（首页嵌入）──
-function SeedWidget() {
-  const tSeeds = useTranslations("seeds");
-  const [seed, setSeed] = useState<Seed | null | undefined>(undefined); // undefined = loading
-  const [isWatering, setIsWatering] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    seedsApi.getCurrent()
-      .then((r) => setSeed(r.active_seed))
-      .catch(() => setSeed(null));
-  }, []);
-
-  async function handleWater(e: React.MouseEvent) {
-    e.preventDefault();
-    if (!seed || isWatering) return;
-    setIsWatering(true);
-    try {
-      const res = await seedsApi.water();
-      setSeed(res.seed);
-      setMsg(res.encouragement_message);
-      setTimeout(() => setMsg(null), 3000);
-    } catch { /* ignore */ }
-    finally { setTimeout(() => setIsWatering(false), 900); }
-  }
-
-  // still loading
-  if (seed === undefined) return null;
-
-  return (
-    <Link href="/seeds"
-      className="group flex items-center gap-4 rounded-2xl px-5 py-4 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] bg-seed-bg border border-seed-border shadow-glow-green"
-    >
-      {/* mini animation */}
-      <div className="shrink-0">
-        <SeedAnimation
-          status={seed?.status ?? null}
-          streakDays={seed?.streak_days ?? 0}
-          isWatering={isWatering}
-          seedType={seed?.seed_type ?? null}
-          size={52}
-        />
-      </div>
-
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-seed-text">
-          {tSeeds("title")}
-        </p>
-        {msg ? (
-          <p className="text-xs mt-0.5 truncate text-[oklch(0.65_0.15_145)]">{msg}</p>
-        ) : seed ? (
-          <p className="text-xs mt-0.5 text-pu-muted">
-            {tSeeds("streakOf", { days: seed.streak_days })}
-          </p>
-        ) : (
-          <p className="text-xs mt-0.5 text-pu-very-dim">
-            {tSeeds("noSeedDesc")}
-          </p>
-        )}
-      </div>
-
-      {seed?.status === "growing" && (
-        <button
-          onClick={handleWater}
-          className="shrink-0 flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-medium transition-all hover:scale-[1.05] active:scale-[0.95] bg-[oklch(0.28_0.065_200)] text-seed-water"
-        >
-          <Droplets className="h-3.5 w-3.5" />
-          {isWatering ? "…" : tSeeds("waterBtn")}
-        </button>
-      )}
-    </Link>
-  );
-}
 
 export default function DashboardPage() {
   const t = useTranslations("dashboard");
@@ -190,9 +100,6 @@ export default function DashboardPage() {
           </div>
         ))}
       </div>
-
-      {/* ── 时光种子小组件 ── */}
-      <SeedWidget />
 
       {/* ── 功能导航 2×2 ── */}
       <div>

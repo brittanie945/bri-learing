@@ -3,11 +3,10 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import { Stamp, Clock, BookOpen, Coins, Timer, Leaf, TrendingUp } from "lucide-react";
+import { Stamp, Clock, BookOpen, Coins, Timer, TrendingUp } from "lucide-react";
 import { getUser } from "@/lib/auth-client";
 import { diaryApi, type MoodStats } from "@/lib/api/diary";
 import { coinsApi, type CoinBalance } from "@/lib/api/coins";
-import { seedsApi } from "@/lib/api/seeds";
 
 // ────── Mood config (matches existing mood system) ──────
 const MOOD_META: Record<string, { label: string; color: string; icon: string }> = {
@@ -108,15 +107,11 @@ export default function SettingsPage() {
   const [moodStats, setMoodStats] = useState<MoodStats | null>(null);
   const [coinData, setCoinData] = useState<CoinBalance | null>(null);
   const [capsuleCount, setCapsuleCount] = useState(0);
-  const [seedCount, setSeedCount] = useState(0);
 
   useEffect(() => {
     diaryApi.moodStats().then(setMoodStats).catch(() => {});
     coinsApi.getBalance().then(setCoinData).catch(() => {});
     diaryApi.list({ is_capsule: true }).then((r) => setCapsuleCount(r.length)).catch(() => {});
-    seedsApi.getCurrent()
-      .then((r) => setSeedCount(r.withered_seeds.length + (r.active_seed ? 1 : 0)))
-      .catch(() => {});
   }, []);
 
   const archiveId = user?.id?.replace(/-/g, "").slice(0, 8).toUpperCase() ?? "--------";
@@ -136,7 +131,6 @@ export default function SettingsPage() {
     { icon: <Coins className="h-4 w-4" />,    label: t("statCoins"),    value: coinBalance,            accent: "oklch(0.80 0.18 80)"  },
     { icon: <Timer className="h-4 w-4" />,    label: t("statCapsules"), value: capsuleCount,           accent: "oklch(0.80 0.18 195)" },
     { icon: <TrendingUp className="h-4 w-4" />, label: t("statEarned"), value: `+${totalEarned}`,     accent: "oklch(0.75 0.18 80)"  },
-    { icon: <Leaf className="h-4 w-4" />,     label: t("statSeeds"),    value: seedCount,              accent: "oklch(0.72 0.20 145)" },
   ];
 
   // Achievement unlock conditions
@@ -146,7 +140,6 @@ export default function SettingsPage() {
     { id: "streak",    icon: "🔥", label: t("badge_streak"),    desc: t("badge_streak_desc"),    unlocked: streak >= 3 },
     { id: "capsule",   icon: "⏳", label: t("badge_capsule"),   desc: t("badge_capsule_desc"),   unlocked: capsuleCount >= 1 },
     { id: "rich",      icon: "💰", label: t("badge_rich"),      desc: t("badge_rich_desc"),      unlocked: totalEarned >= 50 },
-    { id: "gardener",  icon: "🌱", label: t("badge_gardener"),  desc: t("badge_gardener_desc"),  unlocked: seedCount >= 1 },
   ];
 
   // Mood spectrum data

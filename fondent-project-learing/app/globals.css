@@ -67,21 +67,6 @@
   --color-quote-link:       oklch(0.60 0.080 68);
   --color-quote-pin:        oklch(0.42 0.045 68);
 
-  /* ─── Seed / 时光种子 (hue ~145, ~200) ──────────────────────────── */
-  --color-seed-bg:          oklch(0.15 0.032 145);
-  --color-seed-border:      oklch(0.30 0.065 145 / 0.45);
-  --color-seed-text:        oklch(0.82 0.18 145);
-  --color-seed-water:       oklch(0.82 0.16 200);
-
-  /* ─── Branch / 枯枝 (hue ~50) ──────────────────────────────────── */
-  --color-branch-bg:        oklch(0.15 0.020 50);
-  --color-branch-bg-icon:   oklch(0.20 0.028 50);
-  --color-branch-border:    oklch(0.28 0.040 50 / 0.45);
-  --color-branch-text:      oklch(0.62 0.055 50);
-  --color-branch-sub:       oklch(0.48 0.030 50);
-  --color-branch-muted:     oklch(0.44 0.025 50);
-  --color-branch-dim:       oklch(0.40 0.020 50);
-
   /* ─── Revived / 复活 (hue ~165) ─────────────────────────────────── */
   --color-revived:          oklch(0.55 0.14 165);
 
@@ -254,12 +239,6 @@ html.dark .text-green-500   { color: oklch(0.65 0.22 290); }
 html.dark .text-green-400   { color: oklch(0.82 0.20 290); }
 html.dark .hover\:bg-green-600:hover { background-color: oklch(0.58 0.22 290); }
 
-/* ── 品红系（calendar）── */
-html.dark .bg-teal-50      { background-color: oklch(0.19 0.055 330); }
-html.dark .border-teal-100 { border-color: oklch(0.35 0.090 330 / 0.50); }
-html.dark .text-teal-700   { color: oklch(0.78 0.20 330); }
-html.dark .text-teal-600   { color: oklch(0.72 0.20 330); }
-
 /* ── 金/橙系（capsule）── */
 html.dark .bg-amber-50      { background-color: oklch(0.20 0.050 65); }
 html.dark .border-amber-100 { border-color: oklch(0.35 0.085 65 / 0.48); }
@@ -269,13 +248,6 @@ html.dark .text-amber-700   { color: oklch(0.82 0.18 65); }
 html.dark .text-amber-600   { color: oklch(0.76 0.18 65); }
 html.dark .text-amber-500   { color: oklch(0.70 0.17 65); }
 html.dark .hover\:bg-amber-100:hover { background-color: oklch(0.24 0.055 65); }
-
-/* ── 电蓝系（drift）── */
-html.dark .bg-blue-50      { background-color: oklch(0.19 0.048 256); }
-html.dark .border-blue-200 { border-color: oklch(0.38 0.090 256 / 0.55); }
-html.dark .text-blue-600   { color: oklch(0.74 0.20 256); }
-html.dark .bg-blue-500     { background-color: oklch(0.62 0.22 256); }
-html.dark .hover\:bg-blue-600:hover { background-color: oklch(0.56 0.22 256); }
 
 /* ── 红色/错误 ── */
 html.dark .bg-red-50    { background-color: oklch(0.19 0.045 15); }
@@ -359,9 +331,6 @@ html.dark .group:hover .group-hover\:text-green-700 { color: oklch(0.78 0.22 290
 }
 @utility shadow-icon-glow {
   box-shadow: 0 0 28px oklch(0.40 0.28 300 / 0.45);
-}
-@utility shadow-seed-dot {
-  box-shadow: 0 0 8px oklch(0.55 0.20 145 / 0.60);
 }
 @utility shadow-chat-empty {
   box-shadow: 0 0 40px oklch(0.35 0.28 300 / 0.40);

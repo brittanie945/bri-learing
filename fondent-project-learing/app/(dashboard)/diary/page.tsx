@@ -40,24 +40,18 @@ function VoucherModal({
   const warnings: Record<VoucherType, string> = {
     TIME_ACCELERATE: t("accelerateWarning"),
     TIME_FREEZE: t("freezeWarning"),
-    REWIND: t("rewindWarning"),
-    SEED_REVIVAL: "",
   };
   const icons: Record<VoucherType, string> = {
     TIME_ACCELERATE: "⚡",
     TIME_FREEZE: "❄️",
-    REWIND: "🔄",
-    SEED_REVIVAL: "💧",
   };
   const names: Record<VoucherType, string> = {
     TIME_ACCELERATE: t("accelerate"),
     TIME_FREEZE: t("freeze"),
-    REWIND: t("rewind"),
-    SEED_REVIVAL: t("seedRevival"),
   };
 
   const hueMap: Record<VoucherType, number> = {
-    TIME_ACCELERATE: 70, TIME_FREEZE: 220, REWIND: 290, SEED_REVIVAL: 165,
+    TIME_ACCELERATE: 70, TIME_FREEZE: 220,
   };
   const hue = hueMap[type];
 

@@ -91,3 +91,43 @@ async def delete_session(
     await db.delete(session)
     await db.commit()
     return True
+
+
+async def get_active_sessions_with_messages(
+    db: AsyncSession,
+) -> list[dict]:
+    """
+    获取所有有消息的会话及其消息历史，用于 Checkpointer hydration。
+
+    返回列表，每项包含 session_id 和按时间排序的 messages 列表。
+    """
+    # 子查询：找出所有有消息的会话
+    subq = (
+        select(ChatMessage.session_id)
+        .group_by(ChatMessage.session_id)
+        .subquery()
+    )
+
+    # 主查询：获取这些会话的消息（按时间排序）
+    result = await db.execute(
+        select(ChatMessage)
+        .where(ChatMessage.session_id.in_(select(subq)))
+        .order_by(ChatMessage.session_id.asc(), ChatMessage.created_at.asc())
+    )
+    all_messages = list(result.scalars().all())
+
+    # 按 session_id 分组
+    sessions_map: dict[str, list[dict]] = {}
+    for msg in all_messages:
+        sid = str(msg.session_id)
+        if sid not in sessions_map:
+            sessions_map[sid] = []
+        sessions_map[sid].append({
+            "role": msg.role,
+            "content": msg.content,
+        })
+
+    return [
+        {"session_id": uuid.UUID(sid), "messages": msgs}
+        for sid, msgs in sessions_map.items()
+    ]

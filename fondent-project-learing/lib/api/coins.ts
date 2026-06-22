@@ -2,7 +2,7 @@ import { req } from "@/lib/api/request";
 
 // ────── Types ──────
 
-export type VoucherType = "TIME_ACCELERATE" | "TIME_FREEZE" | "REWIND" | "SEED_REVIVAL";
+export type VoucherType = "TIME_ACCELERATE" | "TIME_FREEZE";
 
 export interface CoinBalance {
   balance: number;

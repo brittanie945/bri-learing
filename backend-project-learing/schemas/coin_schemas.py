@@ -8,15 +8,11 @@ from enum import Enum
 class VoucherType(str, Enum):
     TIME_ACCELERATE = "TIME_ACCELERATE"   # 光加速券：胶囊提前 7 天开启
     TIME_FREEZE = "TIME_FREEZE"           # 时光冻结券：胶囊延期 30 天
-    REWIND = "REWIND"                     # 倒带券：撤回漂流瓶
-    SEED_REVIVAL = "SEED_REVIVAL"         # 时光营养液：复活一颗枯萎种子
 
 
 VOUCHER_COST = {
     VoucherType.TIME_ACCELERATE: 30,
     VoucherType.TIME_FREEZE: 20,
-    VoucherType.REWIND: 15,
-    VoucherType.SEED_REVIVAL: 20,
 }
 
 
@@ -39,7 +35,7 @@ class CoinTransactionItem(BaseModel):
 
 class UseVoucherRequest(BaseModel):
     voucher_type: VoucherType
-    target_id: str  # DiaryEntry.id 或 DriftBottle.id
+    target_id: str  # DiaryEntry.id
 
 
 class UseVoucherResponse(BaseModel):

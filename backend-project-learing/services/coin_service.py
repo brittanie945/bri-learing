@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
-from models import DiaryEntry, DriftBottle
+from models import DiaryEntry
 from repositories.coin_repository import (
     add_coins,
     deduct_coins,
@@ -81,8 +81,6 @@ async def svc_buy_voucher(
     reason_map = {
         VoucherType.TIME_ACCELERATE: "BUY_ACCELERATE",
         VoucherType.TIME_FREEZE: "BUY_FREEZE",
-        VoucherType.REWIND: "BUY_REWIND",
-        VoucherType.SEED_REVIVAL: "BUY_SEED_REVIVAL",
     }
     try:
         await deduct_coins(db, user_id, cost, reason_map[voucher_type])
@@ -93,8 +91,6 @@ async def svc_buy_voucher(
     name_map = {
         VoucherType.TIME_ACCELERATE: "光加速券",
         VoucherType.TIME_FREEZE: "时光冻结券",
-        VoucherType.REWIND: "倒带券",
-        VoucherType.SEED_REVIVAL: "时光营养液",
     }
     return BuyVoucherResponse(
         success=True,
@@ -173,36 +169,3 @@ async def svc_use_voucher(
             message=f"胶囊已延期 30 天，新解锁时间：{entry.unlock_at.strftime('%Y-%m-%d')}",
         )
 
-    elif voucher_type == VoucherType.REWIND:
-        from models import DriftBottle
-        import hashlib
-        import os
-
-        salt = os.getenv("BOTTLE_HASH_SALT", "default_salt")
-        author_hash = hashlib.sha256(f"{user_id}{salt}".encode()).hexdigest()
-
-        result = await db.execute(
-            select(DriftBottle).where(
-                DriftBottle.id == target_id,
-                DriftBottle.author_hash == author_hash,
-                DriftBottle.is_picked == False,
-            )
-        )
-        bottle = result.scalar_one_or_none()
-        if not bottle:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="漂流瓶不存在或已被捞取，无法召回",
-            )
-        try:
-            await consume_voucher(db, user_id, voucher_type.value)
-        except ValueError as e:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
-        await db.delete(bottle)
-        await db.commit()
-        new_balance = await get_balance(db, user_id)
-        return UseVoucherResponse(
-            success=True,
-            new_balance=new_balance,
-            message="漂流瓶已成功召回",
-        )

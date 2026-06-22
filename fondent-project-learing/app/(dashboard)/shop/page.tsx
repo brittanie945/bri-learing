@@ -9,26 +9,20 @@ const VOUCHERS: Array<{
   type: VoucherType;
   icon: string;
   cost: number;
-  nameKey: "accelerate" | "freeze" | "rewind" | "seedRevival";
-  descKey: "accelerateDesc" | "freezeDesc" | "rewindDesc" | "seedRevivalDesc";
+  nameKey: "accelerate" | "freeze";
+  descKey: "accelerateDesc" | "freezeDesc";
   accentHue: number;
 }> = [
   { type: "TIME_ACCELERATE", icon: "⚡", cost: 30, nameKey: "accelerate",   descKey: "accelerateDesc",   accentHue: 70  },
   { type: "TIME_FREEZE",     icon: "❄️", cost: 20, nameKey: "freeze",       descKey: "freezeDesc",       accentHue: 220 },
-  { type: "REWIND",          icon: "🔄", cost: 15, nameKey: "rewind",       descKey: "rewindDesc",       accentHue: 290 },
-  { type: "SEED_REVIVAL",    icon: "💧", cost: 20, nameKey: "seedRevival", descKey: "seedRevivalDesc", accentHue: 165 },
 ];
 
 const REASON_MAP: Record<string, string> = {
   DIARY_CHECKIN:    "日记打卡奖励",
   BUY_ACCELERATE:   "购买光加速券",
   BUY_FREEZE:       "购买时光冻结券",
-  BUY_REWIND:       "购买倒带券",
-  BUY_SEED_REVIVAL: "购买时光营养液",
-  SEED_SPROUT:      "时光种子发芽奖励",
   USE_ACCELERATE:   "使用光加速券",
   USE_FREEZE:       "使用时光冻结券",
-  USE_REWIND:       "使用倒带券",
 };
 
 // ────── 购买确认弹窗 ──────
@@ -198,7 +192,7 @@ function BagVoucherCard({ v, quantity }: { v: (typeof VOUCHERS)[0]; quantity: nu
         </p>
         <p className="text-xs mt-0.5 text-pu-muted">{t(v.descKey)}</p>
         <p className="text-xs mt-1.5 text-[oklch(0.48_0.015_290)]">
-          {quantity > 0 ? (v.type === "REWIND" ? "前往漂流瓶页面使用" : "前往日记页面使用") : "暂无库存，去商店购买"}
+          {quantity > 0 ? "前往日记页面使用" : "暂无库存，去商店购买"}
         </p>
       </div>
 
@@ -344,7 +338,7 @@ export default function ShopPage() {
             <BagVoucherCard key={v.type} v={v} quantity={getQty(v.type)} />
           ))}
           <p className="text-xs text-center pt-2 text-pu-ghost">
-            日记页面使用 ⚡❄️ · 漂流瓶页面使用 🔄
+            日记页面使用 ⚡❄️
           </p>
         </div>
       )}

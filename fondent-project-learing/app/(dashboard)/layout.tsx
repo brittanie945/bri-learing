@@ -4,7 +4,7 @@ import { Fragment, Suspense, useCallback, useEffect, useState, startTransition }
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Home, BookOpen, Calendar, Mail, LogOut, TreePine, Menu, X, MessageSquare, ShoppingBag, Coins, Archive, ChevronDown, Plus } from "lucide-react";
+import { Home, BookOpen, LogOut, TreePine, Menu, X, MessageSquare, ShoppingBag, Coins, Archive, ChevronDown, Plus } from "lucide-react";
 import { isAuthenticated, getUser, logout } from "@/lib/auth-client";
 import LanguageSwitcher from "@/components/language-switcher";
 import { coinsApi } from "@/lib/api/coins";
@@ -103,9 +103,6 @@ const navConfig = [
   { key: "home", href: "/", Icon: Home },
   { key: "chat", href: "/chat", Icon: MessageSquare },
   { key: "diary", href: "/diary", Icon: BookOpen },
-  { key: "calendar", href: "/calendar", Icon: Calendar },
-  { key: "drift", href: "/drift", Icon: Mail },
-  { key: "seeds", href: "/seeds", Icon: TreePine },
   { key: "shop", href: "/shop", Icon: ShoppingBag },
   { key: "settings", href: "/settings", Icon: Archive },
 ] as const;

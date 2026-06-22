@@ -1,14 +1,12 @@
 # 🌳 心洞 — Treehouse
 
-一个以「情感日记 + 匿名漂流瓶」为核心的 Web 应用，帮助用户记录心情、追踪情绪、封存时间胶囊，以及匿名互动。
+一个以「情感日记」为核心的 Web 应用，帮助用户记录心情、追踪情绪、封存时间胶囊。
 
 ## ✨ 功能特性
 
 - 📝 **情感日记** — 记录每日心情，支持情绪标签、天气、自定义标签
-- 🎯 **情绪追踪** — 可视化情绪日历，回顾情绪变化趋势
 - ⏳ **时间胶囊** — 设置解锁日期，写给未来的自己
 - 💣 **自毁日记** — 设定自毁天数，到期自动清除
-- 🍾 **匿名漂流瓶** — 投放心情、捞起陌生人的瓶子、匿名回复
 - 🌐 **中英文切换** — 内置 i18n，支持中文 / English
 - 🔐 **JWT 认证** — 注册 / 登录，bcrypt 加密
 
@@ -26,11 +24,11 @@
 ```
 backend-project-learing/       # FastAPI 后端
 ├── main.py                    # 应用入口
-├── models.py                  # ORM 模型（User / DiaryEntry / DriftBottle）
+├── models.py                  # ORM 模型（User / DiaryEntry）
 ├── database.py                # 数据库连接
 ├── app/database/init_db.py    # 数据库初始化 / 增量更新 / 重置
 ├── core/security.py           # JWT 生成与校验
-├── routers/                   # API 路由（auth / diary / drift）
+├── routers/                   # API 路由（auth / diary）
 ├── schemas/                   # Pydantic 数据校验
 ├── services/                  # 业务逻辑
 └── repositories/              # 数据访问层
@@ -40,8 +38,6 @@ fondent-project-learing/       # Next.js 前端
 │   ├── login/ & register/     # 认证页面
 │   └── (dashboard)/           # 主面板
 │       ├── diary/             # 日记列表 & 详情
-│       ├── drift/             # 漂流瓶
-│       ├── calendar/          # 情绪日历
 │       └── settings/          # 个人设置
 ├── components/                # UI 组件（编辑器 / 情绪选择器 / 语言切换）
 ├── lib/api/                   # API 客户端
